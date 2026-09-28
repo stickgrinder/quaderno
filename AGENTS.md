@@ -10,11 +10,11 @@ Read this file completely before starting any task. Then read the documents list
 |---|---|
 | `vault-spec/format.md` | The encrypted file format. Public: other people build clients from it. |
 | `vault-spec/migrations/*.sql` | The schema. If it disagrees with `format.md`, the SQL wins and the document has a bug: report it. |
-| `docs/product-spec.md` | What the app does, as rules. Version 1 scope. |
-| `docs/ui-spec.md` | Screens, widgets, layouts, shortcuts, states. |
+| `docs/product-spec.md` | What Quaderno does, as rules, for every platform. Version 1 scope. |
+| `gnome/docs/ui-spec.md` | GNOME app: screens, widgets, layouts, shortcuts, states. (Android gets its own `android/docs/ui-spec.md`.) |
 | `docs/statistics.md` | Insights definitions (version 1.1). |
 | `docs/plan.md` | Milestones and acceptance criteria. Work on one milestone at a time. |
-| `docs/design/*.png` | Exported design artboards. Visual reference only; the HTML they came from is not code to port. |
+| `gnome/docs/design/*.png` | GNOME design artboards. Visual reference only; the HTML they came from is not code to port. |
 
 If a task needs a decision these documents don't make, **stop and ask**. Don't invent product behavior.
 
@@ -28,7 +28,7 @@ If a task needs a decision these documents don't make, **stop and ask**. Don't i
 - **Secrets:** `oo7` (Secret Service, with the Flatpak portal).
 - **Other crates:** `uuid` (v7), `unicode-normalization`, `jiff` or `chrono` for time (pick one and use it everywhere), `thiserror` in libraries, `anyhow` only in the binary, `gettext-rs`.
 - **Build:** meson (drives cargo), plus a Flatpak manifest against the current stable `org.gnome.Platform`.
-- **Icons:** Phosphor Icons 2.1, regular weight (MIT), converted to GTK symbolic icons at build time (see `docs/ui-spec.md` §Icons).
+- **Icons:** Phosphor Icons 2.1, regular weight (MIT), converted to GTK symbolic icons at build time (see `gnome/docs/ui-spec.md` §Icons).
 - **License:** GPL-3.0-or-later for all code. Every source file starts with an SPDX header: `// SPDX-License-Identifier: GPL-3.0-or-later`.
 - **App ID:** `io.github.stickgrinder.Quaderno`.
 
@@ -51,8 +51,9 @@ gnome/               the GNOME app (binary `quaderno`)
   ui/                Blueprint files
   data/              desktop file, metainfo, GSettings schema, icons, icon synonyms
   build-aux/         Flatpak manifest, aur/ PKGBUILD templates
-android/             the Android app (later). Gradle project. Empty in 1.0 except README.md.
-docs/                product, UI and statistics specs, plan, design PNGs
+  docs/              GNOME-specific docs: ui-spec.md, design/ PNGs
+android/             the Android app (later). Gradle project, with its own docs/ (ui-spec.md, design/). Empty in 1.0 except README.md.
+docs/                shared docs: product spec, statistics, plan
 ```
 
 **Releases** are tagged per component: `vault-vX.Y.Z` (library and spec), `gnome-vX.Y.Z`, `android-vX.Y.Z`.

@@ -23,7 +23,7 @@ One milestone per agent session (or a few). Tick the box when all acceptance cri
 **Accept:** `cargo test -p quaderno-vault` covers all of the above; the Python reader reproduces `sample.json`.
 
 ### M2 · Shell: welcome, unlock, lock
-- [ ] Welcome / unlock / error / main pages (ui-spec §2, §3.1–3.2).
+- [ ] Welcome / unlock / error / main pages (`gnome/docs/ui-spec.md` §2, §3.1–3.2).
 - [ ] Keyring via `oo7`; graceful fallback without Secret Service.
 - [ ] Lock action, auto-lock on idle and on session lock; memory cleared on lock.
 - [ ] Read-only banner for newer vaults.
@@ -34,7 +34,7 @@ One milestone per agent session (or a few). Tick the box when all acceptance cri
 - [ ] Sections sidebar, entry list with journal-day headers and filters, editor with GtkSourceView and dimmed Markdown.
 - [ ] Autosave, discard-empty, delete with undo, entry date popover and backdated info bar.
 - [ ] In-memory search.
-- [ ] Breakpoints (ui-spec §2.2).
+- [ ] Breakpoints (`gnome/docs/ui-spec.md` §2.2).
 
 **Accept:** write, edit, re-date, delete/undo and search journal pages; nothing unencrypted appears on disk (check `$XDG_*` dirs and `/tmp`).
 

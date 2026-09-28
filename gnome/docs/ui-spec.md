@@ -1,7 +1,7 @@
-# Quaderno — UI spec
+# Quaderno for GNOME — UI spec
 
 **Scope:** version 1.0. **Last updated:** 2026-09-28.
-Behavior is in `docs/product-spec.md`; this document says how it looks and which widgets implement it. Design artboards: `docs/design/*.png` (exported from the design canvas).
+Behavior is in `docs/product-spec.md`; this document says how it looks and which widgets implement it. Design artboards: `design/*.png` next to this file (exported from the design canvas).
 
 ## 1. Principles
 
