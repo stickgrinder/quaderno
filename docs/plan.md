@@ -5,11 +5,13 @@ One milestone per agent session (or a few). Tick the box when all acceptance cri
 ## Version 1.0 — capture entries
 
 ### M0 · Repository scaffolding
-- [ ] Monorepo layout from `AGENTS.md`: Cargo workspace with `crates/quaderno-vault` and `gnome`; meson project in `gnome/` driving cargo; Flatpak manifest in `gnome/build-aux/`; GPL-3.0-or-later `COPYING`; SPDX headers; shared `po/` with `it`; `android/README.md` placeholder.
-- [ ] Empty `AdwApplicationWindow` with the app ID, desktop file, metainfo, GSettings schema, placeholder icon.
-- [ ] CI: vault workflow (fmt, clippy `-D warnings`, tests) and GNOME workflow (meson build, Flatpak build), each triggered by its paths (`AGENTS.md` §Repository layout).
+- [x] Monorepo layout from `AGENTS.md`: Cargo workspace with `crates/quaderno-vault` and `gnome`; meson project in `gnome/` driving cargo; Flatpak manifest in `gnome/build-aux/`; GPL-3.0-or-later `COPYING`; SPDX headers; shared `po/` with `it`; `android/README.md` placeholder.
+- [x] Empty `AdwApplicationWindow` with the app ID, desktop file, metainfo, GSettings schema, placeholder icon.
+- [x] CI: vault workflow (fmt, clippy `-D warnings`, tests) and GNOME workflow (meson build, Flatpak build), each triggered by its paths (`AGENTS.md` §Repository layout).
 
 **Accept:** `flatpak run io.github.stickgrinder.Quaderno` opens an empty window; CI green.
+
+_Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) because meson's gettext module cannot read outside its project; kept the existing `LICENSE` instead of adding `COPYING`; Flatpak cargo deps are vendored in `gnome/build-aux/cargo-sources.json`, and the module uses the `simple` buildsystem to run meson from the monorepo root; window-open check is manual (no display in CI); placeholder app icon until M7.
 
 ### M1 · Vault library (`quaderno-vault`, no GTK)
 - [ ] Create, open, close; SQLCipher settings set explicitly (vault spec §2.1); NFC passphrase handling; `zeroize`.

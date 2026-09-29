@@ -26,7 +26,7 @@ If a task needs a decision these documents don't make, **stop and ask**. Don't i
 - **Editor:** GtkSourceView 5 (`sourceview5` crate) with the Markdown language.
 - **Database:** `rusqlite` with SQLCipher. Cargo feature `bundled-sqlcipher` (Flatpak) or `system-sqlcipher` (distribution packages, e.g. AUR). Default: bundled.
 - **Secrets:** `oo7` (Secret Service, with the Flatpak portal).
-- **Other crates:** `uuid` (v7), `unicode-normalization`, `jiff` or `chrono` for time (pick one and use it everywhere), `thiserror` in libraries, `anyhow` only in the binary, `gettext-rs`.
+- **Other crates:** `uuid` (v7), `unicode-normalization`, `jiff` for time (use it everywhere), `thiserror` in libraries, `anyhow` only in the binary, `gettext-rs`.
 - **Build:** meson (drives cargo), plus a Flatpak manifest against the current stable `org.gnome.Platform`.
 - **Icons:** Phosphor Icons 2.1, regular weight (MIT), converted to GTK symbolic icons at build time (see `gnome/docs/ui-spec.md` §Icons).
 - **License:** GPL-3.0-or-later for all code. Every source file starts with an SPDX header: `// SPDX-License-Identifier: GPL-3.0-or-later`.
@@ -43,13 +43,13 @@ vault-spec/          public format spec + migrations (CC-BY-SA-4.0); the vault c
 crates/
   quaderno-vault/      shared library: everything that touches the vault file. No GTK, no Android.
   quaderno-vault-ffi/  Kotlin/Swift bindings via uniffi. Added when Android work starts; not in 1.0.
-po/                  shared gettext catalogs (LINGUAS starts with "it"). Default-list labels live here
-                     too, so Android can convert the same translations (vault spec §6.2).
 gnome/               the GNOME app (binary `quaderno`)
   meson.build        meson project for the app; drives cargo
   src/
   ui/                Blueprint files
   data/              desktop file, metainfo, GSettings schema, icons, icon synonyms
+  po/                gettext catalogs (LINGUAS starts with "it"). Default-list labels live here
+                     too, for consistency across clients (vault spec §6.2).
   build-aux/         Flatpak manifest, aur/ PKGBUILD templates
   docs/              GNOME-specific docs: ui-spec.md, design/ PNGs
 android/             the Android app (later). Gradle project, with its own docs/ (ui-spec.md, design/). Empty in 1.0 except README.md.
@@ -58,7 +58,7 @@ docs/                shared docs: product spec, statistics, plan
 
 **Releases** are tagged per component: `vault-vX.Y.Z` (library and spec), `gnome-vX.Y.Z`, `android-vX.Y.Z`.
 
-**CI** has one workflow per component, triggered by paths: `gnome/**` runs the GNOME build, `android/**` the Android build; changes under `crates/**`, `vault-spec/**` or `po/**` run every workflow that depends on them.
+**CI** has one workflow per component, triggered by paths: `gnome/**` runs the GNOME build, `android/**` the Android build; changes under `crates/**` or `vault-spec/**` run every workflow that depends on them.
 
 ## Commands
 
