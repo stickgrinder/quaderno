@@ -43,6 +43,10 @@ pub enum VaultError {
     #[error("not found")]
     NotFound,
 
+    /// The operation needs a writable vault, but it is open read-only.
+    #[error("this journal is open read-only")]
+    ReadOnly,
+
     /// A write was rejected by a database trigger because of the entry-type
     /// rules (spec §5.1).
     #[error("the write breaks a rule for this entry type: {0}")]
