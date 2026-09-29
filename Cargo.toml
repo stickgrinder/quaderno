@@ -18,3 +18,12 @@ repository = "https://github.com/stickgrinder/quaderno"
 # using newer APIs.
 gtk = { package = "gtk4", version = "0.11", features = ["v4_18"] }
 adw = { package = "libadwaita", version = "0.9", features = ["v1_7"] }
+
+# quaderno-vault. `rusqlite` is used with SQLCipher; the SQLCipher feature is
+# selected by the crate's own `bundled-sqlcipher` / `system-sqlcipher` features.
+rusqlite = { version = "0.40", features = ["backup"] }
+uuid = { version = "1", features = ["v7"] }
+unicode-normalization = "0.1"
+jiff = "0.2"
+thiserror = "2"
+zeroize = "1"

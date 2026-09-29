@@ -13,3 +13,23 @@ repository.workspace = true
 [lib]
 name = "quaderno_vault"
 path = "src/lib.rs"
+
+[features]
+default = ["bundled-sqlcipher"]
+# Build SQLCipher from source and link the host OpenSSL (used by Flatpak and
+# development builds).
+bundled-sqlcipher = ["rusqlite/bundled-sqlcipher"]
+# Link the distribution's SQLCipher instead (used by distribution packages).
+system-sqlcipher = ["rusqlite/sqlcipher"]
+
+[dependencies]
+rusqlite = { workspace = true, features = ["backup"] }
+uuid = { workspace = true }
+unicode-normalization = { workspace = true }
+jiff = { workspace = true }
+thiserror = { workspace = true }
+zeroize = { workspace = true }
+
+[dev-dependencies]
+serde_json = "1"
+tempfile = "3"
