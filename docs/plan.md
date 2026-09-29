@@ -27,12 +27,14 @@ _Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) bec
 _Deferred/decided:_ the library never retains the passphrase (`backup`/`change_passphrase` take it as an argument); snapshots use the SQLite online backup API; a `Vault::export_json` (product spec §10 shape) was added for the fixture and M7; fixtures use random UUIDv7 ids and the current time, so CI checks the reader against the committed pair and also round-trips a freshly generated sample instead of diffing regenerated files; the migrate-on-open path is not covered by a test because only migration 0001 exists; SQLCipher logs wrong-passphrase HMAC errors to stderr (page numbers only, never content) and silencing them is left for later.
 
 ### M2 · Shell: welcome, unlock, lock
-- [ ] Welcome / unlock / error / main pages (`gnome/docs/ui-spec.md` §2, §3.1–3.2).
-- [ ] Keyring via `oo7`; graceful fallback without Secret Service.
-- [ ] Lock action, auto-lock on idle and on session lock; memory cleared on lock.
-- [ ] Read-only banner for newer vaults.
+- [x] Welcome / unlock / error / main pages (`gnome/docs/ui-spec.md` §2, §3.1–3.2).
+- [x] Keyring via `oo7`; graceful fallback without Secret Service.
+- [x] Lock action, auto-lock on idle and on session lock; memory cleared on lock.
+- [x] Read-only banner for newer vaults.
 
 **Accept:** create a vault, quit, reopen with and without keyring, wrong passphrase handling, auto-lock works.
+
+_Deferred/decided:_ the error page's "Open a backup…" is deferred to M7 (only "Locate file…" for now); session lock uses `org.gnome.ScreenSaver.ActiveChanged` (Flatpak gains `--talk-name=org.gnome.ScreenSaver`); oo7 runs on a dedicated tokio worker thread and its entry is keyed by the absolute vault path; an explicit Lock is not auto-unlocked from the keyring (the keyring is only used at startup/open); idle is checked every 15 seconds; the auth state machine is GTK-free and unit-tested.
 
 ### M3 · Timeline and journal page editor
 - [ ] Sections sidebar, entry list with journal-day headers and filters, editor with GtkSourceView and dimmed Markdown.
