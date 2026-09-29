@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: gnome
+
+on:
+  push:
+    paths:
+      - "gnome/**"
+      - "crates/**"
+      - "vault-spec/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/gnome.yml"
+  pull_request:
+    paths:
+      - "gnome/**"
+      - "crates/**"
+      - "vault-spec/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/gnome.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  flatpak:
+    name: Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: quaderno.flatpak
+          manifest-path: gnome/build-aux/io.github.stickgrinder.Quaderno.json
+          run-tests: true
