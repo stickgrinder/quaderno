@@ -1,0 +1,10 @@
+# Build directories
+/target/
+/gnome/target/
+/build/
+/build-flatpak/
+/.flatpak-builder/
+
+# Generated files
+*.mo
+gnome/po/quaderno.pot

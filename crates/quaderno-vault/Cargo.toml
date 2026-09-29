@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[package]
+name = "quaderno-vault"
+description = "Shared library for reading and writing Quaderno vaults"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+name = "quaderno_vault"
+path = "src/lib.rs"
