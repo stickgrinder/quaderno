@@ -17,5 +17,20 @@
       <summary>Window maximized</summary>
       <description>Whether the main window was maximized when it was last closed.</description>
     </key>
+    <key name="vault-path" type="s">
+      <default>''</default>
+      <summary>Journal file</summary>
+      <description>Absolute path of the configured journal; empty when none is configured.</description>
+    </key>
+    <key name="auto-lock-minutes" type="i">
+      <default>5</default>
+      <summary>Auto-lock after</summary>
+      <description>Minutes of inactivity before the vault locks; 0 never locks.</description>
+    </key>
+    <key name="lock-on-session-lock" type="b">
+      <default>true</default>
+      <summary>Lock when the session locks</summary>
+      <description>Whether locking the session also locks the vault.</description>
+    </key>
   </schema>
 </schemalist>

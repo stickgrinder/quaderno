@@ -28,3 +28,10 @@ jiff = "0.2"
 thiserror = "2"
 zeroize = "1"
 serde_json = "1"
+
+# The GNOME app.
+quaderno-vault = { path = "crates/quaderno-vault" }
+oo7 = "0.6"
+gettext-rs = "0.8"
+tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
+futures-channel = "0.3"

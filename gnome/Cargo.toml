@@ -16,6 +16,12 @@ glib-build-tools = "0.22"
 [dependencies]
 gtk = { workspace = true }
 adw = { workspace = true }
+quaderno-vault = { workspace = true }
+oo7 = { workspace = true }
+gettext-rs = { workspace = true }
+tokio = { workspace = true }
+futures-channel = { workspace = true }
+zeroize = { workspace = true }
 
 [[bin]]
 name = "quaderno"
