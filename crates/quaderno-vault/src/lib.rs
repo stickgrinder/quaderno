@@ -8,4 +8,9 @@
 
 #![forbid(unsafe_code)]
 
+pub mod error;
 pub mod migrations;
+pub mod text;
+pub mod time;
+
+pub use error::VaultError;
