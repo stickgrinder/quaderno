@@ -75,4 +75,4 @@ _Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) bec
 - Import from Quaderno's own Markdown/JSON export.
 
 ## Later
-Quick capture (keyring-unlocked vault only), daily reminder, "append note to existing entry", hidden-syntax editor mode, recently deleted view, Android companion in `android/`, reusing `quaderno-vault` through `crates/quaderno-vault-ffi` (uniffi Kotlin bindings) and the shared `po/` catalogs.
+Quick capture (keyring-unlocked vault only), daily reminder, "append note to existing entry", hidden-syntax editor mode, recently deleted view, Android companion in `android/`, reusing `quaderno-vault` through `crates/quaderno-vault-ffi` (uniffi Kotlin bindings) and its own translations.

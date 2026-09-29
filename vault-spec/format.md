@@ -1,6 +1,6 @@
 # Quaderno vault format
 
-**Version:** 1 (draft) · **Last updated:** 2026-09-28
+**Version:** 1 (draft) · **Last updated:** 2026-09-29
 **Normative schema:** [`migrations/0001_initial.sql`](migrations/0001_initial.sql)
 **License:** this document is CC-BY-SA-4.0. The Quaderno app and the `quaderno-vault` library are GPL-3.0-or-later.
 
@@ -185,7 +185,7 @@ Default `label` values are English source strings in the gettext sense: the Engl
 
 - **Context:** each label is translated with gettext context equal to the item's `kind` (`emotion` or `activity`), i.e. `pgettext("emotion", "Calm")`. The same English word can then be translated differently as an emotion and as an activity, and translators know which one they are looking at.
 - **Fallback:** a language with no translation shows the English `label`. No client ever needs a translation to display a vault.
-- **Catalog:** Quaderno's catalogs (`po/*.po`) are the reference translations. Other clients MAY reuse them. Clients whose platform doesn't use gettext (Android `strings.xml`, Windows `.resx`) convert the catalog at build time, deriving resource names from the item's `id` or from context plus label (`emotion_calm`). That naming is internal to each client and never stored in the vault.
+- **Catalog:** Quaderno's reference catalogs live at `gnome/po/*.po` in the reference repository. Other clients MAY copy or convert them, but each client ships its own translations. Clients whose platform doesn't use gettext (Android `strings.xml`, Windows `.resx`) convert the catalog at build time, deriving resource names from the item's `id` or from context plus label (`emotion_calm`). That naming is internal to each client and never stored in the vault.
 - **Wording fixes:** if a default's English wording needs to change, the change goes into the translation catalogs (English included), never into the vault. That avoids a migration touching every user's data.
 - Rating labels, dream flags and colors (Appendices B and C) are not stored as text in the vault. Clients translate them with context `rating.mood`, `rating.energy`, `rating.cognitive_load`, `rating.sleep`, `dream_flag` and `color`.
 
@@ -338,6 +338,7 @@ Fixed keys, with the GNOME palette values Quaderno uses (informative):
 
 ## Changelog
 
+- **2026-09-29** — Reference translation catalogs live at `gnome/po/`; every client ships its own translations.
 - **2026-09-28** — Decided: `mood` on a dream is mood on waking and is kept out of daily mood statistics. Empty `content` explicitly allowed.
 - **2026-09-28** — `choice`: replaced `key` + translated `label` with a frozen English `label` (gettext source string, context = kind) and `custom_label` for user names. Added §6.2 on translations.
 - **2026-09-28** — First draft. Replaces the generic OJPP 1.0 draft with a Quaderno-specific schema.
