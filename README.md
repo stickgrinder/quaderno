@@ -28,6 +28,8 @@ Version 1.0 is in development. The current milestone and acceptance criteria are
 | `gnome/` | The GNOME app |
 | `vault-spec/` | Public file-format spec and SQL migrations |
 | `docs/` | Product specs, statistics, plan |
+| `fixtures/` | Sample encrypted vault and its expected JSON |
+| `tools/` | Independent readers for the format |
 | `android/` | Android companion app (TBD) |
 
 ## Building and running

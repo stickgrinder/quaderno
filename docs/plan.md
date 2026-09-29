@@ -14,15 +14,17 @@ One milestone per agent session (or a few). Tick the box when all acceptance cri
 _Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) because meson's gettext module cannot read outside its project; kept the existing `LICENSE` instead of adding `COPYING`; Flatpak cargo deps are vendored in `gnome/build-aux/cargo-sources.json`, and the module uses the `simple` buildsystem to run meson from the monorepo root; window-open check is manual (no display in CI); placeholder app icon until M7.
 
 ### M1 · Vault library (`quaderno-vault`, no GTK)
-- [ ] Create, open, close; SQLCipher settings set explicitly (vault spec §2.1); NFC passphrase handling; `zeroize`.
-- [ ] Migration runner embedding `vault-spec/migrations/*.sql`; compatibility states (§7.2).
-- [ ] Typed API: entries, choices, subjects, links, settings; all writes set `updated_at`, soft delete, NFC, timestamp formatting; edits as `UPDATE` of named columns.
-- [ ] Journal-day computation (§5.4); title derivation; word count.
-- [ ] Snapshot (backup API / `sqlcipher_export`), rekey (§2.4), validation (§8.3).
-- [ ] Tests for every rule trigger, the compatibility matrix, rekey, snapshot, NFC, journal day at `day_end` edges.
-- [ ] `fixtures/sample.quaderno` + `fixtures/sample.json` generator (vault spec §10), and a small independent Python reader in `tools/` that opens the sample using only the spec.
+- [x] Create, open, close; SQLCipher settings set explicitly (vault spec §2.1); NFC passphrase handling; `zeroize`.
+- [x] Migration runner embedding `vault-spec/migrations/*.sql`; compatibility states (§7.2).
+- [x] Typed API: entries, choices, subjects, links, settings; all writes set `updated_at`, soft delete, NFC, timestamp formatting; edits as `UPDATE` of named columns.
+- [x] Journal-day computation (§5.4); title derivation; word count.
+- [x] Snapshot (backup API / `sqlcipher_export`), rekey (§2.4), validation (§8.3).
+- [x] Tests for every rule trigger, the compatibility matrix, rekey, snapshot, NFC, journal day at `day_end` edges.
+- [x] `fixtures/sample.quaderno` + `fixtures/sample.json` generator (vault spec §10), and a small independent Python reader in `tools/` that opens the sample using only the spec.
 
 **Accept:** `cargo test -p quaderno-vault` covers all of the above; the Python reader reproduces `sample.json`.
+
+_Deferred/decided:_ the library never retains the passphrase (`backup`/`change_passphrase` take it as an argument); snapshots use the SQLite online backup API; a `Vault::export_json` (product spec §10 shape) was added for the fixture and M7; fixtures use random UUIDv7 ids and the current time, so CI checks the reader against the committed pair and also round-trips a freshly generated sample instead of diffing regenerated files; the migrate-on-open path is not covered by a test because only migration 0001 exists; SQLCipher logs wrong-passphrase HMAC errors to stderr (page numbers only, never content) and silencing them is left for later.
 
 ### M2 · Shell: welcome, unlock, lock
 - [ ] Welcome / unlock / error / main pages (`gnome/docs/ui-spec.md` §2, §3.1–3.2).

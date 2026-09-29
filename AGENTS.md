@@ -54,6 +54,8 @@ gnome/               the GNOME app (binary `quaderno`)
   docs/              GNOME-specific docs: ui-spec.md, design/ PNGs
 android/             the Android app (later). Gradle project, with its own docs/ (ui-spec.md, design/). Empty in 1.0 except README.md.
 docs/                shared docs: product spec, statistics, plan
+fixtures/            sample.quaderno + sample.json, the reference test material (vault spec §10)
+tools/               independent readers/tools for the format (e.g. the Python sample reader)
 ```
 
 **Releases** are tagged per component: `vault-vX.Y.Z` (library and spec), `gnome-vX.Y.Z`, `android-vX.Y.Z`.
@@ -68,6 +70,14 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 meson setup build gnome && meson compile -C build && meson test -C build
 flatpak-builder --user --install --force-clean build-flatpak gnome/build-aux/io.github.stickgrinder.Quaderno.json
+```
+
+The vault crate also provides the reference fixture. After changing the vault,
+regenerate it and check that the independent reader reproduces it:
+
+```sh
+cargo run -p quaderno-vault --example generate_fixtures
+python3 tools/read_sample.py fixtures/sample.quaderno --check fixtures/sample.json
 ```
 
 All of these must pass before a milestone counts as done. Android commands will be added with the Android app.
