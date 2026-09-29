@@ -8,6 +8,7 @@ project('quaderno',
 )
 
 gnome = import('gnome')
+i18n = import('i18n')
 
 bindir = get_option('bindir')
 datadir = get_option('datadir')
@@ -45,6 +46,7 @@ custom_target('quaderno',
 )
 
 subdir('data')
+subdir('po')
 
 gnome.post_install(
   glib_compile_schemas: true,

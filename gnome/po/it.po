@@ -1,0 +1,126 @@
+# Italian translation of Quaderno.
+# SPDX-License-Identifier: GPL-3.0-or-later
+# This catalog is shared conceptually with other Quaderno clients; each client
+# ships its own copy (see vault-spec/format.md §6.2).
+msgid ""
+msgstr ""
+"Project-Id-Version: quaderno\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-29 00:00+0200\n"
+"PO-Revision-Date: 2026-09-29 00:00+0200\n"
+"Last-Translator: Paolo Pustorino <stickgrinder@gmail.com>\n"
+"Language-Team: Italian\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Private, encrypted journal"
+msgstr "Diario privato e cifrato"
+
+# Default emotion labels (vault-spec/format.md Appendix A), context = kind.
+msgctxt "emotion"
+msgid "Joy"
+msgstr "Gioia"
+
+msgctxt "emotion"
+msgid "Gratitude"
+msgstr "Gratitudine"
+
+msgctxt "emotion"
+msgid "Calm"
+msgstr "Calma"
+
+msgctxt "emotion"
+msgid "Love"
+msgstr "Amore"
+
+msgctxt "emotion"
+msgid "Pride"
+msgstr "Orgoglio"
+
+msgctxt "emotion"
+msgid "Hope"
+msgstr "Speranza"
+
+msgctxt "emotion"
+msgid "Sadness"
+msgstr "Tristezza"
+
+msgctxt "emotion"
+msgid "Anger"
+msgstr "Rabbia"
+
+msgctxt "emotion"
+msgid "Anxiety"
+msgstr "Ansia"
+
+msgctxt "emotion"
+msgid "Loneliness"
+msgstr "Solitudine"
+
+msgctxt "emotion"
+msgid "Boredom"
+msgstr "Noia"
+
+msgctxt "emotion"
+msgid "Nostalgia"
+msgstr "Nostalgia"
+
+# Default activity labels (vault-spec/format.md Appendix A), context = kind.
+msgctxt "activity"
+msgid "Work"
+msgstr "Lavoro"
+
+msgctxt "activity"
+msgid "Exercise"
+msgstr "Esercizio"
+
+msgctxt "activity"
+msgid "Walk"
+msgstr "Passeggiata"
+
+msgctxt "activity"
+msgid "Reading"
+msgstr "Lettura"
+
+msgctxt "activity"
+msgid "Cooking"
+msgstr "Cucinare"
+
+msgctxt "activity"
+msgid "Friends & family"
+msgstr "Amici e famiglia"
+
+msgctxt "activity"
+msgid "Music"
+msgstr "Musica"
+
+msgctxt "activity"
+msgid "Side project"
+msgstr "Progetto personale"
+
+msgctxt "activity"
+msgid "Nature"
+msgstr "Natura"
+
+msgctxt "activity"
+msgid "Meditation"
+msgstr "Meditazione"
+
+msgctxt "activity"
+msgid "Gaming"
+msgstr "Videogiochi"
+
+msgctxt "activity"
+msgid "Travel"
+msgstr "Viaggio"
+
+msgctxt "activity"
+msgid "Screen time"
+msgstr "Tempo schermo"
+
+msgctxt "activity"
+msgid "Chores"
+msgstr "Faccende"

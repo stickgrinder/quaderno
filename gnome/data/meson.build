@@ -14,12 +14,13 @@ install_data(
   install_dir: datadir / 'metainfo',
 )
 
-# Installed as-is for now; translated through `i18n.merge_file` once the
-# gettext catalogs are wired up.
-install_data(
-  'io.github.stickgrinder.Quaderno.desktop.in',
+i18n.merge_file(
+  input: 'io.github.stickgrinder.Quaderno.desktop.in',
+  output: 'io.github.stickgrinder.Quaderno.desktop',
+  po_dir: '../po',
+  type: 'desktop',
+  install: true,
   install_dir: datadir / 'applications',
-  rename: 'io.github.stickgrinder.Quaderno.desktop',
 )
 
 install_data(

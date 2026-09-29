@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Translatable files, relative to the meson project root (gnome/).
+# The desktop file and Blueprint UI are handled by `i18n.merge_file` and
+# are added here once they carry translatable keys.
+
+src/application.rs
+src/main.rs
+src/window.rs
