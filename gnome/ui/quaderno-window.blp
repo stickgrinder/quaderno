@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+template $QuadernoWindow: Adw.ApplicationWindow {
+  default-width: 980;
+  default-height: 640;
+  title: "Quaderno";
+
+  content: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      title-widget: Adw.WindowTitle {
+        title: "Quaderno";
+      };
+    }
+  };
+}
