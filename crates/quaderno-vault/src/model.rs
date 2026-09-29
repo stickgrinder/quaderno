@@ -120,3 +120,190 @@ pub struct Entry {
     /// Soft-deletion time, UTC.
     pub deleted_at: Option<Timestamp>,
 }
+
+/// The kind of a configurable list item (spec §4.3).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ChoiceKind {
+    /// An emotion.
+    Emotion,
+    /// A day activity.
+    Activity,
+}
+
+impl ChoiceKind {
+    /// The value stored in `choice.kind`.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            ChoiceKind::Emotion => "emotion",
+            ChoiceKind::Activity => "activity",
+        }
+    }
+
+    /// Parses a stored `choice.kind`.
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "emotion" => Some(ChoiceKind::Emotion),
+            "activity" => Some(ChoiceKind::Activity),
+            _ => None,
+        }
+    }
+}
+
+/// A row of `choice`: an emotion or a day activity (spec §4.3).
+#[derive(Debug, Clone)]
+pub struct Choice {
+    /// The item's id.
+    pub id: Uuid,
+    /// Emotion or activity.
+    pub kind: ChoiceKind,
+    /// For defaults: the frozen English label to translate. `None` for items
+    /// the user created.
+    pub label: Option<String>,
+    /// The user's own name, shown as-is when set.
+    pub custom_label: Option<String>,
+    /// A Phosphor icon name.
+    pub icon: String,
+    /// Display order.
+    pub sort_order: i64,
+    /// Hidden items stay on past entries and in statistics.
+    pub hidden: bool,
+    /// Creation time, UTC.
+    pub created_at: Timestamp,
+    /// Last edit time, UTC.
+    pub updated_at: Timestamp,
+    /// Soft-deletion time, UTC.
+    pub deleted_at: Option<Timestamp>,
+}
+
+impl Choice {
+    /// The name to show: `custom_label` if set, otherwise the frozen `label`.
+    pub fn display_label(&self) -> &str {
+        self.custom_label
+            .as_deref()
+            .or(self.label.as_deref())
+            .unwrap_or("")
+    }
+}
+
+/// The kind of a subject (spec §4.4).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SubjectKind {
+    /// A person.
+    Person,
+    /// A place.
+    Place,
+    /// A thing.
+    Thing,
+    /// A tag.
+    Tag,
+}
+
+impl SubjectKind {
+    /// The value stored in `subject.kind`.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            SubjectKind::Person => "person",
+            SubjectKind::Place => "place",
+            SubjectKind::Thing => "thing",
+            SubjectKind::Tag => "tag",
+        }
+    }
+
+    /// Parses a stored `subject.kind`.
+    pub fn parse(value: &str) -> Option<Self> {
+        match value {
+            "person" => Some(SubjectKind::Person),
+            "place" => Some(SubjectKind::Place),
+            "thing" => Some(SubjectKind::Thing),
+            "tag" => Some(SubjectKind::Tag),
+            _ => None,
+        }
+    }
+}
+
+/// A row of `subject`: a person, place, thing or tag (spec §4.4).
+#[derive(Debug, Clone)]
+pub struct Subject {
+    /// The subject's id.
+    pub id: Uuid,
+    /// Person, place, thing or tag.
+    pub kind: SubjectKind,
+    /// The name, NFC-normalized and trimmed.
+    pub name: String,
+    /// Creation time, UTC.
+    pub created_at: Timestamp,
+    /// Last edit time, UTC.
+    pub updated_at: Timestamp,
+    /// Soft-deletion time, UTC.
+    pub deleted_at: Option<Timestamp>,
+}
+
+/// The twelve fixed colours (spec Appendix C).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Color {
+    /// Red.
+    Red,
+    /// Orange.
+    Orange,
+    /// Yellow.
+    Yellow,
+    /// Green.
+    Green,
+    /// Teal.
+    Teal,
+    /// Blue.
+    Blue,
+    /// Purple.
+    Purple,
+    /// Pink.
+    Pink,
+    /// Brown.
+    Brown,
+    /// Gray.
+    Gray,
+    /// Black.
+    Black,
+    /// White.
+    White,
+}
+
+impl Color {
+    /// All twelve colours, in the schema's order.
+    pub const ALL: [Color; 12] = [
+        Color::Red,
+        Color::Orange,
+        Color::Yellow,
+        Color::Green,
+        Color::Teal,
+        Color::Blue,
+        Color::Purple,
+        Color::Pink,
+        Color::Brown,
+        Color::Gray,
+        Color::Black,
+        Color::White,
+    ];
+
+    /// The value stored in `entry_color.color`.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Color::Red => "red",
+            Color::Orange => "orange",
+            Color::Yellow => "yellow",
+            Color::Green => "green",
+            Color::Teal => "teal",
+            Color::Blue => "blue",
+            Color::Purple => "purple",
+            Color::Pink => "pink",
+            Color::Brown => "brown",
+            Color::Gray => "gray",
+            Color::Black => "black",
+            Color::White => "white",
+        }
+    }
+
+    /// Parses a stored `entry_color.color`.
+    pub fn parse(value: &str) -> Option<Self> {
+        Color::ALL.into_iter().find(|color| color.as_str() == value)
+    }
+}

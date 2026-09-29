@@ -12,10 +12,15 @@ pub mod model;
 pub mod text;
 pub mod time;
 
+mod collections;
 mod crypto;
 mod entries;
+mod links;
+mod settings;
 mod vault;
 
 pub use error::VaultError;
-pub use model::{DreamFlag, Entry, EntryType, Rating};
+pub use model::{
+    Choice, ChoiceKind, Color, DreamFlag, Entry, EntryType, Rating, Subject, SubjectKind,
+};
 pub use vault::{Access, Vault};
