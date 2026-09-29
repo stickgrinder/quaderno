@@ -1,0 +1,568 @@
+{
+  "choice": [
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "sun",
+      "id": "01a0e54f-b000-7fb5-a336-339c06c3a42f",
+      "kind": "emotion",
+      "label": "Joy",
+      "sort_order": 10,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "hand-heart",
+      "id": "01a0e54f-b001-7559-a22a-ffe581c89d9d",
+      "kind": "emotion",
+      "label": "Gratitude",
+      "sort_order": 20,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "flower-lotus",
+      "id": "01a0e54f-b002-7f29-bd09-fc096a90db83",
+      "kind": "emotion",
+      "label": "Calm",
+      "sort_order": 30,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "heart",
+      "id": "01a0e54f-b003-78b5-969f-199867984ade",
+      "kind": "emotion",
+      "label": "Love",
+      "sort_order": 40,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "medal",
+      "id": "01a0e54f-b004-7fb4-a335-5026cad417e6",
+      "kind": "emotion",
+      "label": "Pride",
+      "sort_order": 50,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "sparkle",
+      "id": "01a0e54f-b005-7fb7-9cd5-737230e26061",
+      "kind": "emotion",
+      "label": "Hope",
+      "sort_order": 60,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "cloud-rain",
+      "id": "01a0e54f-b006-7db0-bd8d-1eaa4d6b64b5",
+      "kind": "emotion",
+      "label": "Sadness",
+      "sort_order": 70,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "fire",
+      "id": "01a0e54f-b007-74d1-988a-2eb50d027ebb",
+      "kind": "emotion",
+      "label": "Anger",
+      "sort_order": 80,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "lightning",
+      "id": "01a0e54f-b008-70a4-864f-ecdfc2fadf45",
+      "kind": "emotion",
+      "label": "Anxiety",
+      "sort_order": 90,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "user-minus",
+      "id": "01a0e54f-b009-771d-8b2f-7243f7c1a93f",
+      "kind": "emotion",
+      "label": "Loneliness",
+      "sort_order": 100,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "hourglass-medium",
+      "id": "01a0e54f-b00a-71d1-91dd-11163195ed02",
+      "kind": "emotion",
+      "label": "Boredom",
+      "sort_order": 110,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "clock-counter-clockwise",
+      "id": "01a0e54f-b00b-798e-af1b-11ef2129c5fd",
+      "kind": "emotion",
+      "label": "Nostalgia",
+      "sort_order": 120,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "briefcase",
+      "id": "01a0e54f-b00c-7db7-8e30-cb9d36f00e43",
+      "kind": "activity",
+      "label": "Work",
+      "sort_order": 10,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "barbell",
+      "id": "01a0e54f-b00d-7997-8a7a-1e45368c0bd4",
+      "kind": "activity",
+      "label": "Exercise",
+      "sort_order": 20,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "person-simple-walk",
+      "id": "01a0e54f-b00e-7e98-8488-c59b5b1e5c36",
+      "kind": "activity",
+      "label": "Walk",
+      "sort_order": 30,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "book-open",
+      "id": "01a0e54f-b00f-7376-b0d5-7169aac16696",
+      "kind": "activity",
+      "label": "Reading",
+      "sort_order": 40,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "cooking-pot",
+      "id": "01a0e54f-b010-7a50-9164-445a3e69de85",
+      "kind": "activity",
+      "label": "Cooking",
+      "sort_order": 50,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "users-three",
+      "id": "01a0e54f-b011-708d-9ed4-05d688df30ef",
+      "kind": "activity",
+      "label": "Friends & family",
+      "sort_order": 60,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "music-notes",
+      "id": "01a0e54f-b012-7cf8-a8e2-76fe92463718",
+      "kind": "activity",
+      "label": "Music",
+      "sort_order": 70,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "code",
+      "id": "01a0e54f-b013-7e6b-9c40-1c9f21e4734c",
+      "kind": "activity",
+      "label": "Side project",
+      "sort_order": 80,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "tree",
+      "id": "01a0e54f-b014-7f60-b70f-f04f9b13a162",
+      "kind": "activity",
+      "label": "Nature",
+      "sort_order": 90,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "person-simple-tai-chi",
+      "id": "01a0e54f-b015-7aee-9cf2-c0dc7cb9f319",
+      "kind": "activity",
+      "label": "Meditation",
+      "sort_order": 100,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "game-controller",
+      "id": "01a0e54f-b016-7307-b266-54e22ea1518a",
+      "kind": "activity",
+      "label": "Gaming",
+      "sort_order": 110,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "airplane",
+      "id": "01a0e54f-b017-7d3b-a756-3e9a6fa79642",
+      "kind": "activity",
+      "label": "Travel",
+      "sort_order": 120,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "device-mobile",
+      "id": "01a0e54f-b018-7c91-a5ba-b36dd93bd4db",
+      "kind": "activity",
+      "label": "Screen time",
+      "sort_order": 130,
+      "updated_at": "2026-09-28T00:00:00Z"
+    },
+    {
+      "created_at": "2026-09-28T00:00:00Z",
+      "custom_label": null,
+      "deleted_at": null,
+      "hidden": 0,
+      "icon": "broom",
+      "id": "01a0e54f-b019-7a3c-97cd-61cb08775256",
+      "kind": "activity",
+      "label": "Chores",
+      "sort_order": 140,
+      "updated_at": "2026-09-28T00:00:00Z"
+    }
+  ],
+  "entry": [
+    {
+      "cognitive_load": 3,
+      "conflict_of": null,
+      "content": "# A slow Saturday by the lake\n\nWoke up late for once: **nine hours** of sleep and no alarm.\n\n- The light on the mountains around four\n- A quiet first hour",
+      "created_at": "2026-09-29T16:23:15Z",
+      "dated_at": "2026-09-26T21:14:00+02:00",
+      "deleted_at": null,
+      "energy": 4,
+      "id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "lucid": null,
+      "mood": 4,
+      "nightmare": null,
+      "recurring": null,
+      "sleep": 4,
+      "source_id": null,
+      "type": "journal",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "cognitive_load": null,
+      "conflict_of": null,
+      "content": "# The train that became a boat\n\nThe carriage kept filling with water, slowly, like a bath.",
+      "created_at": "2026-09-29T16:23:15Z",
+      "dated_at": "2026-09-22T07:40:00+02:00",
+      "deleted_at": null,
+      "energy": null,
+      "id": "01a0edfa-4037-75b4-9919-03f717e1a442",
+      "lucid": 1,
+      "mood": 4,
+      "nightmare": null,
+      "recurring": 1,
+      "sleep": 4,
+      "source_id": null,
+      "type": "dream",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "cognitive_load": null,
+      "conflict_of": null,
+      "content": "Call Dad, then book the train for Saturday",
+      "created_at": "2026-09-29T16:23:15Z",
+      "dated_at": "2026-09-28T09:12:00+02:00",
+      "deleted_at": null,
+      "energy": null,
+      "id": "01a0edfa-40d1-72af-8ed2-66955d2dcd51",
+      "lucid": null,
+      "mood": null,
+      "nightmare": null,
+      "recurring": null,
+      "sleep": null,
+      "source_id": null,
+      "type": "note",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "cognitive_load": null,
+      "conflict_of": null,
+      "content": "Call Dad, then book the train for Saturday",
+      "created_at": "2026-09-29T16:23:15Z",
+      "dated_at": "2026-09-29T18:23:15+02:00",
+      "deleted_at": null,
+      "energy": null,
+      "id": "01a0edfa-40ff-7368-b7ca-30dd80225c85",
+      "lucid": null,
+      "mood": null,
+      "nightmare": null,
+      "recurring": null,
+      "sleep": null,
+      "source_id": "01a0edfa-40d1-72af-8ed2-66955d2dcd51",
+      "type": "journal",
+      "updated_at": "2026-09-29T16:23:15Z"
+    }
+  ],
+  "entry_choice": [
+    {
+      "choice_id": "01a0e54f-b001-7559-a22a-ffe581c89d9d",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "choice_id": "01a0e54f-b002-7f29-bd09-fc096a90db83",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "choice_id": "01a0e54f-b00e-7e98-8488-c59b5b1e5c36",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "choice_id": "01a0e54f-b011-708d-9ed4-05d688df30ef",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "choice_id": "01a0e54f-b017-7d3b-a756-3e9a6fa79642",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "choice_id": "01a0e54f-b002-7f29-bd09-fc096a90db83",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-4037-75b4-9919-03f717e1a442",
+      "updated_at": "2026-09-29T16:23:15Z"
+    }
+  ],
+  "entry_color": [
+    {
+      "color": "blue",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "color": "green",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "color": "teal",
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-4037-75b4-9919-03f717e1a442",
+      "updated_at": "2026-09-29T16:23:15Z"
+    }
+  ],
+  "entry_subject": [
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "subject_id": "01a0edfa-3e93-72e0-95f6-7fb5d0af8698",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "subject_id": "01a0edfa-3ea5-74f4-a05d-c18ea463cc58",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "subject_id": "01a0edfa-3eb8-768c-954d-00e74a16b5ce",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "subject_id": "01a0edfa-3ecb-7086-ad62-18f9afb6f48d",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-3ef1-736d-a237-8488e1d10c69",
+      "subject_id": "01a0edfa-3ede-7508-b004-68e18a069842",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-40d1-72af-8ed2-66955d2dcd51",
+      "subject_id": "01a0edfa-3ecb-7086-ad62-18f9afb6f48d",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "entry_id": "01a0edfa-40ff-7368-b7ca-30dd80225c85",
+      "subject_id": "01a0edfa-3ecb-7086-ad62-18f9afb6f48d",
+      "updated_at": "2026-09-29T16:23:15Z"
+    }
+  ],
+  "setting": [
+    {
+      "key": "day_end",
+      "updated_at": "2026-09-29T16:23:15Z",
+      "value": "03:00"
+    }
+  ],
+  "subject": [
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "id": "01a0edfa-3e93-72e0-95f6-7fb5d0af8698",
+      "kind": "person",
+      "name": "Marta",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "id": "01a0edfa-3ea5-74f4-a05d-c18ea463cc58",
+      "kind": "place",
+      "name": "Lecco",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "id": "01a0edfa-3eb8-768c-954d-00e74a16b5ce",
+      "kind": "thing",
+      "name": "Film camera",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "id": "01a0edfa-3ecb-7086-ad62-18f9afb6f48d",
+      "kind": "tag",
+      "name": "weekend",
+      "updated_at": "2026-09-29T16:23:15Z"
+    },
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "deleted_at": null,
+      "id": "01a0edfa-3ede-7508-b004-68e18a069842",
+      "kind": "tag",
+      "name": "lake",
+      "updated_at": "2026-09-29T16:23:15Z"
+    }
+  ],
+  "vault": [
+    {
+      "created_at": "2026-09-29T16:23:15Z",
+      "format": "quaderno",
+      "id": "01a0edfa-3dc2-7491-81c8-242e07b571e7",
+      "read_compat": 1,
+      "schema_version": 1,
+      "singleton": 1,
+      "write_compat": 1
+    }
+  ]
+}
