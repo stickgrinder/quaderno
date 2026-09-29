@@ -18,10 +18,7 @@
     "append-path": "/usr/lib/sdk/rust-stable/bin",
     "env": {
       "CARGO_HOME": "/run/build/quaderno/cargo"
-    },
-    "build-args": [
-      "--share=network"
-    ]
+    }
   },
   "modules": [
     {
@@ -33,6 +30,7 @@
         "meson install -C _build --no-rebuild"
       ],
       "sources": [
+        "cargo-sources.json",
         {
           "type": "dir",
           "path": "../../",
