@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Placeholder application icon; replaced with the final artwork in M7. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect x="16" y="16" width="96" height="96" rx="24" fill="#3584e4"/>
+  <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round">
+    <line x1="44" y1="48" x2="84" y2="48"/>
+    <line x1="44" y1="64" x2="84" y2="64"/>
+    <line x1="44" y1="80" x2="70" y2="80"/>
+  </g>
+</svg>

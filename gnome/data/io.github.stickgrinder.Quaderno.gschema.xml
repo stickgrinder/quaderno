@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<schemalist>
+  <schema id="io.github.stickgrinder.Quaderno" path="/io/github/stickgrinder/Quaderno/">
+    <key name="window-width" type="i">
+      <default>980</default>
+      <summary>Window width</summary>
+      <description>Last width of the main window, in logical pixels.</description>
+    </key>
+    <key name="window-height" type="i">
+      <default>640</default>
+      <summary>Window height</summary>
+      <description>Last height of the main window, in logical pixels.</description>
+    </key>
+    <key name="window-maximized" type="b">
+      <default>false</default>
+      <summary>Window maximized</summary>
+      <description>Whether the main window was maximized when it was last closed.</description>
+    </key>
+  </schema>
+</schemalist>

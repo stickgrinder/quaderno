@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Desktop Entry]
+Name=Quaderno
+Comment=Private, encrypted journal
+Type=Application
+Exec=quaderno
+Icon=io.github.stickgrinder.Quaderno
+Terminal=false
+Categories=Utility;
+Keywords=journal;diary;notes;dreams;private;
+StartupNotify=true
