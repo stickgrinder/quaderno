@@ -16,6 +16,7 @@ mod collections;
 mod crypto;
 mod entries;
 mod links;
+mod maintenance;
 mod settings;
 mod vault;
 
