@@ -1,0 +1,55 @@
+{
+  "app-id": "io.github.stickgrinder.Quaderno",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "50",
+  "sdk": "org.gnome.Sdk",
+  "command": "quaderno",
+  "sdk-extensions": [
+    "org.freedesktop.Sdk.Extension.rust-stable"
+  ],
+  "finish-args": [
+    "--share=ipc",
+    "--socket=fallback-x11",
+    "--socket=wayland",
+    "--device=dri",
+    "--talk-name=org.freedesktop.secrets"
+  ],
+  "build-options": {
+    "append-path": "/usr/lib/sdk/rust-stable/bin",
+    "env": {
+      "CARGO_HOME": "/run/build/quaderno/cargo"
+    },
+    "build-args": [
+      "--share=network"
+    ]
+  },
+  "modules": [
+    {
+      "name": "quaderno",
+      "buildsystem": "simple",
+      "build-commands": [
+        "meson setup --prefix=/app --libdir=lib _build gnome",
+        "meson compile -C _build",
+        "meson install -C _build --no-rebuild"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../../",
+          "skip": [
+            ".git",
+            ".flatpak-builder",
+            "build",
+            "build/*",
+            "build-flatpak",
+            "build-flatpak/*",
+            "target",
+            "target/*",
+            "gnome/target",
+            "gnome/target/*"
+          ]
+        }
+      ]
+    }
+  ]
+}
