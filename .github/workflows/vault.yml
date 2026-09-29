@@ -6,6 +6,8 @@ on:
     paths:
       - "crates/**"
       - "vault-spec/**"
+      - "fixtures/**"
+      - "tools/**"
       - "Cargo.toml"
       - "Cargo.lock"
       - ".github/workflows/vault.yml"
@@ -13,6 +15,8 @@ on:
     paths:
       - "crates/**"
       - "vault-spec/**"
+      - "fixtures/**"
+      - "tools/**"
       - "Cargo.toml"
       - "Cargo.lock"
       - ".github/workflows/vault.yml"
@@ -29,9 +33,22 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
+      - name: Install SQLCipher build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev pkg-config sqlcipher
       - name: Check formatting
         run: cargo fmt --all --check
       - name: Clippy
         run: cargo clippy -p quaderno-vault --all-targets -- -D warnings
       - name: Test
         run: cargo test -p quaderno-vault
+      - name: Check the committed sample with the Python reader
+        run: python3 tools/read_sample.py fixtures/sample.quaderno --check fixtures/sample.json
+      - name: Generate a fresh sample and read it back
+        run: |
+          export QUADERNO_FIXTURES_DIR="$RUNNER_TEMP/fixtures"
+          cargo run -p quaderno-vault --example generate_fixtures
+          python3 tools/read_sample.py \
+            "$RUNNER_TEMP/fixtures/sample.quaderno" \
+            --check "$RUNNER_TEMP/fixtures/sample.json"

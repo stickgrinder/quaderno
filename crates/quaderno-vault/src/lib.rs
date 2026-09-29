@@ -21,6 +21,9 @@ mod maintenance;
 mod settings;
 mod vault;
 
+#[cfg(test)]
+mod rules_tests;
+
 pub use error::VaultError;
 pub use model::{
     Choice, ChoiceKind, Color, DreamFlag, Entry, EntryType, Rating, Subject, SubjectKind,

@@ -17,8 +17,13 @@ use quaderno_vault::{ChoiceKind, Color, EntryType, SubjectKind, Vault};
 const PASSPHRASE: &str = "Quaderno sample 1";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let repo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let fixtures = repo.join("fixtures");
+    let fixtures = std::env::var_os("QUADERNO_FIXTURES_DIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(|| {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("../..")
+                .join("fixtures")
+        });
     std::fs::create_dir_all(&fixtures)?;
 
     let vault_path = fixtures.join("sample.quaderno");
