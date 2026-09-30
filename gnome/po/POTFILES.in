@@ -4,5 +4,6 @@
 # are added here once they carry translatable keys.
 
 src/application.rs
+src/details.rs
 src/main.rs
 src/window.rs

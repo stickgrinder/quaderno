@@ -87,13 +87,19 @@ Artboard: Unlock. `AdwStatusPage` with a lock icon, "Quaderno is locked", the va
 
 ### 3.6 Details panel
 
-`GtkScrolledWindow` with `AdwPreferencesGroup`s (artboard Main, right):
+The end sidebar of an `AdwOverlaySplitView` around the editor (see §2.1), toggled
+from the editor header with the details button and Ctrl+Shift+I, closing with the
+X in its header. `GtkScrolledWindow` with `AdwPreferencesGroup`s (artboard Main, right):
 
-- **Entry date:** row with date button; caption with created/updated times.
-- **How it felt:** four rows, each a label + `AdwToggleGroup` of 5 icon toggles, allowing no selection (clicking the active toggle clears it). Tooltips give the value's label.
-- **Emotions / Day activities:** `GtkFlowBox` of chips (`pill` buttons with icon + label; clicking a chip's remove icon unlinks it, with undo toast), plus an "Add" chip opening a `GtkPopover` with a `GtkSearchEntry` and a `GtkListView` of choices.
+- **Entry date:** row with date button (it opens the editor's calendar popover); caption with created/updated times.
+- **How it felt:** four rows, each a label plus a linked box of 5 icon `GtkToggleButton`s, allowing no selection (clicking the active toggle clears it). `AdwToggleGroup` is deliberately not used here: it can only ever keep one toggle active, so it cannot express the empty value a rating needs. The value's label is the row subtitle and the button tooltips.
+- **Emotions / Day activities:** `GtkFlowBox` of chips (`pill` buttons with icon + label; clicking a chip's remove icon unlinks it, with undo toast), plus an "Add" chip opening a `GtkPopover` with a `GtkSearchEntry` and a `GtkListView` of choices. The popover stays open so several can be picked; already-linked items are not listed.
 - **Colors of the day:** 12 circular `GtkToggleButton`s with the color as background, accessible names = color names.
-- **People, places & things, Tags:** one token field per kind: a `GtkFlowBox` of chips followed by a `GtkText`, with a `GtkPopover` suggestion list (`GtkListView`). Artboard Dream shows the suggestion popover.
+- **People, places & things, Tags:** one token field per kind: an `AdwWrapBox` of chips followed by a `GtkText`, so the text sits inline with the chips and still wraps; with a `GtkPopover` suggestion list (`GtkListView`). Artboard Dream shows the suggestion popover. Suggestions are sorted by use count, show "N entries · last <date>", and end with a "Create …" row; Enter picks, Shift+Enter always creates, Backspace on an empty field removes the last token.
+
+The panel only offers what the entry type allows (vault spec §5.1): journal pages
+and dreams get every section, quick notes get tags only, and a read-only vault
+disables the whole panel.
 
 ### 3.7 Quick notes view
 
@@ -137,7 +143,7 @@ Artboard Notes: list of note cards (`GtkListView` with `card` style rows), `AdwT
 ## 5. Icons
 
 - Source: Phosphor Icons 2.1.1, regular weight, from the `@phosphor-icons/core` package. Ship `LICENSE` (MIT) under `gnome/data/icons/phosphor/`.
-- A build script converts each used SVG into a GTK symbolic icon named `ph-<name>-symbolic` (fill set to a plain color GTK can recolor; drop `currentColor`), and adds it to the GResource. Only icons referenced by the app or the default lists, plus the full picker set, are shipped.
+- A build script converts each used SVG into a GTK symbolic icon named `ph-<name>-symbolic` (fill set to a plain color GTK can recolor; drop `currentColor`), and adds it to the GResource. The whole regular set is vendored and converted, so the picker (M6) needs no new assets; they live under `scalable/actions` in the GResource, because that is the directory the `hicolor` fallback theme that carries resource icons actually scans.
 - Stored icon names in the vault are bare Phosphor names (`flower-lotus`); the app maps them to `ph-flower-lotus-symbolic`. Unknown names show `ph-question-symbolic`.
 - The icon picker's synonym table lives in `gnome/data/icon-synonyms.tsv`, translated terms included.
 

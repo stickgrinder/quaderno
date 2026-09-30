@@ -4,23 +4,74 @@
 //! logic that moves between them.
 
 use std::cell::{Cell, RefCell};
+use std::collections::HashSet;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::{gio, glib};
-use quaderno_vault::{Access, EntryType, SubjectKind, Vault, VaultError};
+use quaderno_vault::{
+    Access, Choice, ChoiceKind, Color, Entry, EntryType, Rating, Subject, SubjectKind, Vault,
+    VaultError,
+};
 use sourceview5::prelude::*;
 use uuid::Uuid;
 use zeroize::Zeroizing;
 
+use crate::details;
+use crate::icons;
 use crate::keyring::Keyring;
+use crate::picker;
 use crate::state::{CreateForm, CreateValidity, Phase, Throttle};
 use crate::timeline::{self, Filter};
 
 fn quaderno_settings() -> gio::Settings {
     gio::Settings::new(crate::application::APP_ID)
+}
+
+/// The kind of chip whose remove button is being built.
+#[derive(Clone, Copy)]
+enum ChipKind {
+    Choice,
+    Subject,
+}
+
+/// One rating row: its five toggle buttons plus the row it lives in.
+pub struct RatingControl {
+    rating: Rating,
+    row: adw::ActionRow,
+    buttons: Vec<gtk::ToggleButton>,
+}
+
+/// One choice chip field (emotions or day activities) and its Add popover.
+pub struct ChoiceControl {
+    kind: ChoiceKind,
+    section: gtk::Box,
+    flow: gtk::FlowBox,
+    add_button: gtk::Button,
+}
+
+/// One token field (people, places, things, tags) and its suggestion popover.
+pub struct TokenControl {
+    kind: SubjectKind,
+    row: gtk::Box,
+    wrap: adw::WrapBox,
+    entry: gtk::Text,
+}
+
+/// The widgets of the constructed details panel.
+pub struct PanelWidgets {
+    date_button: gtk::Button,
+    dates_label: gtk::Label,
+    felt_group: adw::PreferencesGroup,
+    ratings: Vec<RatingControl>,
+    choices: Vec<ChoiceControl>,
+    colors_section: gtk::Box,
+    colors: Vec<(Color, gtk::ToggleButton)>,
+    subjects_section: gtk::Box,
+    subjects_title: gtk::Label,
+    tokens: Vec<TokenControl>,
 }
 
 mod imp {
@@ -133,6 +184,14 @@ mod imp {
         pub entry_menu: TemplateChild<gtk::MenuButton>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub details_split: TemplateChild<adw::OverlaySplitView>,
+        #[template_child]
+        pub details_button: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub details_close: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub details_box: TemplateChild<gtk::Box>,
         // Non-template state.
         pub editor_buffer: RefCell<Option<sourceview5::Buffer>>,
         pub editor_view: RefCell<Option<sourceview5::View>>,
@@ -147,6 +206,8 @@ mod imp {
         pub row_ids: RefCell<Vec<Option<uuid::Uuid>>>,
         pub section_filters: RefCell<Vec<(u32, Filter)>>,
         pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
+        pub panel: RefCell<Option<PanelWidgets>>,
+        pub panel_loading: Cell<bool>,
     }
 
     impl Default for QuadernoWindow {
@@ -220,6 +281,12 @@ mod imp {
                 search_index: RefCell::new(None),
                 entry_menu: Default::default(),
                 toast_overlay: Default::default(),
+                details_split: Default::default(),
+                details_button: Default::default(),
+                details_close: Default::default(),
+                details_box: Default::default(),
+                panel: RefCell::new(None),
+                panel_loading: Cell::new(false),
             }
         }
     }
@@ -249,6 +316,7 @@ mod imp {
             obj.setup_editor();
             obj.setup_sections();
             obj.setup_main();
+            obj.setup_details();
             obj.setup_breakpoints();
         }
     }
@@ -421,6 +489,8 @@ impl QuadernoWindow {
         if let Some(view) = self.imp().editor_view.borrow().as_ref() {
             view.set_editable(editable);
         }
+        // A read-only vault disables the whole details panel (product spec §3.2).
+        self.imp().details_box.set_sensitive(editable);
         let buttons: [gtk::Widget; 9] = [
             self.imp().new_button.clone().upcast(),
             self.imp().date_button.clone().upcast(),
@@ -667,6 +737,7 @@ impl QuadernoWindow {
         self.register_action("heading-3", |window| window.prefix_line("### "));
         self.register_action("bold", |window| window.wrap_selection("**", "**"));
         self.register_action("italic", |window| window.wrap_selection("*", "*"));
+        self.register_action("toggle-details", |window| window.toggle_details());
     }
 
     fn register_action(&self, name: &str, run: fn(&QuadernoWindow)) {
@@ -736,10 +807,846 @@ impl QuadernoWindow {
             .connect_clicked(move |_| window.wrap_selection("[", "](url)"));
     }
 
+    // ---- details panel (ui-spec §3.6, product spec §5) -------------------
+
+    fn setup_details(&self) {
+        let imp = self.imp();
+
+        let window = self.clone();
+        imp.details_button.connect_toggled(move |button| {
+            window
+                .imp()
+                .details_split
+                .set_show_sidebar(button.is_active());
+        });
+        let window = self.clone();
+        imp.details_split.connect_show_sidebar_notify(move |split| {
+            window
+                .imp()
+                .details_button
+                .set_active(split.shows_sidebar());
+        });
+        let window = self.clone();
+        imp.details_close.connect_clicked(move |_| {
+            window.imp().details_split.set_show_sidebar(false);
+        });
+
+        self.build_details();
+    }
+
+    fn toggle_details(&self) {
+        let button = &self.imp().details_button;
+        button.set_active(!button.is_active());
+    }
+
+    /// Builds the panel once; `refresh_details` keeps it in sync afterwards.
+    fn build_details(&self) {
+        let container = &self.imp().details_box;
+        while let Some(child) = container.first_child() {
+            container.remove(&child);
+        }
+
+        // Entry date + created/updated caption.
+        let date_button = gtk::Button::new();
+        date_button.add_css_class("flat");
+        let window = self.clone();
+        date_button.connect_clicked(move |_| {
+            window.imp().date_button.popup();
+        });
+        let date_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Entry date"))
+            .build();
+        date_row.add_suffix(&date_button);
+        let date_group = adw::PreferencesGroup::new();
+        date_group.add(&date_row);
+        let dates_label = gtk::Label::new(None);
+        dates_label.set_xalign(0.0);
+        dates_label.set_wrap(true);
+        dates_label.add_css_class("dim-label");
+        dates_label.add_css_class("caption");
+        let date_section = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        date_section.append(&date_group);
+        date_section.append(&dates_label);
+        container.append(&date_section);
+
+        // How it felt: four rows of five icon toggles. `AdwToggleGroup` cannot
+        // deselect, so plain linked toggle buttons implement "click the active
+        // value to clear it" (ui-spec §3.6).
+        let felt_group = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("How it felt"))
+            .build();
+        let mut ratings = Vec::new();
+        for rating in [
+            Rating::Mood,
+            Rating::Energy,
+            Rating::CognitiveLoad,
+            Rating::Sleep,
+        ] {
+            let row = adw::ActionRow::new();
+            let buttons_box = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+            buttons_box.add_css_class("linked");
+            buttons_box.set_valign(gtk::Align::Center);
+
+            let mut buttons = Vec::new();
+            for value in 1..=5u8 {
+                let button = gtk::ToggleButton::new();
+                if let Some(icon) = details::rating_icon(rating, value) {
+                    button.set_icon_name(&icons::resolve(icon));
+                }
+                if let Some(label) = details::rating_label(rating, value) {
+                    button.set_tooltip_text(Some(&label));
+                    button.update_property(&[gtk::accessible::Property::Label(&label)]);
+                }
+                buttons.push(button.clone());
+                buttons_box.append(&button);
+            }
+            for (index, button) in buttons.iter().enumerate() {
+                let value = index as u8 + 1;
+                let buttons = buttons.clone();
+                let window = self.clone();
+                button.connect_toggled(move |button| {
+                    if window.imp().panel_loading.get() {
+                        return;
+                    }
+                    if !button.is_active() {
+                        if buttons.iter().all(|button| !button.is_active()) {
+                            window.write_rating(rating, None);
+                        }
+                        return;
+                    }
+                    for other in &buttons {
+                        if other != button {
+                            other.set_active(false);
+                        }
+                    }
+                    window.write_rating(rating, Some(value));
+                });
+            }
+            row.add_suffix(&buttons_box);
+            felt_group.add(&row);
+            ratings.push(RatingControl {
+                rating,
+                row,
+                buttons,
+            });
+        }
+        container.append(&felt_group);
+
+        // Emotions and day activities.
+        let emotions =
+            self.build_choice_section(ChoiceKind::Emotion, &gettextrs::gettext("Emotions"));
+        let activities =
+            self.build_choice_section(ChoiceKind::Activity, &gettextrs::gettext("Day activities"));
+
+        // Colours of the day.
+        let colors_section = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        let colors_heading = gtk::Label::new(Some(&gettextrs::gettext("Colors of the day")));
+        colors_heading.set_xalign(0.0);
+        colors_heading.add_css_class("heading");
+        let colors_flow = gtk::FlowBox::new();
+        colors_flow.set_selection_mode(gtk::SelectionMode::None);
+        colors_flow.set_column_spacing(6);
+        colors_flow.set_row_spacing(6);
+        colors_flow.set_valign(gtk::Align::Start);
+        let mut colors = Vec::new();
+        for color in Color::ALL {
+            let button = gtk::ToggleButton::new();
+            button.add_css_class("color-swatch");
+            button.add_css_class(color_css_class(color));
+            let label = details::color_label(color);
+            button.set_tooltip_text(Some(&label));
+            button.update_property(&[gtk::accessible::Property::Label(&label)]);
+            let window = self.clone();
+            button.connect_toggled(move |button| {
+                if window.imp().panel_loading.get() {
+                    return;
+                }
+                window.toggle_color(color, button.is_active());
+            });
+            colors.push((color, button.clone()));
+            colors_flow.append(&button);
+        }
+        colors_section.append(&colors_heading);
+        colors_section.append(&colors_flow);
+        container.append(&colors_section);
+
+        // People, places, things, tags.
+        let subjects_section = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        let subjects_title = gtk::Label::new(None);
+        subjects_title.set_xalign(0.0);
+        subjects_title.add_css_class("heading");
+        let subjects_group = adw::PreferencesGroup::new();
+        let mut tokens = Vec::new();
+        for kind in [
+            SubjectKind::Person,
+            SubjectKind::Place,
+            SubjectKind::Thing,
+            SubjectKind::Tag,
+        ] {
+            let token = self.build_token_field(kind);
+            subjects_group.add(&token.row);
+            tokens.push(token);
+        }
+        subjects_section.append(&subjects_title);
+        subjects_section.append(&subjects_group);
+        container.append(&subjects_section);
+
+        self.imp().panel.replace(Some(PanelWidgets {
+            date_button,
+            dates_label,
+            felt_group,
+            ratings,
+            choices: vec![emotions, activities],
+            colors_section,
+            colors,
+            subjects_section,
+            subjects_title,
+            tokens,
+        }));
+    }
+
+    fn build_choice_section(&self, kind: ChoiceKind, title: &str) -> ChoiceControl {
+        let section = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        let heading = gtk::Label::new(Some(title));
+        heading.set_xalign(0.0);
+        heading.add_css_class("heading");
+
+        let flow = gtk::FlowBox::new();
+        flow.set_selection_mode(gtk::SelectionMode::None);
+        flow.set_column_spacing(6);
+        flow.set_row_spacing(6);
+        flow.set_valign(gtk::Align::Start);
+
+        let add_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Add"))
+            .icon_name("list-add-symbolic")
+            .build();
+        add_button.add_css_class("pill");
+        add_button.set_tooltip_text(Some(&gettextrs::gettext("Add")));
+
+        let (list, selection, model) = picker::list_view();
+        let search = gtk::SearchEntry::new();
+        search.set_placeholder_text(Some(&gettextrs::gettext("Search")));
+        let scrolled = gtk::ScrolledWindow::builder()
+            .child(&list)
+            .vexpand(true)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .build();
+        let content = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        content.set_size_request(280, 320);
+        content.append(&search);
+        content.append(&scrolled);
+        let popover = gtk::Popover::new();
+        popover.set_child(Some(&content));
+        popover.set_parent(&add_button);
+
+        {
+            let window = self.clone();
+            let search = search.clone();
+            let model = model.clone();
+            let popover = popover.clone();
+            add_button.connect_clicked(move |_| {
+                search.set_text("");
+                window.populate_choice_picker(kind, "", &model);
+                popover.popup();
+                search.grab_focus();
+            });
+        }
+        {
+            let window = self.clone();
+            let model = model.clone();
+            search.connect_search_changed(move |search| {
+                window.populate_choice_picker(kind, &search.text(), &model);
+            });
+        }
+        {
+            let window = self.clone();
+            let search = search.clone();
+            let model = model.clone();
+            let selection = selection.clone();
+            list.connect_activate(move |_, _| {
+                let Some(row) = selection
+                    .selected_item()
+                    .and_downcast::<picker::PickerRow>()
+                else {
+                    return;
+                };
+                if row.is_create() {
+                    return;
+                }
+                let Ok(id) = Uuid::parse_str(&row.id()) else {
+                    return;
+                };
+                window.link_choice(id);
+                window.populate_choice_picker(kind, &search.text(), &model);
+            });
+        }
+
+        section.append(&heading);
+        section.append(&flow);
+        self.imp().details_box.append(&section);
+
+        ChoiceControl {
+            kind,
+            section,
+            flow,
+            add_button,
+        }
+    }
+
+    fn build_token_field(&self, kind: SubjectKind) -> TokenControl {
+        let row = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        row.set_margin_top(6);
+        row.set_margin_bottom(6);
+        row.set_margin_start(6);
+        row.set_margin_end(6);
+        let icon = gtk::Image::from_icon_name(subject_icon(kind));
+        icon.set_valign(gtk::Align::Center);
+        row.append(&icon);
+
+        let wrap = adw::WrapBox::new();
+        wrap.set_child_spacing(6);
+        wrap.set_line_spacing(6);
+        wrap.set_hexpand(true);
+        wrap.set_valign(gtk::Align::Center);
+        let entry = gtk::Text::new();
+        entry.set_placeholder_text(Some(&details::subject_placeholder(kind)));
+        entry.set_hexpand(true);
+        entry.set_width_request(80);
+        wrap.append(&entry);
+        row.append(&wrap);
+
+        let (list, selection, model) = picker::list_view();
+        let scrolled = gtk::ScrolledWindow::builder()
+            .child(&list)
+            .vexpand(true)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .build();
+        let content = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        content.set_size_request(280, 300);
+        content.append(&scrolled);
+        let popover = gtk::Popover::new();
+        popover.set_child(Some(&content));
+        popover.set_parent(&entry);
+
+        {
+            let window = self.clone();
+            let model = model.clone();
+            let popover = popover.clone();
+            entry.connect_changed(move |entry| {
+                window.populate_token_suggestions(kind, &entry.text(), &model, &popover);
+            });
+        }
+        {
+            let window = self.clone();
+            let selection = selection.clone();
+            let popover = popover.clone();
+            let keys = gtk::EventControllerKey::new();
+            {
+                let entry = entry.clone();
+                keys.connect_key_pressed(move |_, key, _, state| match key {
+                    gtk::gdk::Key::Return | gtk::gdk::Key::KP_Enter => {
+                        let shift = state.contains(gtk::gdk::ModifierType::SHIFT_MASK);
+                        window.accept_token_suggestion(kind, shift, &entry, &selection, &popover);
+                        glib::Propagation::Stop
+                    }
+                    gtk::gdk::Key::BackSpace if entry.text().is_empty() => {
+                        window.remove_last_subject(kind);
+                        glib::Propagation::Stop
+                    }
+                    gtk::gdk::Key::Escape => {
+                        popover.popdown();
+                        glib::Propagation::Proceed
+                    }
+                    _ => glib::Propagation::Proceed,
+                });
+            }
+            entry.add_controller(keys);
+        }
+        {
+            let window = self.clone();
+            let entry = entry.clone();
+            let selection = selection.clone();
+            let popover = popover.clone();
+            list.connect_activate(move |_, _| {
+                let Some(row) = selection
+                    .selected_item()
+                    .and_downcast::<picker::PickerRow>()
+                else {
+                    return;
+                };
+                if row.is_create() {
+                    let name = entry.text().trim().to_string();
+                    if !name.is_empty() {
+                        window.create_and_link_subject(kind, &name);
+                    }
+                } else if let Ok(id) = Uuid::parse_str(&row.id()) {
+                    window.link_subject(id);
+                }
+                entry.set_text("");
+                popover.popdown();
+            });
+        }
+
+        TokenControl {
+            kind,
+            row,
+            wrap,
+            entry,
+        }
+    }
+
+    /// Rebuilds the panel for the selected entry.
+    fn refresh_details(&self) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let (entry, last_updated) = {
+            let vault = self.imp().vault.borrow();
+            let Some(vault) = vault.as_ref() else {
+                return;
+            };
+            let Ok(entry) = vault.entry(id) else {
+                return;
+            };
+            (entry, vault.entry_last_updated(id).ok())
+        };
+
+        self.imp().panel_loading.set(true);
+        let panel_ref = self.imp().panel.borrow();
+        let Some(panel) = panel_ref.as_ref() else {
+            self.imp().panel_loading.set(false);
+            return;
+        };
+
+        panel
+            .date_button
+            .set_label(&entry.dated_at.strftime("%d %b %Y").to_string());
+        panel
+            .dates_label
+            .set_label(&dates_caption(entry.created_at, last_updated));
+
+        let sections = details::sections_for(entry.entry_type);
+        panel.felt_group.set_visible(sections.ratings);
+        for control in &panel.ratings {
+            control
+                .row
+                .set_title(&details::rating_title(control.rating, entry.entry_type));
+            let value = rating_value(&entry, control.rating);
+            let label = value
+                .and_then(|value| details::rating_label(control.rating, value))
+                .unwrap_or_default();
+            control.row.set_subtitle(&label);
+            for (index, button) in control.buttons.iter().enumerate() {
+                button.set_active(value == Some(index as u8 + 1));
+            }
+        }
+
+        for control in &panel.choices {
+            control.section.set_visible(match control.kind {
+                ChoiceKind::Emotion => sections.emotions,
+                ChoiceKind::Activity => sections.activities,
+            });
+            self.refresh_choice_control(control);
+        }
+
+        panel.colors_section.set_visible(sections.colors);
+        let selected_colors = {
+            let vault = self.imp().vault.borrow();
+            match vault.as_ref() {
+                Some(vault) => vault.entry_colors(id).unwrap_or_default(),
+                None => Vec::new(),
+            }
+        };
+        for (color, button) in &panel.colors {
+            button.set_active(selected_colors.contains(color));
+        }
+
+        panel
+            .subjects_section
+            .set_visible(sections.subjects || sections.tags);
+        panel
+            .subjects_title
+            .set_label(&details::subjects_group_title(entry.entry_type));
+        for token in &panel.tokens {
+            token.row.set_visible(match token.kind {
+                SubjectKind::Person | SubjectKind::Place | SubjectKind::Thing => sections.subjects,
+                SubjectKind::Tag => sections.tags,
+            });
+            self.refresh_token_control(token);
+        }
+
+        drop(panel_ref);
+        self.imp().panel_loading.set(false);
+    }
+
+    fn refresh_choice_control(&self, control: &ChoiceControl) {
+        let flow = &control.flow;
+        flow.remove_all();
+        let Some(id) = *self.imp().selected.borrow() else {
+            flow.append(&control.add_button);
+            return;
+        };
+        let choices = {
+            let vault = self.imp().vault.borrow();
+            match vault.as_ref() {
+                Some(vault) => vault.entry_choices(id).unwrap_or_default(),
+                None => Vec::new(),
+            }
+        };
+        for choice in choices {
+            if choice.kind == control.kind {
+                let chip = self.build_choice_chip(&choice);
+                flow.append(&chip);
+            }
+        }
+        flow.append(&control.add_button);
+    }
+
+    fn build_choice_chip(&self, choice: &Choice) -> gtk::Widget {
+        let label = details::choice_display_label(choice);
+        let chip = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        chip.add_css_class("chip");
+        chip.set_valign(gtk::Align::Center);
+        chip.append(&gtk::Image::from_icon_name(&icons::resolve(&choice.icon)));
+        chip.append(&gtk::Label::new(Some(&label)));
+        chip.append(&self.remove_button(choice.id, ChipKind::Choice));
+        chip.upcast()
+    }
+
+    fn refresh_token_control(&self, control: &TokenControl) {
+        let wrap = &control.wrap;
+        while let Some(child) = wrap.first_child() {
+            wrap.remove(&child);
+        }
+        if let Some(id) = *self.imp().selected.borrow() {
+            let subjects = {
+                let vault = self.imp().vault.borrow();
+                match vault.as_ref() {
+                    Some(vault) => vault
+                        .entry_subjects(id, Some(control.kind))
+                        .unwrap_or_default(),
+                    None => Vec::new(),
+                }
+            };
+            for subject in subjects {
+                let chip = self.build_subject_chip(&subject);
+                wrap.append(&chip);
+            }
+        }
+        wrap.append(&control.entry);
+    }
+
+    fn build_subject_chip(&self, subject: &Subject) -> gtk::Widget {
+        let chip = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        chip.add_css_class("chip");
+        chip.set_valign(gtk::Align::Center);
+        chip.append(&gtk::Label::new(Some(&subject.name)));
+        chip.append(&self.remove_button(subject.id, ChipKind::Subject));
+        chip.upcast()
+    }
+
+    /// A small flat remove button for a chip, wired to unlink with an undo toast.
+    fn remove_button(&self, id: Uuid, kind: ChipKind) -> gtk::Button {
+        let button = gtk::Button::from_icon_name("window-close-symbolic");
+        button.add_css_class("flat");
+        button.add_css_class("circular");
+        let tooltip = gettextrs::gettext("Remove");
+        button.set_tooltip_text(Some(&tooltip));
+        button.update_property(&[gtk::accessible::Property::Label(&tooltip)]);
+        let window = self.clone();
+        button.connect_clicked(move |_| match kind {
+            ChipKind::Choice => window.remove_choice(id),
+            ChipKind::Subject => window.remove_subject(id),
+        });
+        button
+    }
+
+    fn populate_choice_picker(&self, kind: ChoiceKind, query: &str, model: &gio::ListStore) {
+        model.remove_all();
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let vault = self.imp().vault.borrow();
+        let Some(vault) = vault.as_ref() else {
+            return;
+        };
+        let linked: HashSet<Uuid> = vault
+            .entry_choices(id)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|choice| choice.id)
+            .collect();
+        for choice in vault.choices(kind, false).unwrap_or_default() {
+            if linked.contains(&choice.id) {
+                continue;
+            }
+            let label = details::choice_display_label(&choice);
+            if !details::token_matches(query, &label) {
+                continue;
+            }
+            model.append(&picker::PickerRow::new(
+                &choice.id.to_string(),
+                &label,
+                "",
+                &choice.icon,
+                false,
+            ));
+        }
+    }
+
+    fn populate_token_suggestions(
+        &self,
+        kind: SubjectKind,
+        query: &str,
+        model: &gio::ListStore,
+        popover: &gtk::Popover,
+    ) {
+        model.remove_all();
+        let Some(entry_id) = *self.imp().selected.borrow() else {
+            popover.popdown();
+            return;
+        };
+        let (usages, linked) = {
+            let vault = self.imp().vault.borrow();
+            let Some(vault) = vault.as_ref() else {
+                return;
+            };
+            let linked: HashSet<Uuid> = vault
+                .entry_subjects(entry_id, Some(kind))
+                .unwrap_or_default()
+                .into_iter()
+                .map(|subject| subject.id)
+                .collect();
+            (vault.subjects_with_usage(kind).unwrap_or_default(), linked)
+        };
+        for usage in &usages {
+            if linked.contains(&usage.subject.id) {
+                continue;
+            }
+            if !details::token_matches(query, &usage.subject.name) {
+                continue;
+            }
+            let detail = details::usage_detail(usage.entry_count, usage.last_used.as_ref())
+                .unwrap_or_default();
+            model.append(&picker::PickerRow::new(
+                &usage.subject.id.to_string(),
+                &usage.subject.name,
+                &detail,
+                subject_icon(kind),
+                false,
+            ));
+        }
+        let names: Vec<&str> = usages
+            .iter()
+            .map(|usage| usage.subject.name.as_str())
+            .collect();
+        if details::show_create_row(query, names.iter().copied()) {
+            model.append(&picker::PickerRow::new(
+                "",
+                &details::create_label(kind, query.trim()),
+                "",
+                "",
+                true,
+            ));
+        }
+        if model.n_items() > 0 {
+            popover.popup();
+        } else {
+            popover.popdown();
+        }
+    }
+
+    fn accept_token_suggestion(
+        &self,
+        kind: SubjectKind,
+        shift: bool,
+        entry: &gtk::Text,
+        selection: &gtk::SingleSelection,
+        popover: &gtk::Popover,
+    ) {
+        let query = entry.text().trim().to_string();
+        let selected = selection
+            .selected_item()
+            .and_downcast::<picker::PickerRow>();
+        let create = shift || selected.as_ref().is_some_and(|row| row.is_create());
+        if create {
+            if !query.is_empty() {
+                self.create_and_link_subject(kind, &query);
+                entry.set_text("");
+                popover.popdown();
+            }
+            return;
+        }
+        if let Some(row) = selected {
+            if let Ok(id) = Uuid::parse_str(&row.id()) {
+                self.link_subject(id);
+                entry.set_text("");
+                popover.popdown();
+            }
+        }
+    }
+
+    fn write_rating(&self, rating: Rating, value: Option<u8>) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_entry_rating(id, rating, value).is_ok(),
+                None => false,
+            }
+        };
+        if saved {
+            self.refresh_details();
+        }
+    }
+
+    fn toggle_color(&self, color: Color, linked: bool) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) if linked => vault.link_color(id, color).is_ok(),
+                Some(vault) => vault.unlink_color(id, color).is_ok(),
+                None => false,
+            }
+        };
+        if saved {
+            self.refresh();
+        }
+    }
+
+    fn link_choice(&self, choice: Uuid) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let linked = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.link_choice(id, choice).is_ok(),
+                None => false,
+            }
+        };
+        if linked {
+            self.refresh_details();
+            self.refresh();
+        }
+    }
+
+    fn remove_choice(&self, choice: Uuid) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let unlinked = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.unlink_choice(id, choice).is_ok(),
+                None => false,
+            }
+        };
+        if !unlinked {
+            return;
+        }
+        self.refresh_details();
+        self.refresh();
+        self.undo_toast(move |window| window.link_choice(choice));
+    }
+
+    fn link_subject(&self, subject: Uuid) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let linked = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.link_subject(id, subject).is_ok(),
+                None => false,
+            }
+        };
+        if linked {
+            self.refresh_details();
+            self.refresh();
+        }
+    }
+
+    fn remove_subject(&self, subject: Uuid) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let unlinked = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.unlink_subject(id, subject).is_ok(),
+                None => false,
+            }
+        };
+        if !unlinked {
+            return;
+        }
+        self.refresh_details();
+        self.refresh();
+        self.undo_toast(move |window| window.link_subject(subject));
+    }
+
+    fn create_and_link_subject(&self, kind: SubjectKind, name: &str) {
+        let created = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.create_subject(kind, name).ok(),
+                None => None,
+            }
+        };
+        if let Some(id) = created {
+            self.link_subject(id);
+        }
+    }
+
+    fn remove_last_subject(&self, kind: SubjectKind) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let last = {
+            let vault = self.imp().vault.borrow();
+            match vault.as_ref() {
+                Some(vault) => vault
+                    .entry_subjects(id, Some(kind))
+                    .unwrap_or_default()
+                    .last()
+                    .map(|subject| subject.id),
+                None => None,
+            }
+        };
+        if let Some(subject) = last {
+            self.remove_subject(subject);
+        }
+    }
+
+    fn undo_toast(&self, restore: impl Fn(&QuadernoWindow) + 'static) {
+        let toast = adw::Toast::new(&gettextrs::gettext("Removed"));
+        toast.set_button_label(Some(&gettextrs::gettext("Undo")));
+        toast.set_timeout(10);
+        let window = self.clone();
+        toast.connect_button_clicked(move |_| restore(&window));
+        self.imp().toast_overlay.add_toast(toast);
+    }
+
     fn setup_breakpoints(&self) {
         if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1400sp") {
             let breakpoint = adw::Breakpoint::new(condition);
             breakpoint.add_setter(&*self.imp().main_split, "collapsed", Some(&true.to_value()));
+            adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
+        }
+        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1100sp") {
+            let breakpoint = adw::Breakpoint::new(condition);
+            breakpoint.add_setter(
+                &*self.imp().details_split,
+                "collapsed",
+                Some(&true.to_value()),
+            );
             adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
         }
         if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 760sp") {
@@ -971,6 +1878,7 @@ impl QuadernoWindow {
         self.imp().navigation_split.set_show_content(true);
         self.update_banner();
         self.set_footer();
+        self.refresh_details();
     }
 
     fn setup_date_callbacks(&self) {
@@ -1052,6 +1960,7 @@ impl QuadernoWindow {
         self.update_banner();
         self.set_footer();
         self.refresh();
+        self.refresh_details();
     }
 
     fn use_creation_date(&self) {
@@ -1175,6 +2084,7 @@ impl QuadernoWindow {
                 .set_label(&gettextrs::gettext("Saved"));
             self.set_footer();
             self.refresh();
+            self.refresh_details();
         }
     }
 
@@ -1536,6 +2446,67 @@ fn type_icon(entry_type: EntryType) -> &'static str {
         EntryType::Dream => "weather-few-clouds-night-symbolic",
         EntryType::Note => "text-editor-symbolic",
     }
+}
+
+/// The leading icon of a token field (ui-spec §3.6).
+fn subject_icon(kind: SubjectKind) -> &'static str {
+    match kind {
+        SubjectKind::Person => "avatar-default-symbolic",
+        SubjectKind::Place => "mark-location-symbolic",
+        SubjectKind::Thing => "package-x-generic-symbolic",
+        SubjectKind::Tag => "tag-symbolic",
+    }
+}
+
+/// The CSS class that paints a colour swatch (Appendix C).
+fn color_css_class(color: Color) -> &'static str {
+    match color {
+        Color::Red => "color-red",
+        Color::Orange => "color-orange",
+        Color::Yellow => "color-yellow",
+        Color::Green => "color-green",
+        Color::Teal => "color-teal",
+        Color::Blue => "color-blue",
+        Color::Purple => "color-purple",
+        Color::Pink => "color-pink",
+        Color::Brown => "color-brown",
+        Color::Gray => "color-gray",
+        Color::Black => "color-black",
+        Color::White => "color-white",
+    }
+}
+
+/// The stored rating value for a scale.
+fn rating_value(entry: &Entry, rating: Rating) -> Option<u8> {
+    match rating {
+        Rating::Mood => entry.mood,
+        Rating::Energy => entry.energy,
+        Rating::CognitiveLoad => entry.cognitive_load,
+        Rating::Sleep => entry.sleep,
+    }
+}
+
+/// The created/updated caption of the details panel (vault-spec §5.6).
+fn dates_caption(created: jiff::Timestamp, updated: Option<jiff::Timestamp>) -> String {
+    let created = local_datetime(created);
+    match updated {
+        Some(updated) => format!(
+            "{} {} · {} {}",
+            gettextrs::gettext("Created"),
+            created,
+            gettextrs::gettext("Updated"),
+            local_datetime(updated)
+        ),
+        None => format!("{} {}", gettextrs::gettext("Created"), created),
+    }
+}
+
+/// Formats a technical timestamp in the system time zone.
+fn local_datetime(timestamp: jiff::Timestamp) -> String {
+    timestamp
+        .to_zoned(jiff::tz::TimeZone::system())
+        .strftime("%d %b %Y, %H:%M")
+        .to_string()
 }
 
 fn entry_type_label(entry_type: EntryType) -> String {

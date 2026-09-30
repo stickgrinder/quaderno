@@ -124,3 +124,133 @@ msgstr "Tempo schermo"
 msgctxt "activity"
 msgid "Chores"
 msgstr "Faccende"
+
+# Rating scales (vault-spec/format.md Appendix B), context = scale.
+msgctxt "rating.mood"
+msgid "Awful"
+msgstr "Terribile"
+
+msgctxt "rating.mood"
+msgid "Bad"
+msgstr "Scarso"
+
+msgctxt "rating.mood"
+msgid "Okay"
+msgstr "Nella norma"
+
+msgctxt "rating.mood"
+msgid "Good"
+msgstr "Buono"
+
+msgctxt "rating.mood"
+msgid "Great"
+msgstr "Ottimo"
+
+msgctxt "rating.energy"
+msgid "Drained"
+msgstr "Sfinito"
+
+msgctxt "rating.energy"
+msgid "Low"
+msgstr "Bassa"
+
+msgctxt "rating.energy"
+msgid "Steady"
+msgstr "Costante"
+
+msgctxt "rating.energy"
+msgid "High"
+msgstr "Alta"
+
+msgctxt "rating.energy"
+msgid "Charged"
+msgstr "Carica"
+
+msgctxt "rating.cognitive_load"
+msgid "Idle"
+msgstr "Ozioso"
+
+msgctxt "rating.cognitive_load"
+msgid "Light"
+msgstr "Leggera"
+
+msgctxt "rating.cognitive_load"
+msgid "Moderate"
+msgstr "Media"
+
+msgctxt "rating.cognitive_load"
+msgid "Heavy"
+msgstr "Pesante"
+
+msgctxt "rating.cognitive_load"
+msgid "Overloaded"
+msgstr "Sovraccarico"
+
+msgctxt "rating.sleep"
+msgid "Sleepless"
+msgstr "Insonne"
+
+msgctxt "rating.sleep"
+msgid "Poor"
+msgstr "Scarso"
+
+msgctxt "rating.sleep"
+msgid "Fair"
+msgstr "Discreto"
+
+msgctxt "rating.sleep"
+msgid "Good"
+msgstr "Buono"
+
+msgctxt "rating.sleep"
+msgid "Deep"
+msgstr "Profondo"
+
+# The twelve fixed colours (vault-spec/format.md Appendix C).
+msgctxt "color"
+msgid "Red"
+msgstr "Rosso"
+
+msgctxt "color"
+msgid "Orange"
+msgstr "Arancione"
+
+msgctxt "color"
+msgid "Yellow"
+msgstr "Giallo"
+
+msgctxt "color"
+msgid "Green"
+msgstr "Verde"
+
+msgctxt "color"
+msgid "Teal"
+msgstr "Verde acqua"
+
+msgctxt "color"
+msgid "Blue"
+msgstr "Blu"
+
+msgctxt "color"
+msgid "Purple"
+msgstr "Viola"
+
+msgctxt "color"
+msgid "Pink"
+msgstr "Rosa"
+
+msgctxt "color"
+msgid "Brown"
+msgstr "Marrone"
+
+msgctxt "color"
+msgid "Gray"
+msgstr "Grigio"
+
+msgctxt "color"
+msgid "Black"
+msgstr "Nero"
+
+msgctxt "color"
+msgid "White"
+msgstr "Bianco"

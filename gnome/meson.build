@@ -27,8 +27,19 @@ custom_target('quaderno',
   depend_files: files(
     'Cargo.toml',
     'build.rs',
+    'data/quaderno.css',
+    # The vendored Phosphor SVGs are only ever added as a whole set, so meson
+    # does not track the directory; `build.rs` re-converts them whenever cargo
+    # is re-run.
     'src/main.rs',
     'src/application.rs',
+    'src/details.rs',
+    'src/icons.rs',
+    'src/keyring.rs',
+    'src/picker.rs',
+    'src/spell_checking.rs',
+    'src/state.rs',
+    'src/timeline.rs',
     'src/window.rs',
     'ui/quaderno-window.blp',
     'ui/quaderno.gresource.xml',

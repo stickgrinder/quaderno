@@ -21,7 +21,10 @@ pub fn build() -> adw::Application {
         .resource_base_path("/io/github/stickgrinder/Quaderno")
         .build();
 
-    app.connect_startup(|_| register_resources());
+    app.connect_startup(|_| {
+        register_resources();
+        register_css();
+    });
 
     let window: Rc<RefCell<Option<QuadernoWindow>>> = Rc::new(RefCell::new(None));
     let keyring = Keyring::spawn();
@@ -48,6 +51,7 @@ pub fn build() -> adw::Application {
     {
         let window = window.clone();
         app.connect_activate(move |app| {
+            register_icon_path();
             if let Some(existing) = window.borrow().as_ref() {
                 existing.present();
                 return;
@@ -66,6 +70,7 @@ pub fn build() -> adw::Application {
                 ("win.heading-3", vec!["<Control>3"]),
                 ("win.bold", vec!["<Control>b"]),
                 ("win.italic", vec!["<Control>i"]),
+                ("win.toggle-details", vec!["<Control><Shift>i"]),
             ] {
                 app.set_accels_for_action(action, &accels);
             }
@@ -79,9 +84,31 @@ pub fn build() -> adw::Application {
 }
 
 fn register_resources() {
-    // The blob is embedded by `glib-build-tools` at compile time.
+    // The blobs are embedded by `glib-build-tools` at compile time.
     gio::resources_register_include!("quaderno.gresource")
         .expect("the compiled GResource is embedded in the binary");
+    gio::resources_register_include!("quaderno-icons.gresource")
+        .expect("the compiled icon GResource is embedded in the binary");
+}
+
+/// Makes the bundled Phosphor symbols (`ph-<name>-symbolic`) available to GTK
+/// (ui-spec §5). The GResource mirrors an icon theme's `symbolic/actions` layout.
+fn register_icon_path() {
+    gtk::IconTheme::default().add_resource_path(crate::icons::RESOURCE_PATH);
+}
+
+/// Loads the app's own stylesheet (chips, colour swatches).
+fn register_css() {
+    let Some(display) = gtk::gdk::Display::default() else {
+        return;
+    };
+    let provider = gtk::CssProvider::new();
+    provider.load_from_resource("/io/github/stickgrinder/Quaderno/quaderno.css");
+    gtk::style_context_add_provider_for_display(
+        &display,
+        &provider,
+        gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+    );
 }
 
 /// Locks the vault when the GNOME session locks (product spec §3.3).

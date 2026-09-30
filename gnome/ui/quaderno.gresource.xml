@@ -3,6 +3,7 @@
 <gresources>
   <gresource prefix="/io/github/stickgrinder/Quaderno">
     <file>quaderno-window.ui</file>
+    <file>quaderno.css</file>
     <file>styles/quaderno.xml</file>
     <file>styles/quaderno-dark.xml</file>
   </gresource>

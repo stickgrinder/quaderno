@@ -288,7 +288,14 @@ template $QuadernoWindow: Adw.ApplicationWindow {
               Gtk.StackPage {
                 name: "entry";
 
-                child: Adw.ToolbarView {
+                child: Adw.OverlaySplitView details_split {
+                  sidebar-position: end;
+                  min-sidebar-width: 300;
+                  max-sidebar-width: 420;
+                  collapsed: false;
+                  show-sidebar: false;
+
+                  content: Adw.ToolbarView {
                   [top]
                   Adw.HeaderBar {
                     [start]
@@ -343,6 +350,12 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                         };
                       };
                     };
+
+                    [end]
+                    Gtk.ToggleButton details_button {
+                      icon-name: "document-properties-symbolic";
+                      tooltip-text: _("Details");
+                    }
 
                     [end]
                     Gtk.MenuButton entry_menu {
@@ -422,6 +435,35 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                         styles ["dim-label", "caption"]
                       }
                     }
+                  };
+                };
+
+                  sidebar: Adw.ToolbarView {
+                    [top]
+                    Adw.HeaderBar {
+                      title-widget: Adw.WindowTitle {
+                        title: _("Details");
+                      };
+
+                      [end]
+                      Gtk.Button details_close {
+                        icon-name: "window-close-symbolic";
+                        tooltip-text: _("Close");
+                        styles ["flat"]
+                      }
+                    }
+
+                    content: Gtk.ScrolledWindow {
+                      hscrollbar-policy: never;
+                      child: Gtk.Box details_box {
+                        orientation: vertical;
+                        spacing: 18;
+                        margin-top: 12;
+                        margin-bottom: 24;
+                        margin-start: 12;
+                        margin-end: 12;
+                      };
+                    };
                   };
                 };
               }
