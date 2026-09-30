@@ -78,6 +78,8 @@ mod imp {
         #[template_child]
         pub main_split: TemplateChild<adw::OverlaySplitView>,
         #[template_child]
+        pub navigation_split: TemplateChild<adw::NavigationSplitView>,
+        #[template_child]
         pub sidebar_toggle: TemplateChild<gtk::ToggleButton>,
         #[template_child]
         pub new_button: TemplateChild<gtk::Button>,
@@ -175,6 +177,7 @@ mod imp {
                 main_banner: Default::default(),
                 menu_button: Default::default(),
                 main_split: Default::default(),
+                navigation_split: Default::default(),
                 sidebar_toggle: Default::default(),
                 new_button: Default::default(),
                 search_button: Default::default(),
@@ -242,6 +245,7 @@ mod imp {
             obj.setup_editor();
             obj.setup_sections();
             obj.setup_main();
+            obj.setup_breakpoints();
         }
     }
 
@@ -532,6 +536,15 @@ impl QuadernoWindow {
         self.imp().sidebar_toggle.connect_toggled(move |button| {
             window.imp().main_split.set_show_sidebar(button.is_active());
         });
+        let window = self.clone();
+        self.imp()
+            .main_split
+            .connect_show_sidebar_notify(move |split| {
+                window
+                    .imp()
+                    .sidebar_toggle
+                    .set_active(split.shows_sidebar());
+            });
 
         let window = self.clone();
         self.imp().search_button.connect_toggled(move |button| {
@@ -615,6 +628,23 @@ impl QuadernoWindow {
         self.imp()
             .link_button
             .connect_clicked(move |_| window.wrap_selection("[", "](url)"));
+    }
+
+    fn setup_breakpoints(&self) {
+        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1400sp") {
+            let breakpoint = adw::Breakpoint::new(condition);
+            breakpoint.add_setter(&*self.imp().main_split, "collapsed", Some(&true.to_value()));
+            adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
+        }
+        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 760sp") {
+            let breakpoint = adw::Breakpoint::new(condition);
+            breakpoint.add_setter(
+                &*self.imp().navigation_split,
+                "collapsed",
+                Some(&true.to_value()),
+            );
+            adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
+        }
     }
 
     /// Wraps the selection (or the cursor) with Markdown marks.
@@ -832,6 +862,7 @@ impl QuadernoWindow {
         self.imp().current_created.replace(Some(created_at));
         self.imp().selected.replace(Some(id));
         self.imp().editor_stack.set_visible_child_name("entry");
+        self.imp().navigation_split.set_show_content(true);
         self.update_banner();
         self.set_footer();
     }
