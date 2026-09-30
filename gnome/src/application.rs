@@ -92,9 +92,16 @@ fn register_resources() {
 }
 
 /// Makes the bundled Phosphor symbols (`ph-<name>-symbolic`) available to GTK
-/// (ui-spec §5). The GResource mirrors an icon theme's `symbolic/actions` layout.
+/// (ui-spec §5). The GResource mirrors an icon theme's `scalable/actions` layout,
+/// which is the subdirectory the `hicolor` fallback theme scans for resources.
+///
+/// This must add the path to the display's shared theme; `IconTheme::default()`
+/// creates a throwaway theme that no widget uses.
 fn register_icon_path() {
-    gtk::IconTheme::default().add_resource_path(crate::icons::RESOURCE_PATH);
+    let Some(display) = gtk::gdk::Display::default() else {
+        return;
+    };
+    gtk::IconTheme::for_display(&display).add_resource_path(crate::icons::RESOURCE_PATH);
 }
 
 /// Loads the app's own stylesheet (chips, colour swatches).

@@ -20,9 +20,15 @@ pub fn icon_name(name: &str) -> String {
 
 /// The GTK icon name for a stored Phosphor name, falling back to
 /// [`FALLBACK`] when the app doesn't ship that icon.
+///
+/// Uses the display's shared icon theme, the one widgets look icons up in, not
+/// `IconTheme::default()` (which `gtk_icon_theme_new`s a throwaway theme).
 pub fn resolve(name: &str) -> String {
     let candidate = icon_name(name);
-    if gtk::IconTheme::default().has_icon(&candidate) {
+    let found = gtk::gdk::Display::default()
+        .map(|display| gtk::IconTheme::for_display(&display).has_icon(&candidate))
+        .unwrap_or(false);
+    if found {
         candidate
     } else {
         FALLBACK.to_owned()
