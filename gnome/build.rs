@@ -23,6 +23,10 @@ fn main() {
         "cargo:rerun-if-changed={}",
         data_dir.join("styles/quaderno.xml").display()
     );
+    println!(
+        "cargo:rerun-if-changed={}",
+        data_dir.join("styles/quaderno-dark.xml").display()
+    );
     compile_blueprint(&ui_dir, &out_dir);
     compile_resources(
         &[ui_dir.as_path(), data_dir.as_path(), out_dir.as_path()],

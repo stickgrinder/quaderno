@@ -453,9 +453,6 @@ impl QuadernoWindow {
 
         let manager = sourceview5::StyleSchemeManager::default();
         manager.append_search_path("resource:///io/github/stickgrinder/Quaderno/styles");
-        if let Some(scheme) = manager.scheme("quaderno") {
-            buffer.set_style_scheme(Some(&scheme));
-        }
 
         let view = sourceview5::View::with_buffer(&buffer);
         view.set_wrap_mode(gtk::WrapMode::WordChar);
@@ -476,6 +473,26 @@ impl QuadernoWindow {
         self.imp().editor_view.replace(Some(view));
         self.imp().editor_buffer.replace(Some(buffer));
         self.imp().spell_adapter.replace(Some(adapter));
+
+        self.apply_style_scheme();
+        let window = self.clone();
+        adw::StyleManager::default().connect_dark_notify(move |_| window.apply_style_scheme());
+    }
+
+    /// Applies the light or dark Quaderno scheme to match the system style.
+    fn apply_style_scheme(&self) {
+        let id = if adw::StyleManager::default().is_dark() {
+            "quaderno-dark"
+        } else {
+            "quaderno"
+        };
+        let manager = sourceview5::StyleSchemeManager::default();
+        if let (Some(scheme), Some(buffer)) = (
+            manager.scheme(id),
+            self.imp().editor_buffer.borrow().as_ref(),
+        ) {
+            buffer.set_style_scheme(Some(&scheme));
+        }
     }
 
     fn setup_sections(&self) {

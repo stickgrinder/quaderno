@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- The dark variant of the Quaderno scheme (see quaderno.xml). -->
+<style-scheme id="quaderno-dark" name="Quaderno" version="1.0" parent-scheme="Adwaita-dark">
+  <metadata>
+    <description>Quaderno: dimmed Markdown syntax (dark)</description>
+  </metadata>
+
+  <style name="def:list-marker" foreground="#77767b"/>
+  <style name="def:thematic-break" foreground="#77767b"/>
+  <style name="def:shebang" foreground="#77767b"/>
+  <style name="def:link-destination" foreground="#77767b"/>
+  <style name="def:link-symbol" foreground="#77767b"/>
+  <style name="def:special-char" foreground="#77767b"/>
+</style-scheme>
