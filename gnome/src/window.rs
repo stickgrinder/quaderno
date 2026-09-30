@@ -98,7 +98,15 @@ mod imp {
         #[template_child]
         pub type_badge: TemplateChild<gtk::Label>,
         #[template_child]
-        pub date_button: TemplateChild<gtk::Button>,
+        pub date_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub date_calendar: TemplateChild<gtk::Calendar>,
+        #[template_child]
+        pub time_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub today_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub yesterday_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub save_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -116,6 +124,7 @@ mod imp {
         pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
         pub selected: RefCell<Option<uuid::Uuid>>,
         pub current_dated: RefCell<Option<jiff::Zoned>>,
+        pub current_created: RefCell<Option<jiff::Timestamp>>,
         pub dirty: Cell<bool>,
         pub loading: Cell<bool>,
         pub save_source: RefCell<Option<glib::SourceId>>,
@@ -165,6 +174,10 @@ mod imp {
                 editor_stack: Default::default(),
                 type_badge: Default::default(),
                 date_button: Default::default(),
+                date_calendar: Default::default(),
+                time_entry: Default::default(),
+                today_button: Default::default(),
+                yesterday_button: Default::default(),
                 save_label: Default::default(),
                 backdated_banner: Default::default(),
                 editor_scroll: Default::default(),
@@ -173,6 +186,7 @@ mod imp {
                 spell_adapter: RefCell::new(None),
                 selected: RefCell::new(None),
                 current_dated: RefCell::new(None),
+                current_created: RefCell::new(None),
                 dirty: Cell::new(false),
                 loading: Cell::new(false),
                 save_source: RefCell::new(None),
@@ -553,6 +567,8 @@ impl QuadernoWindow {
             window.depart_current();
             glib::Propagation::Proceed
         });
+
+        self.setup_date_callbacks();
     }
 
     fn set_filter(&self, filter: Filter) {
@@ -704,7 +720,7 @@ impl QuadernoWindow {
         }
         self.depart_current();
 
-        let (content, entry_type, dated_at) = {
+        let (content, entry_type, dated_at, created_at) = {
             let vault = self.imp().vault.borrow();
             let Some(vault) = vault.as_ref() else {
                 return;
@@ -712,13 +728,24 @@ impl QuadernoWindow {
             let Ok(entry) = vault.entry(id) else {
                 return;
             };
-            (entry.content, entry.entry_type, entry.dated_at)
+            (
+                entry.content,
+                entry.entry_type,
+                entry.dated_at,
+                entry.created_at,
+            )
         };
 
         self.imp().loading.set(true);
         if let Some(buffer) = self.imp().editor_buffer.borrow().as_ref() {
             buffer.set_text(&content);
         }
+        self.imp()
+            .date_calendar
+            .select_day(&gdatetime_for(dated_at.date()));
+        self.imp()
+            .time_entry
+            .set_text(&dated_at.strftime("%H:%M").to_string());
         self.imp().loading.set(false);
         self.imp().dirty.set(false);
 
@@ -732,9 +759,132 @@ impl QuadernoWindow {
             .save_label
             .set_label(&gettextrs::gettext("Saved"));
         self.imp().current_dated.replace(Some(dated_at));
+        self.imp().current_created.replace(Some(created_at));
         self.imp().selected.replace(Some(id));
         self.imp().editor_stack.set_visible_child_name("entry");
+        self.update_banner();
         self.set_footer();
+    }
+
+    fn setup_date_callbacks(&self) {
+        let window = self.clone();
+        self.imp()
+            .date_calendar
+            .connect_day_selected(move |_| window.apply_date());
+        let window = self.clone();
+        self.imp()
+            .time_entry
+            .connect_activate(move |_| window.apply_date());
+        let window = self.clone();
+        self.imp().today_button.connect_clicked(move |_| {
+            window.set_calendar_to(jiff::Zoned::now().date());
+        });
+        let window = self.clone();
+        self.imp().yesterday_button.connect_clicked(move |_| {
+            if let Ok(yesterday) = jiff::Zoned::now().date().yesterday() {
+                window.set_calendar_to(yesterday);
+            }
+        });
+        self.imp()
+            .backdated_banner
+            .set_button_label(Some(&gettextrs::gettext("Use creation date")));
+        let window = self.clone();
+        self.imp()
+            .backdated_banner
+            .connect_button_clicked(move |_| window.use_creation_date());
+    }
+
+    fn set_calendar_to(&self, date: jiff::civil::Date) {
+        self.imp().date_calendar.select_day(&gdatetime_for(date));
+    }
+
+    /// Applies the calendar and time fields to the selected entry, keeping the
+    /// stored offset (product spec §4.3, §5.5).
+    fn apply_date(&self) {
+        if self.imp().loading.get() {
+            return;
+        }
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let Some(current) = self.imp().current_dated.borrow().clone() else {
+            return;
+        };
+
+        let selected_date = self.imp().date_calendar.date();
+        let Ok(date) = jiff::civil::Date::new(
+            selected_date.year() as i16,
+            selected_date.month() as i8,
+            selected_date.day_of_month() as i8,
+        ) else {
+            return;
+        };
+        let time = parse_time(&self.imp().time_entry.text()).unwrap_or_else(|| current.time());
+        let Ok(new_dated) = current.with().date(date).time(time).build() else {
+            return;
+        };
+
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_entry_dated_at(id, &new_dated).is_ok(),
+                None => false,
+            }
+        };
+        if !saved {
+            return;
+        }
+        self.imp().current_dated.replace(Some(new_dated.clone()));
+        self.imp()
+            .date_button
+            .set_label(&new_dated.strftime("%d %b %Y").to_string());
+        self.imp()
+            .time_entry
+            .set_text(&new_dated.strftime("%H:%M").to_string());
+        self.update_banner();
+        self.set_footer();
+        self.refresh();
+    }
+
+    fn use_creation_date(&self) {
+        let Some(created) = *self.imp().current_created.borrow() else {
+            return;
+        };
+        let created = created.to_zoned(jiff::tz::TimeZone::UTC);
+        self.set_calendar_to(created.date());
+    }
+
+    fn update_banner(&self) {
+        let (Some(dated), Some(created)) = (
+            self.imp().current_dated.borrow().clone(),
+            *self.imp().current_created.borrow(),
+        ) else {
+            self.imp().backdated_banner.set_revealed(false);
+            return;
+        };
+        let created_date = created.to_zoned(jiff::tz::TimeZone::UTC).date();
+        let dated_date = dated.date();
+        if dated_date == created_date {
+            self.imp().backdated_banner.set_revealed(false);
+            return;
+        }
+
+        let days = day_difference(created_date, dated_date);
+        let direction = if days >= 0 {
+            gettextrs::gettext("later")
+        } else {
+            gettextrs::gettext("earlier")
+        };
+        let title = format!(
+            "{} {}, {} {} {}",
+            gettextrs::gettext("Entry date set to"),
+            dated_date.strftime("%a %d %b"),
+            gettextrs::gettext("written"),
+            days.abs(),
+            direction,
+        );
+        self.imp().backdated_banner.set_title(&title);
+        self.imp().backdated_banner.set_revealed(true);
     }
 
     fn buffer_text(&self) -> Option<String> {
@@ -1182,5 +1332,42 @@ fn entry_type_label(entry_type: EntryType) -> String {
         EntryType::Journal => gettextrs::gettext("Journal page"),
         EntryType::Dream => gettextrs::gettext("Dream"),
         EntryType::Note => gettextrs::gettext("Quick note"),
+    }
+}
+
+/// A `GDateTime` at midnight UTC for the given civil date, for `GtkCalendar`.
+fn gdatetime_for(date: jiff::civil::Date) -> glib::DateTime {
+    glib::DateTime::new(
+        &glib::TimeZone::utc(),
+        date.year() as i32,
+        date.month() as i32,
+        date.day() as i32,
+        0,
+        0,
+        0.0,
+    )
+    // The components come from a valid `jiff` date, so this cannot fail.
+    .expect("a valid civil date")
+}
+
+fn parse_time(text: &str) -> Option<jiff::civil::Time> {
+    let (hours, minutes) = text.split_once(':')?;
+    jiff::civil::Time::new(
+        hours.trim().parse().ok()?,
+        minutes.trim().parse().ok()?,
+        0,
+        0,
+    )
+    .ok()
+}
+
+fn day_difference(from: jiff::civil::Date, to: jiff::civil::Date) -> i64 {
+    let start = from.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
+    let end = to.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
+    match (start, end) {
+        (Ok(start), Ok(end)) => {
+            (end.timestamp().as_second() - start.timestamp().as_second()) / 86_400
+        }
+        _ => 0,
     }
 }

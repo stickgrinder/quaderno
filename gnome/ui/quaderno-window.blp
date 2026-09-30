@@ -295,8 +295,51 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                       styles ["dim-label", "caption"]
                     }
 
-                    title-widget: Gtk.Button date_button {
-                      styles ["flat"]
+                    title-widget: Gtk.MenuButton date_button {
+                      label: _("Date");
+
+                      popover: Gtk.Popover {
+                        child: Gtk.Box {
+                          orientation: vertical;
+                          spacing: 6;
+                          margin-top: 6;
+                          margin-bottom: 6;
+                          margin-start: 6;
+                          margin-end: 6;
+
+                          Gtk.Calendar date_calendar {
+                          }
+
+                          Gtk.Box {
+                            orientation: horizontal;
+                            spacing: 6;
+
+                            Gtk.Label {
+                              label: _("Time");
+                            }
+
+                            Gtk.Entry time_entry {
+                              placeholder-text: "HH:MM";
+                              width-chars: 6;
+                              hexpand: true;
+                            }
+                          }
+
+                          Gtk.Box {
+                            orientation: horizontal;
+                            spacing: 6;
+                            homogeneous: true;
+
+                            Gtk.Button today_button {
+                              label: _("Today");
+                            }
+
+                            Gtk.Button yesterday_button {
+                              label: _("Yesterday");
+                            }
+                          }
+                        };
+                      };
                     };
 
                     [end]
