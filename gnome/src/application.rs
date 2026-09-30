@@ -54,7 +54,21 @@ pub fn build() -> adw::Application {
             }
             let created = QuadernoWindow::new(app, keyring.clone());
             window.borrow_mut().replace(created.clone());
-            app.set_accels_for_action("win.delete-entry", &["Delete"]);
+            for (action, accels) in [
+                ("win.delete-entry", vec!["Delete"]),
+                ("win.new", vec!["<Control>n"]),
+                ("win.search", vec!["<Control>f"]),
+                ("win.previous", vec!["<Alt>Up"]),
+                ("win.next", vec!["<Alt>Down"]),
+                ("win.toggle-sidebar", vec!["F9"]),
+                ("win.heading-1", vec!["<Control>1"]),
+                ("win.heading-2", vec!["<Control>2"]),
+                ("win.heading-3", vec!["<Control>3"]),
+                ("win.bold", vec!["<Control>b"]),
+                ("win.italic", vec!["<Control>i"]),
+            ] {
+                app.set_accels_for_action(action, &accels);
+            }
             created.present();
             created.start();
         });

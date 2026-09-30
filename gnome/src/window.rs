@@ -135,7 +135,9 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         // Non-template state.
         pub editor_buffer: RefCell<Option<sourceview5::Buffer>>,
+        pub editor_view: RefCell<Option<sourceview5::View>>,
         pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
+        pub read_only: Cell<bool>,
         pub selected: RefCell<Option<uuid::Uuid>>,
         pub current_dated: RefCell<Option<jiff::Zoned>>,
         pub current_created: RefCell<Option<jiff::Timestamp>>,
@@ -204,7 +206,9 @@ mod imp {
                 quote_button: Default::default(),
                 link_button: Default::default(),
                 editor_buffer: RefCell::new(None),
+                editor_view: RefCell::new(None),
                 spell_adapter: RefCell::new(None),
+                read_only: Cell::new(false),
                 selected: RefCell::new(None),
                 current_dated: RefCell::new(None),
                 current_created: RefCell::new(None),
@@ -404,9 +408,39 @@ impl QuadernoWindow {
         self.imp()
             .main_banner
             .set_revealed(access == Access::ReadOnly);
+        self.imp().read_only.set(access == Access::ReadOnly);
         self.show_phase(Phase::Main);
+        self.apply_read_only();
         self.start_idle_timer();
         self.refresh();
+    }
+
+    /// Disables editing for a vault that is newer than this client (spec §7.2).
+    fn apply_read_only(&self) {
+        let editable = !self.imp().read_only.get();
+        if let Some(view) = self.imp().editor_view.borrow().as_ref() {
+            view.set_editable(editable);
+        }
+        let buttons: [gtk::Widget; 9] = [
+            self.imp().new_button.clone().upcast(),
+            self.imp().date_button.clone().upcast(),
+            self.imp().heading_button.clone().upcast(),
+            self.imp().bold_button.clone().upcast(),
+            self.imp().italic_button.clone().upcast(),
+            self.imp().list_button.clone().upcast(),
+            self.imp().quote_button.clone().upcast(),
+            self.imp().link_button.clone().upcast(),
+            self.imp().entry_menu.clone().upcast(),
+        ];
+        for button in buttons {
+            button.set_sensitive(editable);
+        }
+        if let Some(action) = self
+            .lookup_action("delete-entry")
+            .and_downcast::<gio::SimpleAction>()
+        {
+            action.set_enabled(editable);
+        }
     }
 
     // ---- main page (sections, entry list, editor) ------------------------
@@ -439,6 +473,7 @@ impl QuadernoWindow {
         view.add_controller(focus);
 
         self.imp().editor_scroll.set_child(Some(&view));
+        self.imp().editor_view.replace(Some(view));
         self.imp().editor_buffer.replace(Some(buffer));
         self.imp().spell_adapter.replace(Some(adapter));
     }
@@ -601,6 +636,60 @@ impl QuadernoWindow {
 
         self.setup_date_callbacks();
         self.setup_formatting();
+        self.setup_shortcuts();
+    }
+
+    fn setup_shortcuts(&self) {
+        self.register_action("new", |window| window.new_entry());
+        self.register_action("search", |window| window.open_search());
+        self.register_action("previous", |window| window.select_relative(-1));
+        self.register_action("next", |window| window.select_relative(1));
+        self.register_action("toggle-sidebar", |window| window.toggle_sidebar());
+        self.register_action("heading-1", |window| window.prefix_line("# "));
+        self.register_action("heading-2", |window| window.prefix_line("## "));
+        self.register_action("heading-3", |window| window.prefix_line("### "));
+        self.register_action("bold", |window| window.wrap_selection("**", "**"));
+        self.register_action("italic", |window| window.wrap_selection("*", "*"));
+    }
+
+    fn register_action(&self, name: &str, run: fn(&QuadernoWindow)) {
+        let action = gio::SimpleAction::new(name, None);
+        let window = self.clone();
+        action.connect_activate(move |_, _| run(&window));
+        self.add_action(&action);
+    }
+
+    fn open_search(&self) {
+        self.imp().search_button.set_active(true);
+        self.imp().search_entry.grab_focus();
+    }
+
+    fn toggle_sidebar(&self) {
+        let toggle = &self.imp().sidebar_toggle;
+        toggle.set_active(!toggle.is_active());
+    }
+
+    fn select_relative(&self, delta: i32) {
+        let ids: Vec<Uuid> = self
+            .imp()
+            .row_ids
+            .borrow()
+            .iter()
+            .flatten()
+            .copied()
+            .collect();
+        if ids.is_empty() {
+            return;
+        }
+        let index = match *self.imp().selected.borrow() {
+            Some(current) => ids
+                .iter()
+                .position(|id| *id == current)
+                .map(|index| (index as i32 + delta).clamp(0, ids.len() as i32 - 1) as usize)
+                .unwrap_or(0),
+            None => 0,
+        };
+        self.select_entry(ids[index]);
     }
 
     fn setup_formatting(&self) {
@@ -920,8 +1009,9 @@ impl QuadernoWindow {
         ) else {
             return;
         };
-        let time = parse_time(&self.imp().time_entry.text()).unwrap_or_else(|| current.time());
-        let Ok(new_dated) = current.with().date(date).time(time).build() else {
+        let time =
+            timeline::parse_time(&self.imp().time_entry.text()).unwrap_or_else(|| current.time());
+        let Ok(new_dated) = timeline::shift_datetime(&current, date, time) else {
             return;
         };
 
@@ -970,7 +1060,7 @@ impl QuadernoWindow {
             return;
         }
 
-        let days = day_difference(created_date, dated_date);
+        let days = timeline::day_difference(created_date, dated_date);
         let direction = if days >= 0 {
             gettextrs::gettext("later")
         } else {
@@ -1079,7 +1169,7 @@ impl QuadernoWindow {
         };
         let empty = self
             .buffer_text()
-            .map(|text| text.trim().is_empty())
+            .map(|text| timeline::is_empty_draft(&text))
             .unwrap_or(true);
         if empty {
             let discarded = {
@@ -1370,6 +1460,9 @@ impl QuadernoWindow {
             return; // nothing open
         }
         self.stop_idle_timer();
+        self.imp().search_index.replace(None);
+        self.imp().search_entry.set_text("");
+        self.imp().search_button.set_active(false);
         self.show_unlock();
     }
 
@@ -1449,26 +1542,4 @@ fn gdatetime_for(date: jiff::civil::Date) -> glib::DateTime {
     )
     // The components come from a valid `jiff` date, so this cannot fail.
     .expect("a valid civil date")
-}
-
-fn parse_time(text: &str) -> Option<jiff::civil::Time> {
-    let (hours, minutes) = text.split_once(':')?;
-    jiff::civil::Time::new(
-        hours.trim().parse().ok()?,
-        minutes.trim().parse().ok()?,
-        0,
-        0,
-    )
-    .ok()
-}
-
-fn day_difference(from: jiff::civil::Date, to: jiff::civil::Date) -> i64 {
-    let start = from.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
-    let end = to.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
-    match (start, end) {
-        (Ok(start), Ok(end)) => {
-            (end.timestamp().as_second() - start.timestamp().as_second()) / 86_400
-        }
-        _ => 0,
-    }
 }

@@ -206,6 +206,41 @@ pub fn normalize(text: &str) -> String {
         .collect::<String>()
 }
 
+/// Moves `dated_at` to `date` and `time`, keeping its stored offset
+/// (product spec §4.3, vault spec §5.5).
+pub fn shift_datetime(
+    dated_at: &jiff::Zoned,
+    date: Date,
+    time: jiff::civil::Time,
+) -> Result<jiff::Zoned, jiff::Error> {
+    dated_at.with().date(date).time(time).build()
+}
+
+/// Parses a `HH:MM` time field.
+pub fn parse_time(text: &str) -> Option<jiff::civil::Time> {
+    let (hours, minutes) = text.split_once(':')?;
+    let hours: i8 = hours.trim().parse().ok()?;
+    let minutes: i8 = minutes.trim().parse().ok()?;
+    jiff::civil::Time::new(hours, minutes, 0, 0).ok()
+}
+
+/// Whether text makes an entry an empty draft (product spec §4.2).
+pub fn is_empty_draft(text: &str) -> bool {
+    text.trim().is_empty()
+}
+
+/// Whole days from `from` to `to`.
+pub fn day_difference(from: Date, to: Date) -> i64 {
+    let start = from.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
+    let end = to.at(0, 0, 0, 0).to_zoned(jiff::tz::TimeZone::UTC);
+    match (start, end) {
+        (Ok(start), Ok(end)) => {
+            (end.timestamp().as_second() - start.timestamp().as_second()) / 86_400
+        }
+        _ => 0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -238,7 +273,7 @@ mod tests {
     #[test]
     fn groups_entries_by_journal_day_newest_first() {
         let today = "2026-09-29".parse::<Date>().unwrap();
-        let entries = vec![
+        let entries: Vec<(Entry, Option<String>)> = vec![
             (entry(1, "a", "2026-09-28T22:00:00+02:00"), None),
             (entry(2, "b", "2026-09-29T01:00:00+02:00"), None), // journal day 28
             (entry(3, "c", "2026-09-29T09:00:00+02:00"), None), // journal day 29
@@ -271,5 +306,63 @@ mod tests {
         assert_eq!(index.search("calm"), vec![Uuid::from_u128(1)]);
         assert_eq!(index.search("lake"), vec![Uuid::from_u128(2)]);
         assert!(index.search("missing").is_empty());
+    }
+
+    #[test]
+    fn filters_and_search_combine() {
+        let entries = [
+            (
+                entry(1, "lake", "2026-09-29T09:00:00+02:00"),
+                None::<String>,
+            ),
+            (
+                entry(2, "lake", "2026-09-29T09:00:00+02:00"),
+                None::<String>,
+            ),
+        ];
+        // Only journal pages pass the Journal filter.
+        assert!(
+            entries
+                .iter()
+                .all(|(entry, _)| passes(entry, Filter::Journal))
+        );
+        assert!(!passes(&entries[0].0, Filter::Dreams));
+
+        let mut index = SearchIndex::new();
+        for (entry, _) in &entries {
+            index.add(entry.id, [entry.content.clone()]);
+        }
+        assert_eq!(index.search("lake").len(), 2);
+        assert!(index.search("zzz").is_empty());
+    }
+
+    #[test]
+    fn shifting_the_date_keeps_time_and_offset() {
+        let original = dated("2026-09-22T07:40:00+02:00");
+        let target = "2026-10-05".parse::<Date>().unwrap();
+        let shifted = shift_datetime(&original, target, original.time()).unwrap();
+        assert_eq!(
+            format!("{}{}", shifted.datetime(), ""),
+            "2026-10-05T07:40:00"
+        );
+        assert_eq!(shifted.offset().seconds(), 2 * 3600);
+    }
+
+    #[test]
+    fn parses_times_and_detects_empty_drafts() {
+        assert!(parse_time("09:30").is_some());
+        assert!(parse_time("9:5").is_some());
+        assert!(parse_time("nope").is_none());
+        assert!(is_empty_draft("  \n "));
+        assert!(!is_empty_draft("x"));
+    }
+
+    #[test]
+    fn day_difference_counts_days() {
+        let a = "2026-09-22".parse::<Date>().unwrap();
+        let b = "2026-09-27".parse::<Date>().unwrap();
+        assert_eq!(day_difference(a, b), 5);
+        assert_eq!(day_difference(b, a), -5);
+        assert_eq!(day_difference(a, a), 0);
     }
 }
