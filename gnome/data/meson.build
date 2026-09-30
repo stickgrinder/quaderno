@@ -27,3 +27,9 @@ install_data(
   'icons/hicolor/scalable/apps/io.github.stickgrinder.Quaderno.svg',
   install_dir: datadir / 'icons/hicolor/scalable/apps',
 )
+
+# Phosphor Icons are MIT licensed (ui-spec §5); ship the license with the app.
+install_data(
+  'icons/phosphor/LICENSE',
+  install_dir: datadir / 'licenses/quaderno',
+)
