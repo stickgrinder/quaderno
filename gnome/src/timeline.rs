@@ -112,14 +112,10 @@ pub fn title_and_excerpt(content: &str) -> (String, String) {
 
 fn strip_markers(line: &str) -> String {
     let trimmed = line.trim();
-    let without_prefix = trimmed
-        .trim_start_matches(|c: char| c == '#' || c == '>' || c == '-' || c == '*' || c == '+')
-        .trim();
+    let without_prefix = trimmed.trim_start_matches(['#', '>', '-', '*', '+']).trim();
     without_prefix
         .replace("**", "")
-        .replace('*', "")
-        .replace('_', "")
-        .replace('`', "")
+        .replace(['*', '_', '`'], "")
 }
 
 fn day_label(date: Date, today: Date) -> String {
