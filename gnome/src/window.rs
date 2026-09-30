@@ -116,6 +116,18 @@ mod imp {
         #[template_child]
         pub footer_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub heading_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub bold_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub italic_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub list_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub quote_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub link_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub entry_menu: TemplateChild<gtk::MenuButton>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
@@ -182,6 +194,12 @@ mod imp {
                 backdated_banner: Default::default(),
                 editor_scroll: Default::default(),
                 footer_label: Default::default(),
+                heading_button: Default::default(),
+                bold_button: Default::default(),
+                italic_button: Default::default(),
+                list_button: Default::default(),
+                quote_button: Default::default(),
+                link_button: Default::default(),
                 editor_buffer: RefCell::new(None),
                 spell_adapter: RefCell::new(None),
                 selected: RefCell::new(None),
@@ -569,6 +587,58 @@ impl QuadernoWindow {
         });
 
         self.setup_date_callbacks();
+        self.setup_formatting();
+    }
+
+    fn setup_formatting(&self) {
+        let window = self.clone();
+        self.imp()
+            .heading_button
+            .connect_clicked(move |_| window.prefix_line("# "));
+        let window = self.clone();
+        self.imp()
+            .bold_button
+            .connect_clicked(move |_| window.wrap_selection("**", "**"));
+        let window = self.clone();
+        self.imp()
+            .italic_button
+            .connect_clicked(move |_| window.wrap_selection("*", "*"));
+        let window = self.clone();
+        self.imp()
+            .list_button
+            .connect_clicked(move |_| window.prefix_line("- "));
+        let window = self.clone();
+        self.imp()
+            .quote_button
+            .connect_clicked(move |_| window.prefix_line("> "));
+        let window = self.clone();
+        self.imp()
+            .link_button
+            .connect_clicked(move |_| window.wrap_selection("[", "](url)"));
+    }
+
+    /// Wraps the selection (or the cursor) with Markdown marks.
+    fn wrap_selection(&self, before: &str, after: &str) {
+        let Some(buffer) = self.imp().editor_buffer.borrow().as_ref().cloned() else {
+            return;
+        };
+        if let Some((mut start, mut end)) = buffer.selection_bounds() {
+            let text = buffer.text(&start, &end, false);
+            buffer.delete(&mut start, &mut end);
+            buffer.insert(&mut start, &format!("{before}{text}{after}"));
+        } else {
+            buffer.insert_at_cursor(&format!("{before}{after}"));
+        }
+    }
+
+    /// Prefixes the line at the cursor with a Markdown marker.
+    fn prefix_line(&self, prefix: &str) {
+        let Some(buffer) = self.imp().editor_buffer.borrow().as_ref().cloned() else {
+            return;
+        };
+        let mut iter = buffer.iter_at_offset(buffer.cursor_position());
+        iter.set_line_offset(0);
+        buffer.insert(&mut iter, prefix);
     }
 
     fn set_filter(&self, filter: Filter) {
