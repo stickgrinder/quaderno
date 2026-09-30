@@ -22,6 +22,9 @@ gettext-rs = { workspace = true }
 tokio = { workspace = true }
 futures-channel = { workspace = true }
 zeroize = { workspace = true }
+sourceview5 = { workspace = true }
+libspelling = { workspace = true }
+unicode-normalization = { workspace = true }
 
 [[bin]]
 name = "quaderno"

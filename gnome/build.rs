@@ -17,9 +17,17 @@ fn main() {
         PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").expect("cargo sets CARGO_MANIFEST_DIR"));
     let out_dir = PathBuf::from(std::env::var("OUT_DIR").expect("cargo sets OUT_DIR"));
     let ui_dir = manifest_dir.join("ui");
+    let data_dir = manifest_dir.join("data");
 
+    println!(
+        "cargo:rerun-if-changed={}",
+        data_dir.join("styles/quaderno.xml").display()
+    );
     compile_blueprint(&ui_dir, &out_dir);
-    compile_resources(&ui_dir, &out_dir);
+    compile_resources(
+        &[ui_dir.as_path(), data_dir.as_path(), out_dir.as_path()],
+        &ui_dir,
+    );
 }
 
 fn compile_blueprint(ui_dir: &Path, out_dir: &Path) {
@@ -39,10 +47,10 @@ fn compile_blueprint(ui_dir: &Path, out_dir: &Path) {
     );
 }
 
-fn compile_resources(ui_dir: &Path, out_dir: &Path) {
+fn compile_resources(source_dirs: &[&Path], ui_dir: &Path) {
     let gresource = ui_dir.join(GRESOURCE_FILE);
     glib_build_tools::compile_resources(
-        &[ui_dir, out_dir],
+        source_dirs,
         gresource
             .to_str()
             .expect("the UI directory path is valid UTF-8"),

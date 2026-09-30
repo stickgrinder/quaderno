@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Dims the Markdown punctuation that the stock Markdown language isolates
+     (list markers, blockquote markers, rules, URLs, escapes). Marks that share
+     a class with their text (the # of a heading, the * of emphasis) are not
+     isolated by the language, so they keep the parent style. -->
+<style-scheme id="quaderno" name="Quaderno" version="1.0" parent-scheme="Adwaita">
+  <metadata>
+    <description>Quaderno: dimmed Markdown syntax</description>
+  </metadata>
+
+  <style name="def:list-marker" foreground="#9a9996"/>
+  <style name="def:thematic-break" foreground="#9a9996"/>
+  <style name="def:shebang" foreground="#9a9996"/>
+  <style name="def:link-destination" foreground="#9a9996"/>
+  <style name="def:link-symbol" foreground="#9a9996"/>
+  <style name="def:special-char" foreground="#9a9996"/>
+</style-scheme>
