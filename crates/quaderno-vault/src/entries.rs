@@ -198,6 +198,58 @@ impl Vault {
         found(changed)
     }
 
+    /// Physically removes an empty draft that carries no information.
+    ///
+    /// This is the only physical delete in version 1 (`vault-spec/format.md`
+    /// §3): an entry with empty content, no metadata and no links, which was
+    /// just created and never published. Anything else is rejected.
+    pub fn discard_entry(&mut self, id: Uuid) -> Result<(), VaultError> {
+        let connection = self.require_writable()?;
+        let entry = self.entry(id)?;
+        let empty = entry.content.is_empty()
+            && entry.mood.is_none()
+            && entry.energy.is_none()
+            && entry.cognitive_load.is_none()
+            && entry.sleep.is_none()
+            && entry.lucid.is_none()
+            && entry.nightmare.is_none()
+            && entry.recurring.is_none()
+            && entry.source_id.is_none()
+            && entry.conflict_of.is_none();
+        if !empty {
+            return Err(VaultError::Invalid(
+                "only an entry with no content or metadata can be discarded".into(),
+            ));
+        }
+
+        let links: i64 = connection.query_row(
+            "SELECT (SELECT COUNT(*) FROM entry_choice WHERE entry_id = ?1)
+                  + (SELECT COUNT(*) FROM entry_subject WHERE entry_id = ?1)
+                  + (SELECT COUNT(*) FROM entry_color  WHERE entry_id = ?1)",
+            [id.to_string()],
+            |row| row.get(0),
+        )?;
+        if links > 0 {
+            return Err(VaultError::Invalid(
+                "the entry has linked items and cannot be discarded".into(),
+            ));
+        }
+
+        let referenced: i64 = connection.query_row(
+            "SELECT COUNT(*) FROM entry WHERE source_id = ?1 OR conflict_of = ?1",
+            [id.to_string()],
+            |row| row.get(0),
+        )?;
+        if referenced > 0 {
+            return Err(VaultError::Invalid(
+                "the entry is referenced by another entry".into(),
+            ));
+        }
+
+        connection.execute("DELETE FROM entry WHERE id = ?1", [id.to_string()])?;
+        Ok(())
+    }
+
     /// The last-update time of an entry: the newest `updated_at` among the
     /// entry and its link rows (spec §5.6).
     pub fn entry_last_updated(&self, id: Uuid) -> Result<Timestamp, VaultError> {

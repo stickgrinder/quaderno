@@ -1,6 +1,6 @@
 # Quaderno vault format
 
-**Version:** 1 (draft) · **Last updated:** 2026-09-29
+**Version:** 1 (draft) · **Last updated:** 2026-09-30
 **Normative schema:** [`migrations/0001_initial.sql`](migrations/0001_initial.sql)
 **License:** this document is CC-BY-SA-4.0. The Quaderno app and the `quaderno-vault` library are GPL-3.0-or-later.
 
@@ -71,9 +71,17 @@ Nothing derived from journal content may be written to disk unencrypted by any c
 | Editorial time (`dated_at`) | RFC 3339 with the writer's UTC offset, whole seconds: `2026-09-28T06:41:12+02:00`. A full date and time is always required. |
 | Text | UTF-8, normalized to NFC before writing. Names and labels are trimmed of leading/trailing whitespace. |
 | Booleans | `0` or `1` |
-| Deletion | Soft only: set `deleted_at` (and `updated_at`). Rows are never physically removed in version 1. Restoring clears `deleted_at`. |
+| Deletion | Soft only: set `deleted_at` (and `updated_at`). Restoring clears `deleted_at`. The only physical delete in version 1 is a never-published empty draft (§3.1). |
 
 Every edit to a row MUST set that row's `updated_at` to the current time. Sync depends on it (§8).
+
+### 3.1 Discarding an empty draft
+
+An entry that was just created and still carries no information — empty `content`, no
+metadata, no rows in the link tables, and not referenced by another entry — MAY be
+physically deleted instead of kept. It has never been published, so removing it cannot
+conflict with sync. This is the only physical delete in version 1: a client MUST reject
+it if any of those conditions does not hold.
 
 ---
 
@@ -338,6 +346,7 @@ Fixed keys, with the GNOME palette values Quaderno uses (informative):
 
 ## Changelog
 
+- **2026-09-30** — §3.1: an empty, never-published draft may be physically deleted; the only non-soft delete in version 1.
 - **2026-09-29** — Reference translation catalogs live at `gnome/po/`; every client ships its own translations.
 - **2026-09-28** — Decided: `mood` on a dream is mood on waking and is kept out of daily mood statistics. Empty `content` explicitly allowed.
 - **2026-09-28** — `choice`: replaced `key` + translated `label` with a frozen English `label` (gettext source string, context = kind) and `custom_label` for user names. Added §6.2 on translations.

@@ -91,7 +91,7 @@ These come from the product's core promise: privacy. Breaking one is a bug, what
 3. **Logs never contain entry content, names, labels or passphrases.** Log IDs and counts only.
 4. **All vault access goes through `quaderno-vault`.** No app ever runs SQL directly or reimplements vault logic; Android will use the same crate through `quaderno-vault-ffi`.
 5. **Schema changes are migrations.** Never edit a migration once a release has shipped it. A schema change means a new `vault-spec/migrations/NNNN_*.sql`, the matching update to `vault-spec/format.md`, and a changelog line there.
-6. **Respect the spec's rules for writers:** SQLCipher parameters set explicitly, NFC text, canonical timestamps, soft deletes only, `updated_at` on every edit, edits as `UPDATE` of named columns (never delete-and-reinsert), unknown columns preserved.
+6. **Respect the spec's rules for writers:** SQLCipher parameters set explicitly, NFC text, canonical timestamps, soft deletes only (the sole exception is discarding a never-published empty draft, spec §3.1), `updated_at` on every edit, edits as `UPDATE` of named columns (never delete-and-reinsert), unknown columns preserved.
 7. **Passphrases and keys** are zeroized after use (`zeroize` crate) and never stored except through `oo7`.
 
 ## Conventions

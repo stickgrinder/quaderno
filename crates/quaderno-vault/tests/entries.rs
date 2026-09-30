@@ -2,7 +2,7 @@
 
 //! Entry API and entry-type rules (spec §5.1).
 
-use quaderno_vault::{DreamFlag, EntryType, Rating, Vault, VaultError};
+use quaderno_vault::{DreamFlag, EntryType, Rating, SubjectKind, Vault, VaultError};
 use tempfile::TempDir;
 
 fn new_vault() -> (TempDir, Vault) {
@@ -134,4 +134,55 @@ fn soft_delete_then_restore() {
 
     vault.restore_entry(id).unwrap();
     assert_eq!(vault.entries(false).unwrap().len(), 1);
+}
+
+#[test]
+fn only_empty_unreferenced_drafts_can_be_discarded() {
+    let (_dir, mut vault) = new_vault();
+
+    let empty = vault
+        .create_entry(EntryType::Journal, "", &dated("2026-09-28T21:14:00+02:00"))
+        .unwrap();
+    vault.discard_entry(empty).unwrap();
+    assert!(matches!(vault.entry(empty), Err(VaultError::NotFound)));
+    assert!(
+        vault
+            .entries(true)
+            .unwrap()
+            .iter()
+            .all(|entry| entry.id != empty)
+    );
+
+    let with_text = vault
+        .create_entry(
+            EntryType::Journal,
+            "text",
+            &dated("2026-09-28T21:14:00+02:00"),
+        )
+        .unwrap();
+    assert!(matches!(
+        vault.discard_entry(with_text),
+        Err(VaultError::Invalid(_))
+    ));
+
+    let rated = vault
+        .create_entry(EntryType::Journal, "", &dated("2026-09-28T21:14:00+02:00"))
+        .unwrap();
+    vault
+        .set_entry_rating(rated, Rating::Mood, Some(3))
+        .unwrap();
+    assert!(matches!(
+        vault.discard_entry(rated),
+        Err(VaultError::Invalid(_))
+    ));
+
+    let linked = vault
+        .create_entry(EntryType::Journal, "", &dated("2026-09-28T21:14:00+02:00"))
+        .unwrap();
+    let tag = vault.create_subject(SubjectKind::Tag, "x").unwrap();
+    vault.link_subject(linked, tag).unwrap();
+    assert!(matches!(
+        vault.discard_entry(linked),
+        Err(VaultError::Invalid(_))
+    ));
 }
