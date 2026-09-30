@@ -1198,6 +1198,32 @@
     {
         "type": "archive",
         "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/libspelling/libspelling-0.5.0.crate",
+        "sha256": "1aa3967523e0c59c89ca5695cd01538fdf9aa354a16a7dd48e2873c2b88d57ae",
+        "dest": "cargo/vendor/libspelling-0.5.0"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"1aa3967523e0c59c89ca5695cd01538fdf9aa354a16a7dd48e2873c2b88d57ae\", \"files\": {}}",
+        "dest": "cargo/vendor/libspelling-0.5.0",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/libspelling-sys/libspelling-sys-0.5.0.crate",
+        "sha256": "6f7a85c4b41986eb3ec46b755b8f986e0e65ef254e6b35059b4a462ca9d76612",
+        "dest": "cargo/vendor/libspelling-sys-0.5.0"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"6f7a85c4b41986eb3ec46b755b8f986e0e65ef254e6b35059b4a462ca9d76612\", \"files\": {}}",
+        "dest": "cargo/vendor/libspelling-sys-0.5.0",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
         "url": "https://static.crates.io/crates/libsqlite3-sys/libsqlite3-sys-0.38.2.crate",
         "sha256": "f1d20bef17f513b9b3004532233187769cd072d790971f4e4da0e346eb6401e8",
         "dest": "cargo/vendor/libsqlite3-sys-0.38.2"
@@ -1999,6 +2025,32 @@
         "type": "inline",
         "contents": "{\"package\": \"c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4\", \"files\": {}}",
         "dest": "cargo/vendor/socket2-0.6.5",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/sourceview5/sourceview5-0.11.2.crate",
+        "sha256": "a5b64e13e9ae8d8e35529a2d32d80c7ecd60ffb348c1188b5b790676f5d5b50c",
+        "dest": "cargo/vendor/sourceview5-0.11.2"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"a5b64e13e9ae8d8e35529a2d32d80c7ecd60ffb348c1188b5b790676f5d5b50c\", \"files\": {}}",
+        "dest": "cargo/vendor/sourceview5-0.11.2",
+        "dest-filename": ".cargo-checksum.json"
+    },
+    {
+        "type": "archive",
+        "archive-type": "tar-gzip",
+        "url": "https://static.crates.io/crates/sourceview5-sys/sourceview5-sys-0.11.2.crate",
+        "sha256": "23a6d23d5b5a052b39ad92ff8ab0730cff284378d7f97012368317a5e622452e",
+        "dest": "cargo/vendor/sourceview5-sys-0.11.2"
+    },
+    {
+        "type": "inline",
+        "contents": "{\"package\": \"23a6d23d5b5a052b39ad92ff8ab0730cff284378d7f97012368317a5e622452e\", \"files\": {}}",
+        "dest": "cargo/vendor/sourceview5-sys-0.11.2",
         "dest-filename": ".cargo-checksum.json"
     },
     {
