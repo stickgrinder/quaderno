@@ -1,15 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 //! GTK-free view logic for the timeline and search (product spec §4.5–4.6).
-//!
-//! Temporarily `allow(dead_code)` until the window wires it up; remove then.
-
-#![allow(dead_code)]
 
 use jiff::civil::Date;
 use quaderno_vault::{Entry, EntryType};
 use unicode_normalization::{UnicodeNormalization, char::is_combining_mark};
 use uuid::Uuid;
+
+/// The entry-list filter (ui-spec §3.4).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Filter {
+    /// Every entry.
+    All,
+    /// Journal pages only.
+    Journal,
+    /// Dreams only.
+    Dreams,
+    /// Quick notes only.
+    Notes,
+}
+
+/// Whether an entry passes a filter.
+pub fn passes(entry: &Entry, filter: Filter) -> bool {
+    match filter {
+        Filter::All => true,
+        Filter::Journal => entry.entry_type == EntryType::Journal,
+        Filter::Dreams => entry.entry_type == EntryType::Dream,
+        Filter::Notes => entry.entry_type == EntryType::Note,
+    }
+}
 
 /// A row in the entry list.
 #[derive(Debug, Clone)]
@@ -22,8 +41,6 @@ pub struct EntrySummary {
     pub excerpt: String,
     /// The editorial date.
     pub dated_at: jiff::Zoned,
-    /// The mood rating, if any.
-    pub mood: Option<u8>,
     /// The first tag linked to the entry, if any.
     pub first_tag: Option<String>,
     /// The entry type (used for the filter chips soon).
@@ -80,7 +97,6 @@ fn summarize(entry: Entry, first_tag: Option<String>) -> EntrySummary {
         title,
         excerpt,
         dated_at: entry.dated_at,
-        mood: entry.mood,
         first_tag,
         entry_type: entry.entry_type,
     }

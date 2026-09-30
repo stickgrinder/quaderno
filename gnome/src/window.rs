@@ -10,11 +10,14 @@ use std::time::{Duration, Instant};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::{gio, glib};
-use quaderno_vault::{Access, Vault, VaultError};
+use quaderno_vault::{Access, EntryType, SubjectKind, Vault, VaultError};
+use sourceview5::prelude::*;
+use uuid::Uuid;
 use zeroize::Zeroizing;
 
 use crate::keyring::Keyring;
 use crate::state::{CreateForm, CreateValidity, Phase, Throttle};
+use crate::timeline::{self, Filter};
 
 fn quaderno_settings() -> gio::Settings {
     gio::Settings::new(crate::application::APP_ID)
@@ -72,6 +75,45 @@ mod imp {
         pub main_banner: TemplateChild<adw::Banner>,
         #[template_child]
         pub menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub main_split: TemplateChild<adw::OverlaySplitView>,
+        #[template_child]
+        pub sidebar_toggle: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub new_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub search_button: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub search_bar: TemplateChild<gtk::SearchBar>,
+        #[template_child]
+        pub search_entry: TemplateChild<gtk::SearchEntry>,
+        #[template_child]
+        pub filter_group: TemplateChild<adw::ToggleGroup>,
+        #[template_child]
+        pub sections_list: TemplateChild<gtk::ListBox>,
+        #[template_child]
+        pub entry_list: TemplateChild<gtk::ListBox>,
+        #[template_child]
+        pub editor_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub type_badge: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub date_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub save_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub backdated_banner: TemplateChild<adw::Banner>,
+        #[template_child]
+        pub editor_scroll: TemplateChild<gtk::ScrolledWindow>,
+        #[template_child]
+        pub footer_label: TemplateChild<gtk::Label>,
+        // Non-template state.
+        pub editor_buffer: RefCell<Option<sourceview5::Buffer>>,
+        pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
+        pub selected: RefCell<Option<uuid::Uuid>>,
+        pub row_ids: RefCell<Vec<Option<uuid::Uuid>>>,
+        pub section_filters: RefCell<Vec<(u32, Filter)>>,
+        pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
     }
 
     impl Default for QuadernoWindow {
@@ -103,6 +145,28 @@ mod imp {
                 locate_button: Default::default(),
                 main_banner: Default::default(),
                 menu_button: Default::default(),
+                main_split: Default::default(),
+                sidebar_toggle: Default::default(),
+                new_button: Default::default(),
+                search_button: Default::default(),
+                search_bar: Default::default(),
+                search_entry: Default::default(),
+                filter_group: Default::default(),
+                sections_list: Default::default(),
+                entry_list: Default::default(),
+                editor_stack: Default::default(),
+                type_badge: Default::default(),
+                date_button: Default::default(),
+                save_label: Default::default(),
+                backdated_banner: Default::default(),
+                editor_scroll: Default::default(),
+                footer_label: Default::default(),
+                editor_buffer: RefCell::new(None),
+                spell_adapter: RefCell::new(None),
+                selected: RefCell::new(None),
+                row_ids: RefCell::new(Vec::new()),
+                section_filters: RefCell::new(Vec::new()),
+                search_index: RefCell::new(None),
             }
         }
     }
@@ -129,6 +193,9 @@ mod imp {
             obj.setup_callbacks();
             obj.setup_menu();
             obj.setup_activity();
+            obj.setup_editor();
+            obj.setup_sections();
+            obj.setup_main();
         }
     }
 
@@ -277,6 +344,357 @@ impl QuadernoWindow {
             .set_revealed(access == Access::ReadOnly);
         self.show_phase(Phase::Main);
         self.start_idle_timer();
+        self.refresh();
+    }
+
+    // ---- main page (sections, entry list, editor) ------------------------
+
+    fn setup_editor(&self) {
+        let buffer = sourceview5::Buffer::new(None);
+        if let Some(language) = sourceview5::LanguageManager::default().language("markdown") {
+            buffer.set_language(Some(&language));
+        }
+
+        let manager = sourceview5::StyleSchemeManager::default();
+        manager.append_search_path("resource:///io/github/stickgrinder/Quaderno/styles");
+        if let Some(scheme) = manager.scheme("quaderno") {
+            buffer.set_style_scheme(Some(&scheme));
+        }
+
+        let view = sourceview5::View::with_buffer(&buffer);
+        view.set_wrap_mode(gtk::WrapMode::WordChar);
+        view.set_top_margin(12);
+        view.set_bottom_margin(12);
+        view.set_left_margin(12);
+        view.set_right_margin(12);
+        let adapter = crate::spell_checking::attach(&buffer);
+
+        self.imp().editor_scroll.set_child(Some(&view));
+        self.imp().editor_buffer.replace(Some(buffer));
+        self.imp().spell_adapter.replace(Some(adapter));
+    }
+
+    fn setup_sections(&self) {
+        let sections = [
+            (
+                "document-open-recent-symbolic",
+                gettextrs::gettext("Timeline"),
+                Filter::All,
+            ),
+            (
+                "x-office-document-symbolic",
+                gettextrs::gettext("Journal pages"),
+                Filter::Journal,
+            ),
+            (
+                "weather-few-clouds-night-symbolic",
+                gettextrs::gettext("Dreams"),
+                Filter::Dreams,
+            ),
+            (
+                "text-editor-symbolic",
+                gettextrs::gettext("Quick notes"),
+                Filter::Notes,
+            ),
+        ];
+        let mut mapping = Vec::new();
+        for (icon, label, filter) in sections {
+            let row = self.section_row(icon, &label);
+            self.imp().sections_list.append(&row);
+            mapping.push((row.index() as u32, filter));
+        }
+        self.imp().section_filters.replace(mapping);
+
+        let collections = gtk::ListBoxRow::new();
+        collections.set_selectable(false);
+        collections.set_activatable(false);
+        let heading = gtk::Label::new(Some(&gettextrs::gettext("Collections")));
+        heading.set_xalign(0.0);
+        heading.add_css_class("dim-label");
+        heading.set_margin_top(12);
+        heading.set_margin_bottom(4);
+        heading.set_margin_start(12);
+        collections.set_child(Some(&heading));
+        self.imp().sections_list.append(&collections);
+
+        for (icon, label) in [
+            ("avatar-default-symbolic", gettextrs::gettext("People")),
+            ("mark-location-symbolic", gettextrs::gettext("Locations")),
+            ("package-x-generic-symbolic", gettextrs::gettext("Things")),
+            ("tag-symbolic", gettextrs::gettext("Tags")),
+        ] {
+            let row = self.section_row(icon, &label);
+            row.set_sensitive(false);
+            self.imp().sections_list.append(&row);
+        }
+
+        let window = self.clone();
+        self.imp()
+            .sections_list
+            .connect_row_activated(move |_, row| {
+                let index = row.index() as u32;
+                let filter = window
+                    .imp()
+                    .section_filters
+                    .borrow()
+                    .iter()
+                    .find(|(idx, _)| *idx == index)
+                    .map(|(_, filter)| *filter);
+                if let Some(filter) = filter {
+                    window.set_filter(filter);
+                }
+            });
+    }
+
+    fn section_row(&self, icon: &str, label: &str) -> gtk::ListBoxRow {
+        let row = gtk::ListBoxRow::new();
+        let content = gtk::Box::new(gtk::Orientation::Horizontal, 12);
+        content.set_margin_top(6);
+        content.set_margin_bottom(6);
+        content.set_margin_start(6);
+        let image = gtk::Image::from_icon_name(icon);
+        content.append(&image);
+        let text = gtk::Label::new(Some(label));
+        text.set_xalign(0.0);
+        text.set_hexpand(true);
+        content.append(&text);
+        row.set_child(Some(&content));
+        row
+    }
+
+    fn setup_main(&self) {
+        let window = self.clone();
+        self.imp().sidebar_toggle.connect_toggled(move |button| {
+            window.imp().main_split.set_show_sidebar(button.is_active());
+        });
+
+        let window = self.clone();
+        self.imp().search_button.connect_toggled(move |button| {
+            window.imp().search_bar.set_search_mode(button.is_active());
+        });
+        self.imp()
+            .search_bar
+            .connect_entry(&*self.imp().search_entry);
+
+        let window = self.clone();
+        self.imp().search_entry.connect_search_changed(move |_| {
+            window.refresh();
+        });
+
+        let window = self.clone();
+        self.imp()
+            .filter_group
+            .connect_active_name_notify(move |group| {
+                if let Some(name) = group.active_name() {
+                    window.set_filter(match name.as_str() {
+                        "journal" => Filter::Journal,
+                        "dreams" => Filter::Dreams,
+                        "notes" => Filter::Notes,
+                        _ => Filter::All,
+                    });
+                }
+            });
+
+        let window = self.clone();
+        self.imp().new_button.connect_clicked(move |_| {
+            window.new_entry();
+        });
+
+        let window = self.clone();
+        self.imp().entry_list.connect_row_activated(move |_, row| {
+            let index = row.index();
+            let id = window
+                .imp()
+                .row_ids
+                .borrow()
+                .get(index as usize)
+                .copied()
+                .flatten();
+            if let Some(id) = id {
+                window.select_entry(id);
+            }
+        });
+    }
+
+    fn set_filter(&self, filter: Filter) {
+        let name = match filter {
+            Filter::All => "all",
+            Filter::Journal => "journal",
+            Filter::Dreams => "dreams",
+            Filter::Notes => "notes",
+        };
+        self.imp().filter_group.set_active_name(Some(name));
+        self.refresh();
+    }
+
+    fn active_filter(&self) -> Filter {
+        match self.imp().filter_group.active_name().as_deref() {
+            Some("journal") => Filter::Journal,
+            Some("dreams") => Filter::Dreams,
+            Some("notes") => Filter::Notes,
+            _ => Filter::All,
+        }
+    }
+
+    /// Rebuilds the entry list and search index from the vault.
+    pub fn refresh(&self) {
+        let borrow = self.imp().vault.borrow();
+        let Some(vault) = borrow.as_ref() else {
+            return;
+        };
+
+        let query = self.imp().search_entry.text().to_string();
+        let mut index = timeline::SearchIndex::new();
+        let mut rows = Vec::new();
+        for entry in vault.entries(false).unwrap_or_default() {
+            let subjects = vault.entry_subjects(entry.id, None).unwrap_or_default();
+            let choices = vault.entry_choices(entry.id).unwrap_or_default();
+            let colors = vault.entry_colors(entry.id).unwrap_or_default();
+
+            let first_tag = subjects
+                .iter()
+                .find(|subject| subject.kind == SubjectKind::Tag)
+                .map(|subject| subject.name.clone());
+
+            let mut parts = vec![entry.content.clone()];
+            parts.extend(subjects.iter().map(|subject| subject.name.clone()));
+            parts.extend(
+                choices
+                    .iter()
+                    .map(|choice| choice.display_label().to_owned()),
+            );
+            parts.extend(colors.iter().map(|color| color.as_str().to_owned()));
+            index.add(entry.id, parts);
+
+            if timeline::passes(&entry, self.active_filter()) {
+                rows.push((entry, first_tag));
+            }
+        }
+
+        if !query.is_empty() {
+            let matching: std::collections::HashSet<Uuid> =
+                index.search(&query).into_iter().collect();
+            rows.retain(|(entry, _)| matching.contains(&entry.id));
+        }
+
+        let day_end = vault.day_end().unwrap_or((3, 0));
+        let today = jiff::Zoned::now().date();
+        let groups = timeline::group(rows, day_end, today);
+        self.imp().search_index.replace(Some(index));
+        drop(borrow);
+
+        self.populate_list(groups);
+
+        if self.imp().selected.borrow().is_none()
+            && let Some(id) = self.imp().row_ids.borrow().iter().flatten().next().copied()
+        {
+            self.select_entry(id);
+        }
+    }
+
+    fn populate_list(&self, groups: Vec<timeline::DayGroup>) {
+        let list = &self.imp().entry_list;
+        while let Some(child) = list.first_child() {
+            list.remove(&child);
+        }
+        let mut row_ids: Vec<Option<Uuid>> = Vec::new();
+        for group in groups {
+            let header = gtk::ListBoxRow::new();
+            header.set_selectable(false);
+            header.set_activatable(false);
+            let label = gtk::Label::new(Some(&group.label));
+            label.set_xalign(0.0);
+            label.add_css_class("heading");
+            label.set_margin_top(8);
+            label.set_margin_bottom(4);
+            label.set_margin_start(12);
+            header.set_child(Some(&label));
+            list.append(&header);
+            row_ids.push(None);
+
+            for summary in group.entries {
+                let action = adw::ActionRow::builder()
+                    .title(&summary.title)
+                    .subtitle(&summary.excerpt)
+                    .activatable(true)
+                    .build();
+                let image = gtk::Image::from_icon_name(type_icon(summary.entry_type));
+                image.set_valign(gtk::Align::Start);
+                action.add_prefix(&image);
+                let time = summary.dated_at.strftime("%H:%M").to_string();
+                let suffix = gtk::Label::new(Some(&time));
+                suffix.add_css_class("dim-label");
+                suffix.add_css_class("caption");
+                suffix.set_valign(gtk::Align::Start);
+                action.add_suffix(&suffix);
+                if let Some(tag) = &summary.first_tag {
+                    let tag_label = gtk::Label::new(Some(&format!("#{tag}")));
+                    tag_label.add_css_class("dim-label");
+                    tag_label.add_css_class("caption");
+                    tag_label.set_valign(gtk::Align::Start);
+                    action.add_suffix(&tag_label);
+                }
+                let row = gtk::ListBoxRow::new();
+                row.set_child(Some(&action));
+                list.append(&row);
+                row_ids.push(Some(summary.id));
+            }
+        }
+        self.imp().row_ids.replace(row_ids);
+    }
+
+    fn new_entry(&self) {
+        let created = {
+            let mut vault = self.imp().vault.borrow_mut();
+            let Some(vault) = vault.as_mut() else {
+                return;
+            };
+            let now = jiff::Zoned::now();
+            vault.create_entry(EntryType::Journal, "", &now).ok()
+        };
+        if let Some(id) = created {
+            self.imp().selected.replace(None);
+            self.refresh();
+            self.select_entry(id);
+        }
+    }
+
+    fn select_entry(&self, id: Uuid) {
+        let vault = self.imp().vault.borrow();
+        let Some(vault) = vault.as_ref() else {
+            return;
+        };
+        let Ok(entry) = vault.entry(id) else {
+            return;
+        };
+
+        if let Some(buffer) = self.imp().editor_buffer.borrow().as_ref() {
+            buffer.set_text(&entry.content);
+        }
+        self.imp()
+            .type_badge
+            .set_label(&gettextrs::gettext("Journal page"));
+        self.imp()
+            .date_button
+            .set_label(&entry.dated_at.strftime("%d %b %Y").to_string());
+        self.imp()
+            .save_label
+            .set_label(&gettextrs::gettext("Saved"));
+        self.imp().footer_label.set_label(&format!(
+            "{} · {}",
+            gettextrs::ngettext(
+                "{n} word",
+                "{n} words",
+                quaderno_vault::text::word_count(&entry.content) as u32
+            )
+            .replace(
+                "{n}",
+                &quaderno_vault::text::word_count(&entry.content).to_string()
+            ),
+            entry.dated_at.strftime("%d %b %Y, %H:%M"),
+        ));
+        self.imp().editor_stack.set_visible_child_name("entry");
+        self.imp().selected.replace(Some(id));
     }
 
     fn refresh_create_form(&self) {
@@ -553,5 +971,13 @@ impl QuadernoWindow {
         if idle >= Duration::from_secs(minutes as u64 * 60) {
             self.lock();
         }
+    }
+}
+
+fn type_icon(entry_type: EntryType) -> &'static str {
+    match entry_type {
+        EntryType::Journal => "x-office-document-symbolic",
+        EntryType::Dream => "weather-few-clouds-night-symbolic",
+        EntryType::Note => "text-editor-symbolic",
     }
 }

@@ -4,11 +4,11 @@ using Gtk 4.0;
 using Adw 1;
 
 template $QuadernoWindow: Adw.ApplicationWindow {
-  default-width: 980;
+  default-width: 1180;
   default-height: 860;
   title: _("Quaderno");
 
-  content: Adw.ToastOverlay {
+  content: Adw.ToastOverlay toast_overlay {
     child: Gtk.Stack stack {
       transition-type: crossfade;
 
@@ -165,36 +165,226 @@ template $QuadernoWindow: Adw.ApplicationWindow {
       Gtk.StackPage {
         name: "main";
 
-        child: Adw.ToolbarView {
-          [top]
-          Adw.HeaderBar {
-            title-widget: Adw.WindowTitle {
-              title: _("Quaderno");
+        child: Adw.OverlaySplitView main_split {
+          min-sidebar-width: 180;
+          max-sidebar-width: 300;
+
+          sidebar: Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar {
+              title-widget: Adw.WindowTitle {
+                title: _("Quaderno");
+              };
+
+              [end]
+              Gtk.MenuButton menu_button {
+                icon-name: "open-menu-symbolic";
+                tooltip-text: _("Main Menu");
+              }
+            }
+
+            content: Gtk.ScrolledWindow {
+              hscrollbar-policy: never;
+
+              child: Gtk.ListBox sections_list {
+                styles ["navigation-sidebar"]
+                selection-mode: single;
+              };
+            };
+          };
+
+          content: Adw.NavigationSplitView {
+            min-sidebar-width: 280;
+            max-sidebar-width: 440;
+
+            sidebar: Adw.NavigationPage {
+              title: _("Timeline");
+
+              child: Adw.ToolbarView {
+              [top]
+              Adw.HeaderBar {
+                title-widget: Adw.WindowTitle {
+                  title: _("Timeline");
+                };
+
+                [start]
+                Gtk.ToggleButton sidebar_toggle {
+                  icon-name: "sidebar-show-symbolic";
+                  tooltip-text: _("Sections");
+                  active: true;
+                }
+
+                [end]
+                Gtk.ToggleButton search_button {
+                  icon-name: "system-search-symbolic";
+                  tooltip-text: _("Search");
+                }
+
+                [end]
+                Gtk.Button new_button {
+                  icon-name: "list-add-symbolic";
+                  tooltip-text: _("New journal page");
+                  styles ["suggested-action"]
+                }
+              }
+
+              content: Gtk.Box {
+                orientation: vertical;
+
+                Gtk.SearchBar search_bar {
+                  child: Gtk.SearchEntry search_entry {
+                    placeholder-text: _("Search entries");
+                  };
+                }
+
+                Adw.ToggleGroup filter_group {
+                  margin-start: 6;
+                  margin-end: 6;
+                  margin-bottom: 6;
+
+                  Adw.Toggle filter_all {
+                    label: _("All");
+                  }
+
+                  Adw.Toggle filter_journal {
+                    label: _("Journal");
+                  }
+
+                  Adw.Toggle filter_dreams {
+                    label: _("Dreams");
+                  }
+
+                  Adw.Toggle filter_notes {
+                    label: _("Notes");
+                  }
+                }
+
+                Gtk.ScrolledWindow {
+                  vexpand: true;
+                  hscrollbar-policy: never;
+
+                  child: Gtk.ListBox entry_list {
+                    selection-mode: single;
+                  };
+                }
+              };
+            };
             };
 
-            [end]
-            Gtk.MenuButton menu_button {
-              icon-name: "open-menu-symbolic";
-              tooltip-text: _("Main Menu");
-            }
-          }
+            content: Adw.NavigationPage {
+              child: Gtk.Stack editor_stack {
+              Gtk.StackPage {
+                name: "empty";
 
-          content: Gtk.Box {
-            orientation: vertical;
+                child: Adw.StatusPage {
+                  icon-name: "io.github.stickgrinder.Quaderno";
+                  title: _("Your journal");
+                  description: _("Select an entry or create a new one.");
+                };
+              }
 
-            Adw.Banner main_banner {
-              revealed: false;
-            }
+              Gtk.StackPage {
+                name: "entry";
 
-            Adw.StatusPage {
-              vexpand: true;
-              icon-name: "io.github.stickgrinder.Quaderno";
-              title: _("Your journal");
-              description: _("The timeline arrives in a later milestone.");
-            }
+                child: Adw.ToolbarView {
+                  [top]
+                  Adw.HeaderBar {
+                    [start]
+                    Gtk.Label type_badge {
+                      label: _("Journal page");
+                      styles ["dim-label", "caption"]
+                    }
+
+                    title-widget: Gtk.Button date_button {
+                      styles ["flat"]
+                    };
+
+                    [end]
+                    Gtk.MenuButton entry_menu {
+                      icon-name: "view-more-symbolic";
+                      tooltip-text: _("Entry Menu");
+                    }
+
+                    [end]
+                    Gtk.Label save_label {
+                      styles ["dim-label", "caption"]
+                    }
+                  }
+
+                  content: Gtk.Box {
+                    orientation: vertical;
+
+                    Adw.Banner main_banner {
+                      revealed: false;
+                    }
+
+                    Adw.Banner backdated_banner {
+                      revealed: false;
+                    }
+
+                    Gtk.ScrolledWindow editor_scroll {
+                      vexpand: true;
+                      hscrollbar-policy: never;
+                    }
+
+                    Gtk.Box {
+                      orientation: horizontal;
+                      spacing: 6;
+                      margin-top: 6;
+                      margin-bottom: 6;
+                      margin-start: 12;
+                      margin-end: 12;
+
+                      Gtk.Button heading_button {
+                        icon-name: "format-text-bold-symbolic";
+                        tooltip-text: _("Heading");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Button bold_button {
+                        icon-name: "format-text-bold-symbolic";
+                        tooltip-text: _("Bold");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Button italic_button {
+                        icon-name: "format-text-italic-symbolic";
+                        tooltip-text: _("Italic");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Button list_button {
+                        icon-name: "view-list-bullet-symbolic";
+                        tooltip-text: _("List");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Button quote_button {
+                        icon-name: "format-indent-more-symbolic";
+                        tooltip-text: _("Quote");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Button link_button {
+                        icon-name: "insert-link-symbolic";
+                        tooltip-text: _("Link");
+                        styles ["flat"]
+                      }
+
+                      Gtk.Label footer_label {
+                        hexpand: true;
+                        xalign: 1;
+                        styles ["dim-label", "caption"]
+                      }
+                    }
+                  };
+                };
+              }
+            };
           };
         };
-      }
-    };
+      };
+    }
   };
+};
 }

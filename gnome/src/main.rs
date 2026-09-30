@@ -2,6 +2,7 @@
 
 mod application;
 mod keyring;
+mod spell_checking;
 mod state;
 mod timeline;
 mod window;
