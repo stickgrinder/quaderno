@@ -1172,6 +1172,10 @@ impl QuadernoWindow {
                         window.remove_last_subject(kind);
                         glib::Propagation::Stop
                     }
+                    gtk::gdk::Key::comma => {
+                        window.commit_token(kind, &entry, &popover);
+                        glib::Propagation::Stop
+                    }
                     gtk::gdk::Key::Down => {
                         move_selection(&selection, &list, 1);
                         glib::Propagation::Stop
@@ -1209,8 +1213,7 @@ impl QuadernoWindow {
                 } else if let Ok(id) = Uuid::parse_str(&row.id()) {
                     window.link_subject(id);
                 }
-                entry.set_text("");
-                popover.popdown();
+                clear_token_entry(&entry, &popover);
             });
         }
 
@@ -1499,18 +1502,45 @@ impl QuadernoWindow {
         if create {
             if !query.is_empty() {
                 self.create_and_link_subject(kind, &query);
-                entry.set_text("");
-                popover.popdown();
+                clear_token_entry(entry, popover);
             }
             return;
         }
         if let Some(row) = selected {
             if let Ok(id) = Uuid::parse_str(&row.id()) {
                 self.link_subject(id);
-                entry.set_text("");
-                popover.popdown();
+                clear_token_entry(entry, popover);
             }
         }
+    }
+
+    /// Commits the text typed in a token field: links an exact existing match
+    /// (case/accent-insensitive) or creates a new subject. Used by the comma
+    /// shortcut, so a list of names can be typed without leaving the field.
+    fn commit_token(&self, kind: SubjectKind, entry: &gtk::Text, popover: &gtk::Popover) {
+        let text = entry.text();
+        let name = text.trim();
+        if name.is_empty() {
+            popover.popdown();
+            return;
+        }
+        let existing = {
+            let vault = self.imp().vault.borrow();
+            match vault.as_ref() {
+                Some(vault) => vault
+                    .subjects_with_usage(kind)
+                    .unwrap_or_default()
+                    .into_iter()
+                    .find(|usage| details::token_is_exact(name, &usage.subject.name))
+                    .map(|usage| usage.subject.id),
+                None => None,
+            }
+        };
+        match existing {
+            Some(id) => self.link_subject(id),
+            None => self.create_and_link_subject(kind, name),
+        }
+        clear_token_entry(entry, popover);
     }
 
     fn write_rating(&self, rating: Rating, value: Option<u8>) {
@@ -2482,6 +2512,16 @@ fn subject_icon(kind: SubjectKind) -> &'static str {
         SubjectKind::Thing => "package-x-generic-symbolic",
         SubjectKind::Tag => "tag-symbolic",
     }
+}
+
+/// Clears a token field after a subject was linked or created, closes its
+/// popover and puts focus back in the field so several names can be typed in a
+/// row. Linking rebuilds the field's chips (which briefly unfocuses the entry),
+/// hence the explicit re-grab.
+fn clear_token_entry(entry: &gtk::Text, popover: &gtk::Popover) {
+    entry.set_text("");
+    popover.popdown();
+    entry.grab_focus();
 }
 
 /// Moves the highlight in a picker list by `delta`, clamped, and scrolls it
