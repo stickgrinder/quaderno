@@ -238,6 +238,18 @@ pub struct Subject {
     pub deleted_at: Option<Timestamp>,
 }
 
+/// A subject together with how it is used, for autocomplete ordering
+/// (product spec §5).
+#[derive(Debug, Clone)]
+pub struct SubjectUsage {
+    /// The subject itself.
+    pub subject: Subject,
+    /// The number of live entries linked to it.
+    pub entry_count: i64,
+    /// The `dated_at` of the most recent live entry linked to it.
+    pub last_used: Option<Zoned>,
+}
+
 /// The twelve fixed colours (spec Appendix C).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Color {

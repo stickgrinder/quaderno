@@ -213,6 +213,47 @@ fn expand_a_note_copies_text_and_tags() {
 }
 
 #[test]
+fn subjects_with_usage_sorts_by_use_count_and_reports_last_used() {
+    let (_dir, mut vault) = new_vault();
+    let marta = vault.create_subject(SubjectKind::Person, "Marta").unwrap();
+    let lecco = vault.create_subject(SubjectKind::Person, "Lecco").unwrap();
+
+    let first = vault
+        .create_entry(EntryType::Journal, "a", &dated("2026-09-20T21:14:00+02:00"))
+        .unwrap();
+    let second = vault
+        .create_entry(EntryType::Journal, "b", &dated("2026-09-27T21:14:00+02:00"))
+        .unwrap();
+    vault.link_subject(first, marta).unwrap();
+    vault.link_subject(second, marta).unwrap();
+    vault.link_subject(first, lecco).unwrap();
+
+    let usage = vault.subjects_with_usage(SubjectKind::Person).unwrap();
+    assert_eq!(usage.len(), 2);
+    assert_eq!(usage[0].subject.id, marta);
+    assert_eq!(usage[0].entry_count, 2);
+    assert_eq!(
+        usage[0].last_used.as_ref().unwrap().date().to_string(),
+        "2026-09-27"
+    );
+    assert_eq!(usage[1].subject.id, lecco);
+    assert_eq!(usage[1].entry_count, 1);
+
+    // Unlinking drops the count and moves the last-used date back.
+    vault.unlink_subject(second, marta).unwrap();
+    let usage = vault.subjects_with_usage(SubjectKind::Person).unwrap();
+    let marta = usage
+        .iter()
+        .find(|usage| usage.subject.id == marta)
+        .unwrap();
+    assert_eq!(marta.entry_count, 1);
+    assert_eq!(
+        marta.last_used.as_ref().unwrap().date().to_string(),
+        "2026-09-20"
+    );
+}
+
+#[test]
 fn day_end_defaults_and_updates() {
     let (_dir, mut vault) = new_vault();
     assert_eq!(vault.day_end().unwrap(), (3, 0));

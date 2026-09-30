@@ -7,7 +7,7 @@ use rusqlite::{Row, params};
 use uuid::Uuid;
 
 use crate::error::VaultError;
-use crate::model::{Choice, ChoiceKind, Subject, SubjectKind};
+use crate::model::{Choice, ChoiceKind, Subject, SubjectKind, SubjectUsage};
 use crate::vault::Vault;
 use crate::{text::nfc, time};
 
@@ -235,6 +235,44 @@ impl Vault {
         Ok(subjects)
     }
 
+    /// Lists a kind's live subjects with their usage, ordered by how many live
+    /// entries link to them (most used first), for autocomplete
+    /// (product spec §5). Ties are ordered by name, then id.
+    pub fn subjects_with_usage(&self, kind: SubjectKind) -> Result<Vec<SubjectUsage>, VaultError> {
+        let sql = format!(
+            "SELECT {SUBJECT_COLUMNS},
+                    (SELECT COUNT(*) FROM entry_subject es
+                       JOIN entry e ON e.id = es.entry_id
+                      WHERE es.subject_id = s.id AND es.deleted_at IS NULL
+                        AND e.deleted_at IS NULL),
+                    (SELECT MAX(e.dated_at) FROM entry_subject es
+                       JOIN entry e ON e.id = es.entry_id
+                      WHERE es.subject_id = s.id AND es.deleted_at IS NULL
+                        AND e.deleted_at IS NULL)
+               FROM subject s
+              WHERE s.kind = ?1 AND s.deleted_at IS NULL
+              ORDER BY 7 DESC, s.name COLLATE NOCASE, s.id"
+        );
+        let mut statement = self.connection().prepare(&sql)?;
+        let rows = statement.query_map([kind.as_str()], |row| {
+            Ok((
+                row_to_subject(row)?,
+                row.get::<_, i64>(6)?,
+                row.get::<_, Option<String>>(7)?,
+            ))
+        })?;
+        let mut usages = Vec::new();
+        for row in rows {
+            let (subject, entry_count, last_used) = row?;
+            usages.push(SubjectUsage {
+                subject,
+                entry_count,
+                last_used: last_used.as_deref().map(parse_dated).transpose()?,
+            });
+        }
+        Ok(usages)
+    }
+
     /// Renames a subject (spec §4.4).
     pub fn rename_subject(&mut self, id: Uuid, name: &str) -> Result<(), VaultError> {
         let name = normalized_name(name, "a name")?;
@@ -421,6 +459,12 @@ pub(crate) fn row_to_subject(row: &Row<'_>) -> rusqlite::Result<Subject> {
 
 fn parse_timestamp(value: &str) -> rusqlite::Result<jiff::Timestamp> {
     value.parse().map_err(|error| {
+        rusqlite::Error::FromSqlConversionFailure(0, rusqlite::types::Type::Text, Box::new(error))
+    })
+}
+
+fn parse_dated(value: &str) -> rusqlite::Result<jiff::Zoned> {
+    time::parse_dated(value).map_err(|error| {
         rusqlite::Error::FromSqlConversionFailure(0, rusqlite::types::Type::Text, Box::new(error))
     })
 }

@@ -27,5 +27,6 @@ mod rules_tests;
 pub use error::VaultError;
 pub use model::{
     Choice, ChoiceKind, Color, DreamFlag, Entry, EntryType, Rating, Subject, SubjectKind,
+    SubjectUsage,
 };
 pub use vault::{Access, Vault};
