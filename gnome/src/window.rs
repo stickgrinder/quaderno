@@ -107,10 +107,18 @@ mod imp {
         pub editor_scroll: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
         pub footer_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub entry_menu: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         // Non-template state.
         pub editor_buffer: RefCell<Option<sourceview5::Buffer>>,
         pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
         pub selected: RefCell<Option<uuid::Uuid>>,
+        pub current_dated: RefCell<Option<jiff::Zoned>>,
+        pub dirty: Cell<bool>,
+        pub loading: Cell<bool>,
+        pub save_source: RefCell<Option<glib::SourceId>>,
         pub row_ids: RefCell<Vec<Option<uuid::Uuid>>>,
         pub section_filters: RefCell<Vec<(u32, Filter)>>,
         pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
@@ -164,9 +172,15 @@ mod imp {
                 editor_buffer: RefCell::new(None),
                 spell_adapter: RefCell::new(None),
                 selected: RefCell::new(None),
+                current_dated: RefCell::new(None),
+                dirty: Cell::new(false),
+                loading: Cell::new(false),
+                save_source: RefCell::new(None),
                 row_ids: RefCell::new(Vec::new()),
                 section_filters: RefCell::new(Vec::new()),
                 search_index: RefCell::new(None),
+                entry_menu: Default::default(),
+                toast_overlay: Default::default(),
             }
         }
     }
@@ -230,6 +244,18 @@ impl QuadernoWindow {
         menu.append(Some(&gettextrs::gettext("Lock")), Some("app.lock"));
         menu.append(Some(&gettextrs::gettext("Quit")), Some("app.quit"));
         self.imp().menu_button.set_menu_model(Some(&menu));
+
+        let entry_menu = gio::Menu::new();
+        entry_menu.append(
+            Some(&gettextrs::gettext("Delete")),
+            Some("win.delete-entry"),
+        );
+        self.imp().entry_menu.set_menu_model(Some(&entry_menu));
+
+        let delete = gio::SimpleAction::new("delete-entry", None);
+        let window = self.clone();
+        delete.connect_activate(move |_, _| window.delete_selected());
+        self.add_action(&delete);
     }
 
     fn setup_callbacks(&self) {
@@ -368,6 +394,13 @@ impl QuadernoWindow {
         view.set_left_margin(12);
         view.set_right_margin(12);
         let adapter = crate::spell_checking::attach(&buffer);
+
+        let window = self.clone();
+        buffer.connect_changed(move |_| window.schedule_save());
+        let focus = gtk::EventControllerFocus::new();
+        let window = self.clone();
+        focus.connect_leave(move |_| window.flush_save());
+        view.add_controller(focus);
 
         self.imp().editor_scroll.set_child(Some(&view));
         self.imp().editor_buffer.replace(Some(buffer));
@@ -513,6 +546,12 @@ impl QuadernoWindow {
             if let Some(id) = id {
                 window.select_entry(id);
             }
+        });
+
+        let window = self.clone();
+        self.connect_close_request(move |_| {
+            window.depart_current();
+            glib::Propagation::Proceed
         });
     }
 
@@ -660,41 +699,196 @@ impl QuadernoWindow {
     }
 
     fn select_entry(&self, id: Uuid) {
-        let vault = self.imp().vault.borrow();
-        let Some(vault) = vault.as_ref() else {
+        if *self.imp().selected.borrow() == Some(id) {
             return;
-        };
-        let Ok(entry) = vault.entry(id) else {
-            return;
+        }
+        self.depart_current();
+
+        let (content, entry_type, dated_at) = {
+            let vault = self.imp().vault.borrow();
+            let Some(vault) = vault.as_ref() else {
+                return;
+            };
+            let Ok(entry) = vault.entry(id) else {
+                return;
+            };
+            (entry.content, entry.entry_type, entry.dated_at)
         };
 
+        self.imp().loading.set(true);
         if let Some(buffer) = self.imp().editor_buffer.borrow().as_ref() {
-            buffer.set_text(&entry.content);
+            buffer.set_text(&content);
         }
+        self.imp().loading.set(false);
+        self.imp().dirty.set(false);
+
         self.imp()
             .type_badge
-            .set_label(&gettextrs::gettext("Journal page"));
+            .set_label(&entry_type_label(entry_type));
         self.imp()
             .date_button
-            .set_label(&entry.dated_at.strftime("%d %b %Y").to_string());
+            .set_label(&dated_at.strftime("%d %b %Y").to_string());
         self.imp()
             .save_label
             .set_label(&gettextrs::gettext("Saved"));
-        self.imp().footer_label.set_label(&format!(
-            "{} · {}",
-            gettextrs::ngettext(
-                "{n} word",
-                "{n} words",
-                quaderno_vault::text::word_count(&entry.content) as u32
-            )
-            .replace(
-                "{n}",
-                &quaderno_vault::text::word_count(&entry.content).to_string()
-            ),
-            entry.dated_at.strftime("%d %b %Y, %H:%M"),
-        ));
-        self.imp().editor_stack.set_visible_child_name("entry");
+        self.imp().current_dated.replace(Some(dated_at));
         self.imp().selected.replace(Some(id));
+        self.imp().editor_stack.set_visible_child_name("entry");
+        self.set_footer();
+    }
+
+    fn buffer_text(&self) -> Option<String> {
+        self.imp().editor_buffer.borrow().as_ref().map(|buffer| {
+            buffer
+                .text(&buffer.start_iter(), &buffer.end_iter(), false)
+                .to_string()
+        })
+    }
+
+    fn set_footer(&self) {
+        let words = self
+            .buffer_text()
+            .map(|text| quaderno_vault::text::word_count(&text))
+            .unwrap_or(0);
+        let words_label = gettextrs::ngettext("{n} word", "{n} words", words as u32)
+            .replace("{n}", &words.to_string());
+        let date = self
+            .imp()
+            .current_dated
+            .borrow()
+            .as_ref()
+            .map(|dated| dated.strftime("%d %b %Y, %H:%M").to_string())
+            .unwrap_or_default();
+        self.imp()
+            .footer_label
+            .set_label(&format!("{words_label} · {date}"));
+    }
+
+    /// Schedules an autosave one second after the last change (product spec §4.2).
+    fn schedule_save(&self) {
+        if self.imp().loading.get() || self.imp().selected.borrow().is_none() {
+            return;
+        }
+        self.imp().dirty.set(true);
+        self.imp()
+            .save_label
+            .set_label(&gettextrs::gettext("Saving…"));
+        if let Some(source) = self.imp().save_source.borrow_mut().take() {
+            source.remove();
+        }
+        let window = self.clone();
+        let source = glib::timeout_add_seconds_local(1, move || {
+            window.imp().save_source.borrow_mut().take();
+            window.flush_save();
+            glib::ControlFlow::Break
+        });
+        self.imp().save_source.replace(Some(source));
+    }
+
+    /// Persists the editor's text to the selected entry now.
+    ///
+    /// A single-column `UPDATE` runs on the main thread; the heavier vault work
+    /// (open, create, backup) is already off-thread from earlier milestones.
+    fn flush_save(&self) {
+        if let Some(source) = self.imp().save_source.borrow_mut().take() {
+            source.remove();
+        }
+        if !self.imp().dirty.get() {
+            return;
+        }
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let Some(text) = self.buffer_text() else {
+            return;
+        };
+
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_entry_content(id, &text).is_ok(),
+                None => false,
+            }
+        };
+        if saved {
+            self.imp().dirty.set(false);
+            self.imp()
+                .save_label
+                .set_label(&gettextrs::gettext("Saved"));
+            self.set_footer();
+            self.refresh();
+        }
+    }
+
+    /// Called before leaving the current entry: save it, or discard it when it
+    /// is an empty draft with no information (product spec §4.2).
+    fn depart_current(&self) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let empty = self
+            .buffer_text()
+            .map(|text| text.trim().is_empty())
+            .unwrap_or(true);
+        if empty {
+            let discarded = {
+                let mut vault = self.imp().vault.borrow_mut();
+                match vault.as_mut() {
+                    Some(vault) => vault.discard_entry(id).is_ok(),
+                    None => false,
+                }
+            };
+            if discarded {
+                self.imp().dirty.set(false);
+                return;
+            }
+        }
+        self.flush_save();
+    }
+
+    /// Soft-deletes the selected entry and offers an undo toast (product spec §4.4).
+    fn delete_selected(&self) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let deleted = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.soft_delete_entry(id).is_ok(),
+                None => false,
+            }
+        };
+        if !deleted {
+            return;
+        }
+        if let Some(source) = self.imp().save_source.borrow_mut().take() {
+            source.remove();
+        }
+        self.imp().dirty.set(false);
+        self.imp().selected.replace(None);
+        self.imp().editor_stack.set_visible_child_name("empty");
+        self.refresh();
+
+        let toast = adw::Toast::new(&gettextrs::gettext("Entry deleted"));
+        toast.set_button_label(Some(&gettextrs::gettext("Undo")));
+        toast.set_timeout(10);
+        let window = self.clone();
+        toast.connect_button_clicked(move |_| window.restore_entry(id));
+        self.imp().toast_overlay.add_toast(toast);
+    }
+
+    fn restore_entry(&self, id: Uuid) {
+        let restored = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.restore_entry(id).is_ok(),
+                None => false,
+            }
+        };
+        if restored {
+            self.refresh();
+            self.select_entry(id);
+        }
     }
 
     fn refresh_create_form(&self) {
@@ -918,8 +1112,9 @@ impl QuadernoWindow {
         self.show_main(access);
     }
 
-    /// Locks the vault: closes it and shows the unlock screen.
+    /// Locks the vault: saves pending edits, closes it and shows the unlock screen.
     pub fn lock(&self) {
+        self.depart_current();
         if self.imp().vault.borrow_mut().take().is_none() {
             return; // nothing open
         }
@@ -979,5 +1174,13 @@ fn type_icon(entry_type: EntryType) -> &'static str {
         EntryType::Journal => "x-office-document-symbolic",
         EntryType::Dream => "weather-few-clouds-night-symbolic",
         EntryType::Note => "text-editor-symbolic",
+    }
+}
+
+fn entry_type_label(entry_type: EntryType) -> String {
+    match entry_type {
+        EntryType::Journal => gettextrs::gettext("Journal page"),
+        EntryType::Dream => gettextrs::gettext("Dream"),
+        EntryType::Note => gettextrs::gettext("Quick note"),
     }
 }

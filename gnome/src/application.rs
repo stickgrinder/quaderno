@@ -54,6 +54,7 @@ pub fn build() -> adw::Application {
             }
             let created = QuadernoWindow::new(app, keyring.clone());
             window.borrow_mut().replace(created.clone());
+            app.set_accels_for_action("win.delete-entry", &["Delete"]);
             created.present();
             created.start();
         });
