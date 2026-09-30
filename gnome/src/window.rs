@@ -1131,6 +1131,20 @@ impl QuadernoWindow {
         let popover = gtk::Popover::new();
         popover.set_child(Some(&content));
         popover.set_parent(&entry);
+        // A completion popover must not take focus: with `autohide` (the GTK
+        // default) the popover grabs input and moves keyboard focus onto itself,
+        // so the entry stops receiving keystrokes. Keep it non-modal, keep the
+        // list unfocusable, dismiss on focus loss, and drive navigation from the
+        // entry instead.
+        popover.set_autohide(false);
+        popover.set_can_focus(false);
+        list.set_can_focus(false);
+        {
+            let popover = popover.clone();
+            let focus = gtk::EventControllerFocus::new();
+            focus.connect_leave(move |_| popover.popdown());
+            entry.add_controller(focus);
+        }
 
         {
             let window = self.clone();
@@ -1142,6 +1156,7 @@ impl QuadernoWindow {
         }
         {
             let window = self.clone();
+            let list = list.clone();
             let selection = selection.clone();
             let popover = popover.clone();
             let keys = gtk::EventControllerKey::new();
@@ -1155,6 +1170,14 @@ impl QuadernoWindow {
                     }
                     gtk::gdk::Key::BackSpace if entry.text().is_empty() => {
                         window.remove_last_subject(kind);
+                        glib::Propagation::Stop
+                    }
+                    gtk::gdk::Key::Down => {
+                        move_selection(&selection, &list, 1);
+                        glib::Propagation::Stop
+                    }
+                    gtk::gdk::Key::Up => {
+                        move_selection(&selection, &list, -1);
                         glib::Propagation::Stop
                     }
                     gtk::gdk::Key::Escape => {
@@ -2459,6 +2482,21 @@ fn subject_icon(kind: SubjectKind) -> &'static str {
         SubjectKind::Thing => "package-x-generic-symbolic",
         SubjectKind::Tag => "tag-symbolic",
     }
+}
+
+/// Moves the highlight in a picker list by `delta`, clamped, and scrolls it
+/// into view.
+fn move_selection(selection: &gtk::SingleSelection, list: &gtk::ListView, delta: i32) {
+    let current = match selection.selected() {
+        gtk::INVALID_LIST_POSITION => None,
+        index => Some(index as usize),
+    };
+    let Some(next) = details::step_index(current, selection.n_items() as usize, delta) else {
+        return;
+    };
+    let next = next as u32;
+    selection.set_selected(next);
+    list.scroll_to(next, gtk::ListScrollFlags::NONE, None);
 }
 
 /// The CSS class that paints a colour swatch (Appendix C).

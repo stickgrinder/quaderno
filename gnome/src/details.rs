@@ -248,6 +248,19 @@ pub fn show_create_row<'a>(query: &str, names: impl Iterator<Item = &'a str>) ->
     !query.trim().is_empty() && !names.into_iter().any(|name| token_is_exact(query, name))
 }
 
+/// The next highlighted index in a picker list after pressing Up/Down, clamped
+/// to the list. `None` means nothing is selected.
+pub fn step_index(current: Option<usize>, count: usize, delta: i32) -> Option<usize> {
+    if count == 0 {
+        return None;
+    }
+    match current {
+        Some(index) => Some((index as i32 + delta).clamp(0, count as i32 - 1) as usize),
+        None if delta >= 0 => Some(0),
+        None => Some(count - 1),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -347,6 +360,17 @@ mod tests {
         );
         assert_eq!(choice_display_label(&choice(Some("Calm"), None)), "Calm");
         assert_eq!(choice_display_label(&choice(None, None)), "");
+    }
+
+    #[test]
+    fn step_index_clamps_and_wraps_to_the_ends() {
+        assert_eq!(step_index(None, 0, 1), None);
+        assert_eq!(step_index(None, 3, 1), Some(0));
+        assert_eq!(step_index(None, 3, -1), Some(2));
+        assert_eq!(step_index(Some(0), 3, 1), Some(1));
+        assert_eq!(step_index(Some(2), 3, 1), Some(2));
+        assert_eq!(step_index(Some(0), 3, -1), Some(0));
+        assert_eq!(step_index(Some(3), 3, 1), Some(2));
     }
 
     #[test]
