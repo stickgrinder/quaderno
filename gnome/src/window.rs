@@ -1160,6 +1160,9 @@ impl QuadernoWindow {
             let selection = selection.clone();
             let popover = popover.clone();
             let keys = gtk::EventControllerKey::new();
+            // Capture, so a printable key like the comma reaches us before the
+            // `GtkText` input method commits it as text.
+            keys.set_propagation_phase(gtk::PropagationPhase::Capture);
             {
                 let entry = entry.clone();
                 keys.connect_key_pressed(move |_, key, _, state| match key {
