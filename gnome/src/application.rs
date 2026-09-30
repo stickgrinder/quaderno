@@ -107,7 +107,9 @@ fn register_css() {
     gtk::style_context_add_provider_for_display(
         &display,
         &provider,
-        gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        // User priority, so the app's own rules win over the theme's defaults
+        // (an app-level provider is weaker than the theme).
+        gtk::STYLE_PROVIDER_PRIORITY_USER,
     );
 }
 

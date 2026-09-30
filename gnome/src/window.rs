@@ -953,6 +953,9 @@ impl QuadernoWindow {
             let button = gtk::ToggleButton::new();
             button.add_css_class("color-swatch");
             button.add_css_class(color_css_class(color));
+            // A hard size, so the swatch stays circular whatever the theme's
+            // minimum button size is.
+            button.set_size_request(24, 24);
             let label = details::color_label(color);
             button.set_tooltip_text(Some(&label));
             button.update_property(&[gtk::accessible::Property::Label(&label)]);
