@@ -23,6 +23,22 @@
   },
   "modules": [
     {
+      "name": "libspelling",
+      "buildsystem": "meson",
+      "builddir": true,
+      "config-opts": [
+        "-Ddocs=false",
+        "-Dvapi=false"
+      ],
+      "sources": [
+        {
+          "type": "archive",
+          "url": "https://gitlab.gnome.org/GNOME/libspelling/-/archive/0.4.10/libspelling-0.4.10.tar.gz",
+          "sha256": "4a6f8b9f7dac6715e1bff1b28c5e58a56901968fa458e729e9e9b79452e85f04"
+        }
+      ]
+    },
+    {
       "name": "quaderno",
       "buildsystem": "simple",
       "build-commands": [

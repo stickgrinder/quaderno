@@ -37,12 +37,14 @@ _Deferred/decided:_ the library never retains the passphrase (`backup`/`change_p
 _Deferred/decided:_ the error page's "Open a backup…" is deferred to M7 (only "Locate file…" for now); session lock uses `org.gnome.ScreenSaver.ActiveChanged` (Flatpak gains `--talk-name=org.gnome.ScreenSaver`); oo7 runs on a dedicated tokio worker thread and its entry is keyed by the absolute vault path; an explicit Lock is not auto-unlocked from the keyring (the keyring is only used at startup/open); idle is checked every 15 seconds; the auth state machine is GTK-free and unit-tested.
 
 ### M3 · Timeline and journal page editor
-- [ ] Sections sidebar, entry list with journal-day headers and filters, editor with GtkSourceView and dimmed Markdown.
-- [ ] Autosave, discard-empty, delete with undo, entry date popover and backdated info bar.
-- [ ] In-memory search.
-- [ ] Breakpoints (`gnome/docs/ui-spec.md` §2.2).
+- [x] Sections sidebar, entry list with journal-day headers and filters, editor with GtkSourceView and dimmed Markdown.
+- [x] Autosave, discard-empty, delete with undo, entry date popover and backdated info bar.
+- [x] In-memory search.
+- [x] Breakpoints (`gnome/docs/ui-spec.md` §2.2).
 
 **Accept:** write, edit, re-date, delete/undo and search journal pages; nothing unencrypted appears on disk (check `$XDG_*` dirs and `/tmp`).
+
+_Deferred/decided:_ M3 covers journal pages only (New creates a journal page; the split menu for dreams/notes is M5); the details panel is M4, so Ctrl+I is italic in the editor until then; autosave's single-column `UPDATE` runs on the main thread while heavier vault work stays off-thread; the dimmed scheme can only dim the punctuation the stock Markdown language isolates (the `#` of headings and the `*` of emphasis share a class with their text); search matches text, subject names, choice labels and colours, lives in memory and is dropped on lock; libspelling is bundled as a Flatpak module (the GNOME SDK lacks it); Ctrl+, and the shortcuts window are M6.
 
 ### M4 · Details panel
 - [ ] Ratings, emotions/activities picker, colors, token fields with autocomplete for people/places/things/tags.
