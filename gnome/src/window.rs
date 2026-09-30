@@ -1421,7 +1421,7 @@ impl QuadernoWindow {
                 &choice.id.to_string(),
                 &label,
                 "",
-                &choice.icon,
+                &icons::resolve(&choice.icon),
                 false,
             ));
         }
