@@ -47,10 +47,12 @@ _Deferred/decided:_ the error page's "Open a backup…" is deferred to M7 (only 
 _Deferred/decided:_ M3 covers journal pages only (New creates a journal page; the split menu for dreams/notes is M5); the details panel is M4, so Ctrl+I is italic in the editor until then; autosave's single-column `UPDATE` runs on the main thread while heavier vault work stays off-thread; the dimmed scheme can only dim the punctuation the stock Markdown language isolates (the `#` of headings and the `*` of emphasis share a class with their text); search matches text, subject names, choice labels and colours, lives in memory and is dropped on lock; libspelling is bundled as a Flatpak module (the GNOME SDK lacks it); Ctrl+, and the shortcuts window are M6.
 
 ### M4 · Details panel
-- [ ] Ratings, emotions/activities picker, colors, token fields with autocomplete for people/places/things/tags.
-- [ ] Type rules respected in the UI (vault spec §5.1).
+- [x] Ratings, emotions/activities picker, colors, token fields with autocomplete for people/places/things/tags.
+- [x] Type rules respected in the UI (vault spec §5.1).
 
 **Accept:** all metadata can be set and cleared; database triggers are never hit in normal use.
+
+_Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwToggleGroup` cannot deselect (ui-spec §3.6 updated); the token fields use `AdwWrapBox` for inline chips + text; the icons ship the whole Phosphor regular set converted to `ph-*-symbolic` under `scalable/actions` (the only subdirectory the `hicolor` fallback scans for resource icons), because `symbolic/actions` is not in its `index.theme`; the <760sp `AdwBottomSheet` from ui-spec §2.2 is deferred to M6 (the <1100sp overlay is in); the "Add" picker lists visible unlinked choices, stays open for multiple picks and offers no create row (list management is M6); the "Create …" row is hidden when the query exactly matches an existing name, but Shift+Enter still creates; a `subjects_with_usage` query was added to the vault for the "N entries · last <date>" subtitle; the colour, rating and dream-flag labels were added to `gnome/po/it.po`, the rest of the Italian UI strings are M7.
 
 ### M5 · Dreams and quick notes
 - [ ] Dream type: flags in header, "Mood on waking".
