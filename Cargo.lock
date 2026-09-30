@@ -1309,6 +1309,7 @@ dependencies = [
  "gettext-rs",
  "glib-build-tools",
  "gtk4",
+ "jiff",
  "libadwaita",
  "libspelling",
  "oo7",
@@ -1316,6 +1317,7 @@ dependencies = [
  "sourceview5",
  "tokio",
  "unicode-normalization",
+ "uuid",
  "zeroize",
 ]
 

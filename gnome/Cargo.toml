@@ -25,6 +25,8 @@ zeroize = { workspace = true }
 sourceview5 = { workspace = true }
 libspelling = { workspace = true }
 unicode-normalization = { workspace = true }
+jiff = { workspace = true }
+uuid = { workspace = true }
 
 [[bin]]
 name = "quaderno"

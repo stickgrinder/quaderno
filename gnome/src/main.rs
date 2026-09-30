@@ -3,6 +3,7 @@
 mod application;
 mod keyring;
 mod state;
+mod timeline;
 mod window;
 
 use gtk::prelude::*;
