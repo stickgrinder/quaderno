@@ -254,6 +254,21 @@ fn subjects_with_usage_sorts_by_use_count_and_reports_last_used() {
 }
 
 #[test]
+fn expanded_note_ids_track_live_expansions() {
+    let (_dir, mut vault) = new_vault();
+    let note = vault
+        .create_entry(EntryType::Note, "idea", &dated("2026-09-27T09:12:00+02:00"))
+        .unwrap();
+    assert!(vault.expanded_note_ids().unwrap().is_empty());
+
+    let expanded = vault.expand_note(note, EntryType::Journal).unwrap();
+    assert_eq!(vault.expanded_note_ids().unwrap(), vec![note]);
+
+    vault.soft_delete_entry(expanded).unwrap();
+    assert!(vault.expanded_note_ids().unwrap().is_empty());
+}
+
+#[test]
 fn day_end_defaults_and_updates() {
     let (_dir, mut vault) = new_vault();
     assert_eq!(vault.day_end().unwrap(), (3, 0));

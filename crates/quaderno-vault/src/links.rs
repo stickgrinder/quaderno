@@ -233,6 +233,25 @@ impl Vault {
         }
         Ok(ids)
     }
+
+    /// The quick notes that have at least one live entry expanded from them
+    /// (spec §5.2), so the client can tell open notes from expanded ones.
+    pub fn expanded_note_ids(&self) -> Result<Vec<Uuid>, VaultError> {
+        let mut statement = self.connection().prepare(
+            "SELECT DISTINCT source_id FROM entry
+             WHERE source_id IS NOT NULL AND deleted_at IS NULL
+             ORDER BY source_id",
+        )?;
+        let rows = statement.query_map([], |row| row.get::<_, String>(0))?;
+        let mut ids = Vec::new();
+        for row in rows {
+            let value = row?;
+            let id = Uuid::parse_str(&value)
+                .map_err(|error| VaultError::Invalid(format!("bad id {value:?}: {error}")))?;
+            ids.push(id);
+        }
+        Ok(ids)
+    }
 }
 
 fn found(changed: usize) -> Result<(), VaultError> {
