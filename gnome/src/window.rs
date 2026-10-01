@@ -31,6 +31,10 @@ fn quaderno_settings() -> gio::Settings {
     gio::Settings::new(crate::application::APP_ID)
 }
 
+/// The width the font preview would have at the "wide" line width; the other
+/// choices scale it by the same fraction as the editor.
+const PREVIEW_WIDTH: f64 = 520.0;
+
 /// The kind of chip whose remove button is being built.
 #[derive(Clone, Copy)]
 enum ChipKind {
@@ -221,6 +225,7 @@ mod imp {
         pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
         pub editor_css: RefCell<Option<gtk::CssProvider>>,
         pub editor_clamp: RefCell<Option<adw::ClampScrollable>>,
+        pub preview_clamp: RefCell<Option<adw::Clamp>>,
         pub read_only: Cell<bool>,
         pub selected: RefCell<Option<uuid::Uuid>>,
         pub current_dated: RefCell<Option<jiff::Zoned>>,
@@ -310,6 +315,7 @@ mod imp {
                 spell_adapter: RefCell::new(None),
                 editor_css: RefCell::new(None),
                 editor_clamp: RefCell::new(None),
+                preview_clamp: RefCell::new(None),
                 read_only: Cell::new(false),
                 selected: RefCell::new(None),
                 current_dated: RefCell::new(None),
@@ -601,6 +607,13 @@ impl QuadernoWindow {
         self.imp().editor_scroll.set_child(Some(&clamp));
         self.imp().editor_clamp.replace(Some(clamp));
 
+        // Re-apply the line width whenever the editor pane is resized.
+        let window = self.clone();
+        self.imp()
+            .editor_scroll
+            .hadjustment()
+            .connect_changed(move |_| window.apply_line_width());
+
         let css = gtk::CssProvider::new();
         if let Some(display) = gtk::gdk::Display::default() {
             gtk::style_context_add_provider_for_display(
@@ -668,18 +681,27 @@ impl QuadernoWindow {
         }
     }
 
-    /// The maximum editor text-column width for the Line width setting.
-    fn line_width_max(&self) -> i32 {
+    /// The fraction of the editor width used by the Line width setting. A
+    /// fraction, rather than a fixed number of pixels, so the choice always
+    /// takes effect whatever the window size.
+    fn line_width_fraction(&self) -> f64 {
         match self.imp().settings.string("line-width").as_str() {
-            "narrow" => 520,
-            "wide" => 880,
-            _ => 660,
+            "narrow" => 0.6,
+            "wide" => 0.95,
+            _ => 0.78,
         }
     }
 
     fn apply_line_width(&self) {
+        let fraction = self.line_width_fraction();
         if let Some(clamp) = self.imp().editor_clamp.borrow().as_ref() {
-            clamp.set_maximum_size(self.line_width_max());
+            let pane = f64::from(self.imp().editor_scroll.width());
+            if pane > 0.0 {
+                clamp.set_maximum_size((pane * fraction).round() as i32);
+            }
+        }
+        if let Some(preview) = self.imp().preview_clamp.borrow().as_ref() {
+            preview.set_maximum_size((PREVIEW_WIDTH * fraction).round() as i32);
         }
     }
 
@@ -2331,14 +2353,19 @@ impl QuadernoWindow {
         preview.set_margin_bottom(12);
         preview.set_margin_start(12);
         preview.set_margin_end(12);
-        let preview_card = gtk::Box::new(gtk::Orientation::Vertical, 0);
-        preview_card.add_css_class("card");
-        preview_card.set_margin_top(6);
-        preview_card.set_margin_bottom(6);
-        preview_card.set_margin_start(6);
-        preview_card.set_margin_end(6);
-        preview_card.append(&preview);
-        group.add(&preview_card);
+        let preview_clamp = adw::Clamp::new();
+        preview_clamp.set_maximum_size((PREVIEW_WIDTH * self.line_width_fraction()).round() as i32);
+        preview_clamp.set_hexpand(true);
+        preview_clamp.add_css_class("card");
+        preview_clamp.set_margin_top(6);
+        preview_clamp.set_margin_bottom(6);
+        preview_clamp.set_margin_start(6);
+        preview_clamp.set_margin_end(6);
+        preview_clamp.set_child(Some(&preview));
+        self.imp()
+            .preview_clamp
+            .replace(Some(preview_clamp.clone()));
+        group.add(&preview_clamp);
 
         group
     }
