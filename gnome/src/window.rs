@@ -6,6 +6,7 @@
 use std::cell::{Cell, RefCell};
 use std::collections::HashSet;
 use std::path::PathBuf;
+use std::rc::Rc;
 use std::time::{Duration, Instant};
 
 use adw::prelude::*;
@@ -218,6 +219,8 @@ mod imp {
         pub editor_buffer: RefCell<Option<sourceview5::Buffer>>,
         pub editor_view: RefCell<Option<sourceview5::View>>,
         pub spell_adapter: RefCell<Option<libspelling::TextBufferAdapter>>,
+        pub editor_css: RefCell<Option<gtk::CssProvider>>,
+        pub editor_clamp: RefCell<Option<adw::ClampScrollable>>,
         pub read_only: Cell<bool>,
         pub selected: RefCell<Option<uuid::Uuid>>,
         pub current_dated: RefCell<Option<jiff::Zoned>>,
@@ -305,6 +308,8 @@ mod imp {
                 editor_buffer: RefCell::new(None),
                 editor_view: RefCell::new(None),
                 spell_adapter: RefCell::new(None),
+                editor_css: RefCell::new(None),
+                editor_clamp: RefCell::new(None),
                 read_only: Cell::new(false),
                 selected: RefCell::new(None),
                 current_dated: RefCell::new(None),
@@ -390,8 +395,24 @@ impl QuadernoWindow {
     fn setup_menu(&self) {
         let menu = gio::Menu::new();
         menu.append(Some(&gettextrs::gettext("Lock")), Some("app.lock"));
+        let page = gio::Menu::new();
+        page.append(
+            Some(&gettextrs::gettext("Preferences")),
+            Some("win.preferences"),
+        );
+        page.append(
+            Some(&gettextrs::gettext("Keyboard Shortcuts")),
+            Some("win.show-help-overlay"),
+        );
+        page.append(
+            Some(&gettextrs::gettext("About Quaderno")),
+            Some("win.about"),
+        );
+        menu.append_section(None, &page);
         menu.append(Some(&gettextrs::gettext("Quit")), Some("app.quit"));
         self.imp().menu_button.set_menu_model(Some(&menu));
+        self.register_action("preferences", |window| window.present_preferences());
+        self.register_action("about", |window| window.present_about());
 
         let delete = gio::SimpleAction::new("delete-entry", None);
         let window = self.clone();
@@ -563,6 +584,7 @@ impl QuadernoWindow {
         view.set_bottom_margin(12);
         view.set_left_margin(12);
         view.set_right_margin(12);
+        view.add_css_class("entry-text");
         let adapter = crate::spell_checking::attach(&buffer);
 
         let window = self.clone();
@@ -572,12 +594,31 @@ impl QuadernoWindow {
         focus.connect_leave(move |_| window.flush_save());
         view.add_controller(focus);
 
-        self.imp().editor_scroll.set_child(Some(&view));
+        // The line-width preference clamps the text column; the font/size
+        // preference is applied through a CSS provider on the view.
+        let clamp = adw::ClampScrollable::new();
+        clamp.set_child(Some(&view));
+        self.imp().editor_scroll.set_child(Some(&clamp));
+        self.imp().editor_clamp.replace(Some(clamp));
+
+        let css = gtk::CssProvider::new();
+        if let Some(display) = gtk::gdk::Display::default() {
+            gtk::style_context_add_provider_for_display(
+                &display,
+                &css,
+                gtk::STYLE_PROVIDER_PRIORITY_USER,
+            );
+        }
+        self.imp().editor_css.replace(Some(css));
+
         self.imp().editor_view.replace(Some(view));
         self.imp().editor_buffer.replace(Some(buffer));
         self.imp().spell_adapter.replace(Some(adapter));
 
         self.apply_style_scheme();
+        self.apply_writing_font();
+        self.apply_line_width();
+        self.apply_spell_languages();
         let window = self.clone();
         adw::StyleManager::default().connect_dark_notify(move |_| window.apply_style_scheme());
     }
@@ -596,6 +637,64 @@ impl QuadernoWindow {
         ) {
             buffer.set_style_scheme(Some(&scheme));
         }
+    }
+
+    /// The CSS rule for the current writing font and text size.
+    fn writer_font_css(&self) -> String {
+        let settings = &self.imp().settings;
+        let families = match settings.string("writing-font").as_str() {
+            "sans" => "sans-serif".to_owned(),
+            "mono" => "monospace".to_owned(),
+            "custom" => {
+                let family = settings.string("custom-font");
+                if family.is_empty() {
+                    "\"Source Serif 4\", serif".to_owned()
+                } else {
+                    format!("\"{family}\", serif")
+                }
+            }
+            _ => "\"Source Serif 4\", serif".to_owned(),
+        };
+        let size = settings.int("text-size").clamp(14, 26);
+        format!(
+            "textview.entry-text {{ font-family: {families}; font-size: {size}px; }}\n\
+             .writing-preview {{ font-family: {families}; font-size: {size}px; }}"
+        )
+    }
+
+    fn apply_writing_font(&self) {
+        if let Some(css) = self.imp().editor_css.borrow().as_ref() {
+            css.load_from_string(&self.writer_font_css());
+        }
+    }
+
+    /// The maximum editor text-column width for the Line width setting.
+    fn line_width_max(&self) -> i32 {
+        match self.imp().settings.string("line-width").as_str() {
+            "narrow" => 520,
+            "wide" => 880,
+            _ => 660,
+        }
+    }
+
+    fn apply_line_width(&self) {
+        if let Some(clamp) = self.imp().editor_clamp.borrow().as_ref() {
+            clamp.set_maximum_size(self.line_width_max());
+        }
+    }
+
+    fn apply_spell_languages(&self) {
+        let adapter_ref = self.imp().spell_adapter.borrow();
+        let Some(adapter) = adapter_ref.as_ref() else {
+            return;
+        };
+        let languages = self.imp().settings.string("spell-languages");
+        let checker = if languages.is_empty() {
+            libspelling::Checker::new(None, None)
+        } else {
+            libspelling::Checker::new(None, Some(languages.as_str()))
+        };
+        adapter.set_checker(&checker);
     }
 
     fn setup_sections(&self) {
@@ -1725,11 +1824,11 @@ impl QuadernoWindow {
     fn setup_notes(&self) {
         let imp = self.imp();
 
-        // New split button: primary makes a journal page, the menu the rest
-        // (product spec §4.1).
+        // New split button: primary follows the New entry type preference, the
+        // menu offers every type (product spec §4.1, §8).
         let window = self.clone();
         imp.new_button
-            .connect_clicked(move |_| window.new_entry_of(EntryType::Journal));
+            .connect_clicked(move |_| window.new_entry_of(window.default_new_type()));
         let new_menu = gio::Menu::new();
         new_menu.append(
             Some(&gettextrs::gettext("Journal page")),
@@ -1841,6 +1940,17 @@ impl QuadernoWindow {
         self.imp().list_page.set_title(&title);
         self.imp().filter_group.set_visible(!notes);
         self.imp().notes_filter_group.set_visible(notes);
+    }
+
+    /// The entry type the New button creates: a dream before 10:00 when the
+    /// preference says so, otherwise a journal page (product spec §8).
+    fn default_new_type(&self) -> EntryType {
+        if self.imp().settings.string("new-entry-type") == "dream-before-10"
+            && jiff::Zoned::now().hour() < 10
+        {
+            return EntryType::Dream;
+        }
+        EntryType::Journal
     }
 
     fn new_entry_of(&self, entry_type: EntryType) {
@@ -2012,6 +2122,447 @@ impl QuadernoWindow {
         }
 
         imp.panel_loading.set(false);
+    }
+
+    // ---- preferences (M6, General page) ---------------------------------
+
+    fn present_preferences(&self) {
+        let dialog = adw::PreferencesDialog::new();
+        dialog.set_title(&gettextrs::gettext("Preferences"));
+        dialog.add(&self.build_general_page());
+        dialog.present(Some(self));
+    }
+
+    fn present_about(&self) {
+        let about = adw::AboutDialog::builder()
+            .application_name("Quaderno")
+            .application_icon(crate::application::APP_ID)
+            .version(env!("CARGO_PKG_VERSION"))
+            .developer_name("Paolo Pustorino")
+            .developers(["Paolo Pustorino <stickgrinder@gmail.com>"])
+            .website("https://github.com/stickgrinder/quaderno")
+            .license_type(gtk::License::Gpl30)
+            .build();
+        about.present(Some(self));
+    }
+
+    fn build_general_page(&self) -> adw::PreferencesPage {
+        let page = adw::PreferencesPage::new();
+        page.set_title(&gettextrs::gettext("General"));
+        page.set_icon_name(Some("preferences-system-symbolic"));
+
+        page.add(&self.build_writing_group());
+
+        let content_group = adw::PreferencesGroup::new();
+
+        let size_adjustment = gtk::Adjustment::new(
+            f64::from(self.imp().settings.int("text-size").clamp(14, 26)),
+            14.0,
+            26.0,
+            1.0,
+            4.0,
+            0.0,
+        );
+        let size_row = adw::SpinRow::new(Some(&size_adjustment), 1.0, 0);
+        size_row.set_title(&gettextrs::gettext("Text size"));
+        size_row.set_subtitle(&gettextrs::gettext("Entry text size, in points"));
+        {
+            let window = self.clone();
+            size_row.connect_notify_local(Some("value"), move |row, _| {
+                let value = row.value().round() as i32;
+                let _ = window
+                    .imp()
+                    .settings
+                    .set_int("text-size", value.clamp(14, 26));
+                window.apply_writing_font();
+            });
+        }
+        content_group.add(&size_row);
+
+        let width_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Line width"))
+            .subtitle(gettextrs::gettext("Maximum width of the text column"))
+            .build();
+        let width_group = adw::ToggleGroup::new();
+        width_group.set_valign(gtk::Align::Center);
+        for (name, label) in [
+            ("narrow", gettextrs::gettext("Narrow")),
+            ("comfortable", gettextrs::gettext("Comfortable")),
+            ("wide", gettextrs::gettext("Wide")),
+        ] {
+            let toggle = adw::Toggle::new();
+            toggle.set_name(Some(name));
+            toggle.set_label(Some(&label));
+            width_group.add(toggle);
+        }
+        width_group.set_active_name(Some(&self.imp().settings.string("line-width")));
+        {
+            let window = self.clone();
+            width_group.connect_active_name_notify(move |group| {
+                if let Some(name) = group.active_name() {
+                    let _ = window.imp().settings.set_string("line-width", &name);
+                    window.apply_line_width();
+                }
+            });
+        }
+        width_row.add_suffix(&width_group);
+        content_group.add(&width_row);
+
+        let symbols = gtk::StringList::new(&[&gettextrs::gettext("Dimmed")]);
+        let symbols_row = adw::ComboRow::builder()
+            .title(gettextrs::gettext("Markdown symbols"))
+            .subtitle(gettextrs::gettext("Hidden comes in a later version"))
+            .model(&symbols)
+            .sensitive(false)
+            .build();
+        symbols_row.set_selected(0);
+        content_group.add(&symbols_row);
+
+        content_group.add(&self.build_spell_row());
+        page.add(&content_group);
+
+        page.add(&self.build_behavior_group());
+        page
+    }
+
+    fn build_writing_group(&self) -> adw::PreferencesGroup {
+        let group = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Writing font"))
+            .description(gettextrs::gettext(
+                "Used for entry text and quick notes. Interface text always follows the system font.",
+            ))
+            .build();
+
+        let flow = gtk::FlowBox::new();
+        flow.set_selection_mode(gtk::SelectionMode::None);
+        flow.set_column_spacing(6);
+        flow.set_row_spacing(6);
+        flow.set_max_children_per_line(4);
+        flow.set_homogeneous(true);
+
+        let current = self.imp().settings.string("writing-font").to_string();
+        let mut cards: Vec<(String, gtk::ToggleButton)> = Vec::new();
+        for (value, name, subtitle, sample_class) in [
+            (
+                "serif",
+                gettextrs::gettext("Serif"),
+                gettextrs::gettext("Source Serif 4 · bundled"),
+                "font-sample-serif",
+            ),
+            (
+                "sans",
+                gettextrs::gettext("Sans"),
+                gettextrs::gettext("System document font"),
+                "font-sample-sans",
+            ),
+            (
+                "mono",
+                gettextrs::gettext("Mono"),
+                gettextrs::gettext("System monospace font"),
+                "font-sample-mono",
+            ),
+            (
+                "custom",
+                gettextrs::gettext("Custom…"),
+                gettextrs::gettext("Any installed font"),
+                "font-sample-serif",
+            ),
+        ] {
+            let button = gtk::ToggleButton::new();
+            button.set_hexpand(true);
+            button.add_css_class("font-card");
+            button.set_active(current == value);
+            let content = gtk::Box::new(gtk::Orientation::Vertical, 2);
+            content.set_margin_top(9);
+            content.set_margin_bottom(9);
+            content.set_margin_start(9);
+            content.set_margin_end(9);
+            let sample = gtk::Label::new(Some("Aa"));
+            sample.add_css_class("font-sample");
+            sample.add_css_class(sample_class);
+            sample.set_xalign(0.0);
+            content.append(&sample);
+            let title = gtk::Label::new(Some(&name));
+            title.set_xalign(0.0);
+            title.add_css_class("heading");
+            content.append(&title);
+            let note = gtk::Label::new(Some(&subtitle));
+            note.set_xalign(0.0);
+            note.set_wrap(true);
+            note.add_css_class("dim-label");
+            note.add_css_class("caption");
+            content.append(&note);
+            button.set_child(Some(&content));
+            flow.append(&button);
+            cards.push((value.to_owned(), button));
+        }
+
+        for (value, button) in &cards {
+            let value = value.clone();
+            let cards = cards.clone();
+            let window = self.clone();
+            button.connect_clicked(move |button| {
+                if !button.is_active() {
+                    return;
+                }
+                for (_, other) in &cards {
+                    if other != button {
+                        other.set_active(false);
+                    }
+                }
+                if value == "custom" {
+                    window.choose_custom_font();
+                } else {
+                    let _ = window.imp().settings.set_string("writing-font", &value);
+                    window.apply_writing_font();
+                }
+            });
+        }
+        group.add(&flow);
+
+        let preview = gtk::Label::new(Some(
+            "Woke up late for once, nine hours of sleep and no alarm.\n\
+             Marta suggested we take the train to Lecco and just walk along the water until we got hungry.",
+        ));
+        preview.set_wrap(true);
+        preview.set_xalign(0.0);
+        preview.add_css_class("writing-preview");
+        preview.set_margin_top(12);
+        preview.set_margin_bottom(12);
+        preview.set_margin_start(12);
+        preview.set_margin_end(12);
+        let preview_card = gtk::Box::new(gtk::Orientation::Vertical, 0);
+        preview_card.add_css_class("card");
+        preview_card.set_margin_top(6);
+        preview_card.set_margin_bottom(6);
+        preview_card.set_margin_start(6);
+        preview_card.set_margin_end(6);
+        preview_card.append(&preview);
+        group.add(&preview_card);
+
+        group
+    }
+
+    /// Opens a font chooser and stores the chosen family as the custom font
+    /// (the size stays governed by the Text size setting).
+    fn choose_custom_font(&self) {
+        let dialog = gtk::FontDialog::new();
+        let window = self.clone();
+        dialog.choose_font(
+            Some(self),
+            None::<&gtk::pango::FontDescription>,
+            gio::Cancellable::NONE,
+            move |result| {
+                let Ok(font) = result else {
+                    return;
+                };
+                if let Some(family) = font.family() {
+                    let _ = window
+                        .imp()
+                        .settings
+                        .set_string("custom-font", family.as_str());
+                    let _ = window.imp().settings.set_string("writing-font", "custom");
+                    window.apply_writing_font();
+                }
+            },
+        );
+    }
+
+    fn build_spell_row(&self) -> adw::ActionRow {
+        let row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Spell checking"))
+            .subtitle(gettextrs::gettext("Languages from the system dictionaries"))
+            .build();
+        let button = gtk::MenuButton::new();
+        button.set_valign(gtk::Align::Center);
+
+        let provider = libspelling::Provider::default();
+        let languages = provider.list_languages();
+        let mut checks: Vec<(String, gtk::CheckButton)> = Vec::new();
+        let list = gtk::ListBox::new();
+        list.set_selection_mode(gtk::SelectionMode::None);
+        let system = gtk::CheckButton::with_label(&gettextrs::gettext("System default"));
+        system.set_margin_top(6);
+        system.set_margin_bottom(6);
+        system.set_margin_start(6);
+        system.set_margin_end(6);
+        let system_row = gtk::ListBoxRow::new();
+        system_row.set_child(Some(&system));
+        list.append(&system_row);
+        for index in 0..languages.n_items() {
+            let Some(language) = languages
+                .item(index)
+                .and_downcast::<libspelling::Language>()
+            else {
+                continue;
+            };
+            let Some(code) = language.code() else {
+                continue;
+            };
+            let label = language
+                .name()
+                .or_else(|| language.group())
+                .unwrap_or_else(|| code.clone());
+            let check = gtk::CheckButton::with_label(&label);
+            check.set_margin_top(6);
+            check.set_margin_bottom(6);
+            check.set_margin_start(6);
+            check.set_margin_end(6);
+            let list_row = gtk::ListBoxRow::new();
+            list_row.set_child(Some(&check));
+            list.append(&list_row);
+            checks.push((code.to_string(), check));
+        }
+        let checks = Rc::new(checks);
+        let loading = Rc::new(Cell::new(false));
+
+        let stored = self.imp().settings.string("spell-languages").to_string();
+        if stored.is_empty() {
+            system.set_active(true);
+        } else {
+            for (code, check) in checks.iter() {
+                if stored.split(',').any(|part| part == code) {
+                    check.set_active(true);
+                }
+            }
+        }
+        update_spell_label(&button, &stored, &checks);
+
+        let refresh = {
+            let window = self.clone();
+            let refresh_checks = checks.clone();
+            let loading = loading.clone();
+            let button = button.clone();
+            let system = system.clone();
+            Rc::new(move || {
+                if loading.get() {
+                    return;
+                }
+                loading.set(true);
+                if system.is_active() {
+                    for (_, check) in refresh_checks.iter() {
+                        check.set_active(false);
+                    }
+                }
+                let mut codes: Vec<String> = refresh_checks
+                    .iter()
+                    .filter(|(_, check)| check.is_active())
+                    .map(|(code, _)| code.clone())
+                    .collect();
+                if system.is_active() || codes.is_empty() {
+                    system.set_active(true);
+                } else {
+                    system.set_active(false);
+                }
+                codes.sort();
+                let joined = codes.join(",");
+                let _ = window.imp().settings.set_string("spell-languages", &joined);
+                window.apply_spell_languages();
+                update_spell_label(&button, &joined, &refresh_checks);
+                loading.set(false);
+            })
+        };
+        for (_, check) in checks.iter() {
+            let refresh = refresh.clone();
+            check.connect_toggled(move |_| refresh());
+        }
+        {
+            let refresh = refresh.clone();
+            system.connect_toggled(move |_| refresh());
+        }
+
+        let scrolled = gtk::ScrolledWindow::builder()
+            .child(&list)
+            .min_content_height(260)
+            .min_content_width(240)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .build();
+        let popover = gtk::Popover::new();
+        popover.set_child(Some(&scrolled));
+        button.set_popover(Some(&popover));
+        row.add_suffix(&button);
+        row
+    }
+
+    fn build_behavior_group(&self) -> adw::PreferencesGroup {
+        let group = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Behavior"))
+            .build();
+
+        let new_types = gtk::StringList::new(&[
+            &gettextrs::gettext("Journal page"),
+            &gettextrs::gettext("Before 10:00 Dream, then Journal page"),
+        ]);
+        let new_row = adw::ComboRow::builder()
+            .title(gettextrs::gettext("New entry type"))
+            .model(&new_types)
+            .build();
+        new_row.set_selected(
+            if self.imp().settings.string("new-entry-type") == "dream-before-10" {
+                1
+            } else {
+                0
+            },
+        );
+        {
+            let window = self.clone();
+            new_row.connect_selected_notify(move |row| {
+                let value = if row.selected() == 1 {
+                    "dream-before-10"
+                } else {
+                    "journal"
+                };
+                let _ = window.imp().settings.set_string("new-entry-type", value);
+            });
+        }
+        group.add(&new_row);
+
+        let end_values: Vec<String> = (0..=12)
+            .map(|step| {
+                let hours = step / 2;
+                let minutes = (step % 2) * 30;
+                format!("{hours:02}:{minutes:02}")
+            })
+            .collect();
+        let end_list =
+            gtk::StringList::new(&end_values.iter().map(String::as_str).collect::<Vec<_>>());
+        let end_row = adw::ComboRow::builder()
+            .title(gettextrs::gettext("A day ends at"))
+            .subtitle(gettextrs::gettext(
+                "Entries written before this time count for the previous day",
+            ))
+            .model(&end_list)
+            .build();
+        let day_end = {
+            let vault = self.imp().vault.borrow();
+            vault.as_ref().and_then(|vault| vault.day_end().ok())
+        };
+        if let Some((hours, minutes)) = day_end {
+            let index = u32::from(hours) * 2 + u32::from(minutes) / 30;
+            end_row.set_selected(index.min(12));
+        }
+        end_row.set_sensitive(!self.imp().read_only.get() && day_end.is_some());
+        {
+            let window = self.clone();
+            end_row.connect_selected_notify(move |row| {
+                let selected = row.selected();
+                let hours = (selected / 2) as u8;
+                let minutes = ((selected % 2) * 30) as u8;
+                let saved = {
+                    let mut vault = window.imp().vault.borrow_mut();
+                    match vault.as_mut() {
+                        Some(vault) => vault.set_day_end((hours, minutes)).is_ok(),
+                        None => false,
+                    }
+                };
+                if saved {
+                    window.refresh();
+                }
+            });
+        }
+        group.add(&end_row);
+
+        group
     }
 
     fn setup_breakpoints(&self) {
@@ -2870,6 +3421,29 @@ impl QuadernoWindow {
         if idle >= Duration::from_secs(minutes as u64 * 60) {
             self.lock();
         }
+    }
+}
+
+/// The label of the spell-checking menu button: the stored languages' names,
+/// or "System default".
+fn update_spell_label(
+    button: &gtk::MenuButton,
+    stored: &str,
+    checks: &[(String, gtk::CheckButton)],
+) {
+    if stored.is_empty() {
+        button.set_label(&gettextrs::gettext("System default"));
+        return;
+    }
+    let names: Vec<String> = checks
+        .iter()
+        .filter(|(code, _)| stored.split(',').any(|part| part == code))
+        .filter_map(|(_, check)| check.label().map(|label| label.to_string()))
+        .collect();
+    if names.is_empty() {
+        button.set_label(&gettextrs::gettext("System default"));
+    } else {
+        button.set_label(&names.join(", "));
     }
 }
 

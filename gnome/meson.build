@@ -43,6 +43,7 @@ custom_target('quaderno',
     'src/window.rs',
     'ui/quaderno-window.blp',
     'ui/quaderno.gresource.xml',
+    'ui/help-overlay.ui',
   ),
   command: [
     cargo_build,

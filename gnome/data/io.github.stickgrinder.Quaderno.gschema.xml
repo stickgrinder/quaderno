@@ -32,5 +32,40 @@
       <summary>Lock when the session locks</summary>
       <description>Whether locking the session also locks the vault.</description>
     </key>
+    <key name="writing-font" type="s">
+      <default>'serif'</default>
+      <summary>Writing font</summary>
+      <description>Which font the entry editor uses: serif, sans, mono or custom.</description>
+    </key>
+    <key name="custom-font" type="s">
+      <default>''</default>
+      <summary>Custom writing font</summary>
+      <description>A Pango font description used when the writing font is custom.</description>
+    </key>
+    <key name="text-size" type="i">
+      <default>19</default>
+      <summary>Entry text size</summary>
+      <description>Entry text size in points, between 14 and 26.</description>
+    </key>
+    <key name="line-width" type="s">
+      <default>'comfortable'</default>
+      <summary>Line width</summary>
+      <description>Editor text column width: narrow, comfortable or wide.</description>
+    </key>
+    <key name="spell-languages" type="s">
+      <default>''</default>
+      <summary>Spell checking languages</summary>
+      <description>Comma-separated spell checking language codes; empty follows the system default.</description>
+    </key>
+    <key name="new-entry-type" type="s">
+      <default>'journal'</default>
+      <summary>New entry type</summary>
+      <description>What the New button creates: journal, or a dream before 10:00 and a journal page after.</description>
+    </key>
+    <key name="markdown-symbols" type="s">
+      <default>'dimmed'</default>
+      <summary>Markdown symbols</summary>
+      <description>How Markdown syntax characters are shown; version 1.0 offers only dimmed.</description>
+    </key>
   </schema>
 </schemalist>

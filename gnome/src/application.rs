@@ -16,13 +16,17 @@ pub const APP_ID: &str = "io.github.stickgrinder.Quaderno";
 
 /// Builds the application.
 pub fn build() -> adw::Application {
+    // Register the GResource before the app runs: GtkApplication checks for the
+    // `gtk/help-overlay.ui` resource during its own startup, which runs before
+    // the `startup` signal handlers below.
+    register_resources();
+
     let app = adw::Application::builder()
         .application_id(APP_ID)
         .resource_base_path("/io/github/stickgrinder/Quaderno")
         .build();
 
     app.connect_startup(|_| {
-        register_resources();
         register_css();
     });
 
@@ -73,6 +77,7 @@ pub fn build() -> adw::Application {
                 ("win.bold", vec!["<Control>b"]),
                 ("win.italic", vec!["<Control>i"]),
                 ("win.toggle-details", vec!["<Control><Shift>i"]),
+                ("win.preferences", vec!["<Control>comma"]),
             ] {
                 app.set_accels_for_action(action, &accels);
             }

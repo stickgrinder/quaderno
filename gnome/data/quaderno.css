@@ -35,3 +35,17 @@
 .color-gray { background-color: #9a9996; }
 .color-black { background-color: #241f31; }
 .color-white { background-color: #ffffff; }
+
+/* Writing-font choice cards and their sample glyphs (Preferences, General). */
+.font-card {
+  padding: 0;
+  border-radius: 12px;
+}
+
+.font-sample {
+  font-size: 28px;
+}
+
+.font-sample-serif { font-family: "Source Serif 4", serif; }
+.font-sample-sans { font-family: sans-serif; }
+.font-sample-mono { font-family: monospace; }

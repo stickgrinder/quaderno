@@ -7,4 +7,7 @@
     <file>styles/quaderno.xml</file>
     <file>styles/quaderno-dark.xml</file>
   </gresource>
+  <gresource prefix="/io/github/stickgrinder/Quaderno/gtk">
+    <file>help-overlay.ui</file>
+  </gresource>
 </gresources>
