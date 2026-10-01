@@ -122,10 +122,10 @@ deleted note" if the note was deleted), with a link back.
 
 `AdwPreferencesDialog`, three `AdwPreferencesPage`s: General, Entries, Privacy & data (artboards PrefsWriting, PrefsLists, PrefsGeneral).
 
-- Font choice: four selectable cards in a `GtkFlowBox` + live preview label; size `AdwSpinRow`; line width `AdwToggleGroup`; spell checking `AdwComboRow`; default entry type `AdwComboRow`; day end `AdwComboRow` (00:00–06:00 in 30-minute steps).
+- Font choice: four selectable cards in a `GtkFlowBox` + live preview label; size `AdwSpinRow`; line width `AdwToggleGroup` (a fraction of the editor width, so the choice always takes effect); spell checking a `GtkMenuButton` whose popover lists the installed dictionaries as check buttons (stored as a comma-separated list); default entry type `AdwComboRow`; day end `AdwComboRow` (00:00–06:00 in 30-minute steps).
 - Lists: `AdwPreferencesGroup` per kind; rows with drag handle, icon button (opens the icon picker popover), title (translated or custom label), subtitle ("Used in N entries" / "Hidden"), rename and hide buttons. Rename opens an `AdwAlertDialog` with an entry and a "Reset to default name" response for defaults.
 - Icon picker: `GtkPopover` with `GtkSearchEntry`, a "Matching icons" `GtkGridView`, then "All icons" by category.
-- Privacy & data: `AdwSwitchRow`s, `AdwSpinRow` for auto-lock minutes, `AdwButtonRow`s for Change passphrase…, Back up now…, Export…; journal file `AdwActionRow` with "Move…".
+- Privacy & data: Remember passphrase (asks for it when enabling, then stores it in the keyring), Lock after (`AdwComboRow`), Lock when the session locks, Change passphrase… (asks for the current and new passphrase), journal file `AdwActionRow` with "Move…". Backups and export are M7.
 
 ### 3.10 Dialogs
 

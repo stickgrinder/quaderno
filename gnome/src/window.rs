@@ -2148,13 +2148,6 @@ impl QuadernoWindow {
 
     // ---- preferences (M6, General page) ---------------------------------
 
-    fn present_preferences(&self) {
-        let dialog = adw::PreferencesDialog::new();
-        dialog.set_title(&gettextrs::gettext("Preferences"));
-        dialog.add(&self.build_general_page());
-        dialog.present(Some(self));
-    }
-
     fn present_about(&self) {
         let about = adw::AboutDialog::builder()
             .application_name("Quaderno")
@@ -2590,6 +2583,437 @@ impl QuadernoWindow {
         group.add(&end_row);
 
         group
+    }
+
+    fn present_preferences(&self) {
+        let dialog = adw::PreferencesDialog::new();
+        dialog.set_title(&gettextrs::gettext("Preferences"));
+        dialog.add(&self.build_general_page());
+        dialog.add(&self.build_privacy_page());
+        dialog.present(Some(self));
+    }
+
+    fn build_privacy_page(&self) -> adw::PreferencesPage {
+        let page = adw::PreferencesPage::new();
+        page.set_title(&gettextrs::gettext("Privacy & data"));
+        page.set_icon_name(Some("security-high-symbolic"));
+
+        // Unlocking.
+        let unlocking = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Unlocking"))
+            .build();
+
+        let remember = adw::SwitchRow::builder()
+            .title(gettextrs::gettext("Remember passphrase on this device"))
+            .subtitle(gettextrs::gettext(
+                "Stored in GNOME Keyring; the journal opens without asking",
+            ))
+            .build();
+        let loading = Rc::new(Cell::new(true));
+        if let (Some(path), Some(keyring)) = (self.imp().path.borrow().clone(), self.keyring()) {
+            let remember = remember.clone();
+            let loading = loading.clone();
+            let keyring_available = keyring.available();
+            glib::spawn_future_local(async move {
+                if !matches!(keyring_available.await, Ok(true)) {
+                    remember.set_sensitive(false);
+                    remember.set_subtitle(&gettextrs::gettext(
+                        "No keyring is available on this device",
+                    ));
+                    loading.set(false);
+                    return;
+                }
+                if let Ok(Ok(Some(_))) = keyring.lookup(path.to_string_lossy().into_owned()).await {
+                    remember.set_active(true);
+                }
+                loading.set(false);
+            });
+        } else {
+            remember.set_sensitive(false);
+            loading.set(false);
+        }
+        {
+            let window = self.clone();
+            let loading = loading.clone();
+            remember.connect_active_notify(move |row| {
+                if loading.get() {
+                    return;
+                }
+                let keyring = window.keyring();
+                let path = window.imp().path.borrow().clone();
+                if row.is_active() {
+                    let row = row.clone();
+                    let keyring = keyring.clone();
+                    let path = path.clone();
+                    window.prompt_passphrase(
+                        gettextrs::gettext("Remember passphrase"),
+                        gettextrs::gettext(
+                            "Enter the passphrase to store it in GNOME Keyring. The journal will open without asking on this device.",
+                        ),
+                        Rc::new(move |passphrase| {
+                            if let (Some(keyring), Some(path)) = (keyring.clone(), path.clone()) {
+                                let stored = keyring.store(
+                                    path.to_string_lossy().into_owned(),
+                                    Zeroizing::new(passphrase.into_bytes()),
+                                );
+                                let row = row.clone();
+                                glib::spawn_future_local(async move {
+                                    if !matches!(stored.await, Ok(Ok(()))) {
+                                        row.set_active(false);
+                                    }
+                                });
+                            }
+                        }),
+                    );
+                } else if let (Some(keyring), Some(path)) = (keyring.clone(), path.clone()) {
+                    let receiver = keyring.delete(path.to_string_lossy().into_owned());
+                    glib::spawn_future_local(async move {
+                        let _ = receiver.await;
+                    });
+                }
+            });
+        }
+        unlocking.add(&remember);
+
+        let lock_minutes = [0, 1, 2, 5, 10, 15, 30, 60];
+        let lock_labels: Vec<String> = lock_minutes.iter().map(|m| lock_label(*m)).collect();
+        let lock_list =
+            gtk::StringList::new(&lock_labels.iter().map(String::as_str).collect::<Vec<_>>());
+        let lock_row = adw::ComboRow::builder()
+            .title(gettextrs::gettext("Lock after"))
+            .model(&lock_list)
+            .build();
+        let current_minutes = self.imp().settings.int("auto-lock-minutes");
+        let index = lock_minutes
+            .iter()
+            .position(|m| *m == current_minutes)
+            .unwrap_or(3);
+        lock_row.set_selected(index as u32);
+        {
+            let settings = self.imp().settings.clone();
+            lock_row.connect_selected_notify(move |row| {
+                if let Some(minutes) = lock_minutes.get(row.selected() as usize) {
+                    let _ = settings.set_int("auto-lock-minutes", *minutes);
+                }
+            });
+        }
+        unlocking.add(&lock_row);
+
+        let session_lock = adw::SwitchRow::builder()
+            .title(gettextrs::gettext("Lock when the session locks"))
+            .build();
+        session_lock.set_active(self.imp().settings.boolean("lock-on-session-lock"));
+        {
+            let settings = self.imp().settings.clone();
+            session_lock.connect_active_notify(move |row| {
+                let _ = settings.set_boolean("lock-on-session-lock", row.is_active());
+            });
+        }
+        unlocking.add(&session_lock);
+
+        let passphrase_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Passphrase"))
+            .subtitle(gettextrs::gettext(
+                "The journal is always encrypted. A forgotten passphrase cannot be recovered.",
+            ))
+            .build();
+        let change_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Change…"))
+            .valign(gtk::Align::Center)
+            .build();
+        {
+            let window = self.clone();
+            change_button.connect_clicked(move |_| window.present_change_passphrase());
+        }
+        passphrase_row.add_suffix(&change_button);
+        unlocking.add(&passphrase_row);
+        page.add(&unlocking);
+
+        // Data.
+        let data = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Data"))
+            .build();
+        let file_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Journal file"))
+            .build();
+        if let Some(path) = self.imp().path.borrow().clone() {
+            file_row.set_subtitle(&pretty_path(&path));
+        }
+        let move_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Move…"))
+            .valign(gtk::Align::Center)
+            .build();
+        {
+            let window = self.clone();
+            move_button.connect_clicked(move |_| window.present_move_vault());
+        }
+        file_row.add_suffix(&move_button);
+        data.add(&file_row);
+        page.add(&data);
+
+        page
+    }
+
+    /// Shows a one-field dialog asking for the vault passphrase.
+    fn prompt_passphrase(&self, title: String, body: String, action: Rc<dyn Fn(String)>) {
+        let dialog = adw::AlertDialog::new(Some(&title), Some(&body));
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("confirm", &gettextrs::gettext("Continue"));
+        dialog.set_response_appearance("confirm", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("confirm"));
+        dialog.set_close_response("cancel");
+
+        let entry = adw::PasswordEntryRow::new();
+        entry.set_title(&gettextrs::gettext("Passphrase"));
+        let group = adw::PreferencesGroup::new();
+        group.add(&entry);
+        dialog.set_extra_child(Some(&group));
+        dialog.set_response_enabled("confirm", false);
+        {
+            let dialog = dialog.clone();
+            entry.connect_changed(move |entry| {
+                dialog.set_response_enabled("confirm", !entry.text().is_empty());
+            });
+        }
+        dialog.connect_response(None, move |_, response| {
+            if response == "confirm" {
+                action(entry.text().to_string());
+            }
+        });
+        dialog.present(Some(self));
+    }
+
+    fn present_change_passphrase(&self) {
+        let dialog = adw::AlertDialog::new(
+            Some(&gettextrs::gettext("Change passphrase")),
+            Some(&gettextrs::gettext(
+                "The journal is rebuilt with the new passphrase. A forgotten passphrase cannot be recovered.",
+            )),
+        );
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("change", &gettextrs::gettext("Change"));
+        dialog.set_response_appearance("change", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("change"));
+        dialog.set_close_response("cancel");
+
+        let current = adw::PasswordEntryRow::new();
+        current.set_title(&gettextrs::gettext("Current passphrase"));
+        let new = adw::PasswordEntryRow::new();
+        new.set_title(&gettextrs::gettext("New passphrase"));
+        let repeat = adw::PasswordEntryRow::new();
+        repeat.set_title(&gettextrs::gettext("Repeat new passphrase"));
+        let group = adw::PreferencesGroup::new();
+        group.add(&current);
+        group.add(&new);
+        group.add(&repeat);
+        dialog.set_extra_child(Some(&group));
+        dialog.set_response_enabled("change", false);
+        let update: Rc<dyn Fn()> = {
+            let dialog = dialog.clone();
+            let current = current.clone();
+            let new = new.clone();
+            let repeat = repeat.clone();
+            Rc::new(move || {
+                let valid = new.text().chars().count() >= crate::state::MIN_PASSPHRASE_CHARS
+                    && new.text() == repeat.text()
+                    && !current.text().is_empty();
+                dialog.set_response_enabled("change", valid);
+            })
+        };
+        {
+            let update = update.clone();
+            current.connect_changed(move |_| update());
+        }
+        {
+            let update = update.clone();
+            new.connect_changed(move |_| update());
+        }
+        repeat.connect_changed(move |_| update());
+        {
+            let window = self.clone();
+            let current = current.clone();
+            let new = new.clone();
+            dialog.connect_response(None, move |_, response| {
+                if response == "change" {
+                    window.change_passphrase(current.text().to_string(), new.text().to_string());
+                }
+            });
+        }
+        dialog.present(Some(self));
+    }
+
+    /// Changes the passphrase: validate the current one, rebuild the file, update
+    /// the keyring, reopen (vault-spec §2.4).
+    fn change_passphrase(&self, current: String, new: String) {
+        let Some(path) = self.imp().path.borrow().clone() else {
+            return;
+        };
+        self.depart_current();
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let valid = gio::spawn_blocking({
+                let path = path.clone();
+                let current = current.clone();
+                move || Vault::validate(&path, &current).is_ok()
+            })
+            .await
+            .unwrap_or(false);
+            if !valid {
+                window.toast(&gettextrs::gettext("Wrong passphrase."));
+                return;
+            }
+
+            // Close the open connection before the file is rebuilt.
+            let _ = window.imp().vault.borrow_mut().take();
+
+            let outcome = gio::spawn_blocking({
+                let path = path.clone();
+                let current = current.clone();
+                let new = new.clone();
+                move || Vault::change_passphrase(&path, &current, &new)
+            })
+            .await;
+            let passphrase = if matches!(outcome, Ok(Ok(()))) {
+                new
+            } else {
+                window.toast(&gettextrs::gettext("The passphrase could not be changed."));
+                current
+            };
+
+            // Update the keyring entry, if any, to the passphrase now in force.
+            // Reopen first, so a slow or unavailable keyring never stalls the UI.
+            let reopened = gio::spawn_blocking({
+                let path = path.clone();
+                let passphrase = passphrase.clone();
+                move || Vault::open(&path, &passphrase)
+            })
+            .await;
+            match reopened {
+                Ok(Ok(vault)) => {
+                    let access = vault.access();
+                    window.imp().vault.replace(Some(vault));
+                    window.show_main(access);
+                    window.toast(&gettextrs::gettext("Passphrase changed"));
+                    if let Some(keyring) = window.keyring() {
+                        let key = path.to_string_lossy().into_owned();
+                        glib::spawn_future_local(async move {
+                            if let Ok(Ok(Some(_))) = keyring.lookup(key.clone()).await {
+                                let stored =
+                                    keyring.store(key, Zeroizing::new(passphrase.into_bytes()));
+                                let _ = stored.await;
+                            }
+                        });
+                    }
+                }
+                _ => window.show_error(&gettextrs::gettext("The journal could not be reopened.")),
+            }
+        });
+    }
+
+    fn present_move_vault(&self) {
+        if self.imp().path.borrow().is_none() {
+            return;
+        }
+        let dialog = gtk::FileDialog::builder()
+            .title(gettextrs::gettext("Move journal file"))
+            .initial_name("journal.quaderno")
+            .build();
+        let window = self.clone();
+        dialog.save(Some(self), gio::Cancellable::NONE, move |result| {
+            if let Ok(file) = result
+                && let Some(dest) = file.path()
+            {
+                let dest = dest.clone();
+                let caller = window.clone();
+                caller.prompt_passphrase(
+                    gettextrs::gettext("Move journal file"),
+                    gettextrs::gettext(
+                        "Enter the passphrase to verify the copy before the journal is moved.",
+                    ),
+                    Rc::new(move |passphrase| window.clone().move_vault(dest.clone(), passphrase)),
+                );
+            }
+        });
+    }
+
+    /// Copies the vault to `dest`, verifies the copy, removes the original and
+    /// reopens at the new path (product spec §8).
+    fn move_vault(&self, dest: PathBuf, passphrase: String) {
+        let Some(old) = self.imp().path.borrow().clone() else {
+            return;
+        };
+        self.depart_current();
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let moved = gio::spawn_blocking({
+                let old = old.clone();
+                let dest = dest.clone();
+                let passphrase = passphrase.clone();
+                move || {
+                    let vault = Vault::open(&old, &passphrase)?;
+                    let temporary = dest.with_extension("quaderno-moving");
+                    let result = (|| {
+                        vault.backup(&temporary, &passphrase)?;
+                        Vault::validate(&temporary, &passphrase)?;
+                        std::fs::rename(&temporary, &dest)
+                            .map_err(|error| VaultError::io(dest.clone(), error))?;
+                        std::fs::remove_file(&old)
+                            .map_err(|error| VaultError::io(old.clone(), error))?;
+                        Ok::<(), VaultError>(())
+                    })();
+                    if result.is_err() {
+                        let _ = std::fs::remove_file(&temporary);
+                    }
+                    result
+                }
+            })
+            .await;
+            if !matches!(moved, Ok(Ok(()))) {
+                window.toast(&gettextrs::gettext("The journal could not be moved."));
+                return;
+            }
+
+            // The old connection now points at a removed file; reopen the copy
+            // first so a slow keyring never stalls the UI.
+            let _ = window.imp().vault.borrow_mut().take();
+            let _ = window
+                .imp()
+                .settings
+                .set_string("vault-path", &dest.to_string_lossy());
+
+            let reopened = gio::spawn_blocking({
+                let dest = dest.clone();
+                let passphrase = passphrase.clone();
+                move || Vault::open(&dest, &passphrase)
+            })
+            .await;
+            match reopened {
+                Ok(Ok(vault)) => {
+                    let access = vault.access();
+                    window.imp().path.replace(Some(dest.clone()));
+                    window.imp().vault.replace(Some(vault));
+                    window.show_main(access);
+                    window.toast(&gettextrs::gettext("Journal moved"));
+                    if let Some(keyring) = window.keyring() {
+                        let old_key = old.to_string_lossy().into_owned();
+                        let new_key = dest.to_string_lossy().into_owned();
+                        glib::spawn_future_local(async move {
+                            if let Ok(Ok(Some(_))) = keyring.lookup(old_key.clone()).await {
+                                let stored =
+                                    keyring.store(new_key, Zeroizing::new(passphrase.into_bytes()));
+                                let _ = stored.await;
+                            }
+                            let _ = keyring.delete(old_key).await;
+                        });
+                    }
+                }
+                _ => window.show_error(&gettextrs::gettext("The journal could not be reopened.")),
+            }
+        });
+    }
+
+    fn toast(&self, message: &str) {
+        self.imp().toast_overlay.add_toast(adw::Toast::new(message));
     }
 
     fn setup_breakpoints(&self) {
@@ -3448,6 +3872,29 @@ impl QuadernoWindow {
         if idle >= Duration::from_secs(minutes as u64 * 60) {
             self.lock();
         }
+    }
+}
+
+/// The label of an auto-lock duration.
+fn lock_label(minutes: i32) -> String {
+    match minutes {
+        0 => gettextrs::gettext("Never"),
+        1 => gettextrs::gettext("1 minute"),
+        60 => gettextrs::gettext("1 hour"),
+        minutes => gettextrs::ngettext("{n} minute", "{n} minutes", minutes as u32)
+            .replace("{n}", &minutes.to_string()),
+    }
+}
+
+/// A path with the home directory shortened to `~`.
+fn pretty_path(path: &std::path::Path) -> String {
+    let text = path.to_string_lossy();
+    match glib::home_dir().to_str() {
+        Some(home) => match text.strip_prefix(home) {
+            Some(rest) => format!("~{rest}"),
+            None => text.into_owned(),
+        },
+        None => text.into_owned(),
     }
 }
 
