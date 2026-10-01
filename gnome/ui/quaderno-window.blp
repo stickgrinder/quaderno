@@ -197,13 +197,13 @@ template $QuadernoWindow: Adw.ApplicationWindow {
             min-sidebar-width: 280;
             max-sidebar-width: 440;
 
-            sidebar: Adw.NavigationPage {
+            sidebar: Adw.NavigationPage list_page {
               title: _("Timeline");
 
               child: Adw.ToolbarView {
               [top]
               Adw.HeaderBar {
-                title-widget: Adw.WindowTitle {
+                title-widget: Adw.WindowTitle list_title {
                   title: _("Timeline");
                 };
 
@@ -221,9 +221,9 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                 }
 
                 [end]
-                Gtk.Button new_button {
+                Adw.SplitButton new_button {
                   icon-name: "list-add-symbolic";
-                  tooltip-text: _("New journal page");
+                  tooltip-text: _("New");
                   styles ["suggested-action"]
                 }
               }
@@ -243,19 +243,45 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                   margin-bottom: 6;
 
                   Adw.Toggle filter_all {
+                    name: "all";
                     label: _("All");
                   }
 
                   Adw.Toggle filter_journal {
+                    name: "journal";
                     label: _("Journal");
                   }
 
                   Adw.Toggle filter_dreams {
+                    name: "dreams";
                     label: _("Dreams");
                   }
 
                   Adw.Toggle filter_notes {
+                    name: "notes";
                     label: _("Notes");
+                  }
+                }
+
+                Adw.ToggleGroup notes_filter_group {
+                  visible: false;
+                  margin-start: 6;
+                  margin-end: 6;
+                  margin-bottom: 6;
+
+                  Adw.Toggle note_filter_open {
+                    name: "open";
+                    label: _("Open");
+                  }
+
+                  Adw.Toggle note_filter_expanded {
+                    name: "expanded";
+                    label: _("Expanded");
+                  }
+
+                  Adw.Toggle note_filter_all {
+                    name: "all";
+                    label: _("All");
                   }
                 }
 
@@ -299,9 +325,32 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                   [top]
                   Adw.HeaderBar {
                     [start]
-                    Gtk.Label type_badge {
-                      label: _("Journal page");
-                      styles ["dim-label", "caption"]
+                    Gtk.Box {
+                      orientation: horizontal;
+                      spacing: 6;
+
+                      Gtk.Label type_badge {
+                        label: _("Journal page");
+                        styles ["dim-label", "caption"]
+                      }
+
+                      Gtk.Box flags_box {
+                        orientation: horizontal;
+                        spacing: 6;
+                        visible: false;
+
+                        Gtk.ToggleButton flag_lucid {
+                          styles ["pill"]
+                        }
+
+                        Gtk.ToggleButton flag_nightmare {
+                          styles ["pill"]
+                        }
+
+                        Gtk.ToggleButton flag_recurring {
+                          styles ["pill"]
+                        }
+                      }
                     }
 
                     title-widget: Gtk.MenuButton date_button {
@@ -358,6 +407,13 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                     }
 
                     [end]
+                    Adw.SplitButton expand_button {
+                      visible: false;
+                      label: _("Expand into entry");
+                      tooltip-text: _("Expand into entry");
+                    }
+
+                    [end]
                     Gtk.MenuButton entry_menu {
                       icon-name: "view-more-symbolic";
                       tooltip-text: _("Entry Menu");
@@ -378,6 +434,30 @@ template $QuadernoWindow: Adw.ApplicationWindow {
 
                     Adw.Banner backdated_banner {
                       revealed: false;
+                    }
+
+                    Adw.Banner source_banner {
+                      revealed: false;
+                    }
+
+                    Gtk.Box expanded_card {
+                      visible: false;
+                      orientation: vertical;
+                      spacing: 6;
+                      margin-top: 6;
+                      margin-start: 12;
+                      margin-end: 12;
+                      styles ["card"]
+                    }
+
+                    Gtk.Box note_info_card {
+                      visible: false;
+                      orientation: horizontal;
+                      spacing: 8;
+                      margin-top: 6;
+                      margin-start: 12;
+                      margin-end: 12;
+                      styles ["card"]
                     }
 
                     Gtk.ScrolledWindow editor_scroll {

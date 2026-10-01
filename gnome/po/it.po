@@ -254,3 +254,16 @@ msgstr "Nero"
 msgctxt "color"
 msgid "White"
 msgstr "Bianco"
+
+# Dream flags (vault-spec/format.md Appendix B), context = dream_flag.
+msgctxt "dream_flag"
+msgid "Lucid"
+msgstr "Lucido"
+
+msgctxt "dream_flag"
+msgid "Nightmare"
+msgstr "Incubo"
+
+msgctxt "dream_flag"
+msgid "Recurring"
+msgstr "Ricorrente"

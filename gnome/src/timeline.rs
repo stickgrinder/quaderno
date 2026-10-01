@@ -4,6 +4,7 @@
 
 use jiff::civil::Date;
 use quaderno_vault::{Entry, EntryType};
+use std::collections::HashSet;
 use unicode_normalization::{UnicodeNormalization, char::is_combining_mark};
 use uuid::Uuid;
 
@@ -41,8 +42,8 @@ pub struct EntrySummary {
     pub excerpt: String,
     /// The editorial date.
     pub dated_at: jiff::Zoned,
-    /// The first tag linked to the entry, if any.
-    pub first_tag: Option<String>,
+    /// The tags linked to the entry, in name order.
+    pub tags: Vec<String>,
     /// The entry type (used for the filter chips soon).
     pub entry_type: EntryType,
 }
@@ -59,17 +60,13 @@ pub struct DayGroup {
 }
 
 /// Builds the list model: groups entries by journal day, newest first.
-pub fn group(
-    entries: Vec<(Entry, Option<String>)>,
-    day_end: (u8, u8),
-    today: Date,
-) -> Vec<DayGroup> {
+pub fn group(entries: Vec<(Entry, Vec<String>)>, day_end: (u8, u8), today: Date) -> Vec<DayGroup> {
     let mut rows: Vec<(Date, EntrySummary)> = entries
         .into_iter()
-        .map(|(entry, tag)| {
+        .map(|(entry, tags)| {
             let day = quaderno_vault::time::journal_day(&entry.dated_at, day_end)
                 .unwrap_or_else(|_| entry.dated_at.date());
-            (day, summarize(entry, tag))
+            (day, summarize(entry, tags))
         })
         .collect();
     rows.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| b.1.dated_at.cmp(&a.1.dated_at)));
@@ -90,16 +87,71 @@ pub fn group(
     groups
 }
 
-fn summarize(entry: Entry, first_tag: Option<String>) -> EntrySummary {
+fn summarize(entry: Entry, tags: Vec<String>) -> EntrySummary {
     let (title, excerpt) = title_and_excerpt(&entry.content);
     EntrySummary {
         id: entry.id,
         title,
         excerpt,
         dated_at: entry.dated_at,
-        first_tag,
+        tags,
         entry_type: entry.entry_type,
     }
+}
+
+/// The quick-notes sub-filter (ui-spec §3.7).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NoteFilter {
+    /// Notes with no live expanded entry.
+    Open,
+    /// Notes with at least one live expanded entry.
+    Expanded,
+    /// Every note.
+    All,
+}
+
+/// Whether a note passes the Open / Expanded / All filter.
+pub fn note_passes(id: Uuid, expanded: &HashSet<Uuid>, filter: NoteFilter) -> bool {
+    match filter {
+        NoteFilter::All => true,
+        NoteFilter::Open => !expanded.contains(&id),
+        NoteFilter::Expanded => expanded.contains(&id),
+    }
+}
+
+/// Builds the quick-notes list: notes only, newest first, with no day grouping
+/// (ui-spec §3.7). `expanded` holds the notes that have a live expanded entry.
+pub fn note_list(
+    entries: Vec<(Entry, Vec<String>)>,
+    expanded: &HashSet<Uuid>,
+    filter: NoteFilter,
+) -> Vec<EntrySummary> {
+    let mut notes: Vec<EntrySummary> = entries
+        .into_iter()
+        .filter(|(entry, _)| entry.entry_type == EntryType::Note)
+        .filter(|(entry, _)| note_passes(entry.id, expanded, filter))
+        .map(|(entry, tags)| summarize(entry, tags))
+        .collect();
+    notes.sort_by(|a, b| b.dated_at.cmp(&a.dated_at));
+    notes
+}
+
+/// A note row's dim footer date: "Today, 09:12", "Yesterday, 18:40" or
+/// "Tue 22 Sep, 08:02" (ui-spec §3.7).
+pub fn note_date_label(dated_at: &jiff::Zoned, today: Date) -> String {
+    let date = dated_at.date();
+    let time = dated_at.strftime("%H:%M");
+    if date == today {
+        return format!("{}, {time}", gettextrs::gettext("Today"));
+    }
+    if today
+        .yesterday()
+        .map(|yesterday| yesterday == date)
+        .unwrap_or(false)
+    {
+        return format!("{}, {time}", gettextrs::gettext("Yesterday"));
+    }
+    format!("{}, {time}", date.strftime("%a %d %b"))
 }
 
 /// The derived title and a short excerpt (product spec §4.2).
@@ -273,10 +325,10 @@ mod tests {
     #[test]
     fn groups_entries_by_journal_day_newest_first() {
         let today = "2026-09-29".parse::<Date>().unwrap();
-        let entries: Vec<(Entry, Option<String>)> = vec![
-            (entry(1, "a", "2026-09-28T22:00:00+02:00"), None),
-            (entry(2, "b", "2026-09-29T01:00:00+02:00"), None), // journal day 28
-            (entry(3, "c", "2026-09-29T09:00:00+02:00"), None), // journal day 29
+        let entries: Vec<(Entry, Vec<String>)> = vec![
+            (entry(1, "a", "2026-09-28T22:00:00+02:00"), Vec::new()),
+            (entry(2, "b", "2026-09-29T01:00:00+02:00"), Vec::new()), // journal day 28
+            (entry(3, "c", "2026-09-29T09:00:00+02:00"), Vec::new()), // journal day 29
         ];
         let groups = group(entries, (3, 0), today);
         assert_eq!(groups.len(), 2);
@@ -313,11 +365,11 @@ mod tests {
         let entries = [
             (
                 entry(1, "lake", "2026-09-29T09:00:00+02:00"),
-                None::<String>,
+                Vec::<String>::new(),
             ),
             (
                 entry(2, "lake", "2026-09-29T09:00:00+02:00"),
-                None::<String>,
+                Vec::<String>::new(),
             ),
         ];
         // Only journal pages pass the Journal filter.
@@ -334,6 +386,51 @@ mod tests {
         }
         assert_eq!(index.search("lake").len(), 2);
         assert!(index.search("zzz").is_empty());
+    }
+
+    #[test]
+    fn note_list_filters_open_and_expanded_newest_first() {
+        let mut note_open = entry(10, "an open note", "2026-09-29T09:00:00+02:00");
+        note_open.entry_type = EntryType::Note;
+        let mut note_expanded = entry(11, "an expanded note", "2026-09-29T10:00:00+02:00");
+        note_expanded.entry_type = EntryType::Note;
+        let journal = entry(12, "a page", "2026-09-29T11:00:00+02:00");
+        let entries = vec![
+            (note_open, vec!["ideas".to_owned()]),
+            (note_expanded, vec!["book".to_owned()]),
+            (journal, Vec::new()),
+        ];
+        let expanded: HashSet<Uuid> = [Uuid::from_u128(11)].into_iter().collect();
+
+        let all = note_list(entries.clone(), &expanded, NoteFilter::All);
+        assert_eq!(all.len(), 2, "journal pages are not notes");
+        assert_eq!(all[0].id, Uuid::from_u128(11), "newest first");
+        assert_eq!(all[0].tags, vec!["book"]);
+
+        let open = note_list(entries.clone(), &expanded, NoteFilter::Open);
+        assert_eq!(open.len(), 1);
+        assert_eq!(open[0].id, Uuid::from_u128(10));
+
+        let expanded_only = note_list(entries, &expanded, NoteFilter::Expanded);
+        assert_eq!(expanded_only.len(), 1);
+        assert_eq!(expanded_only[0].id, Uuid::from_u128(11));
+    }
+
+    #[test]
+    fn note_date_label_is_relative_for_today_and_yesterday() {
+        let today = "2026-09-29".parse::<Date>().unwrap();
+        assert_eq!(
+            note_date_label(&dated("2026-09-29T09:12:00+02:00"), today),
+            "Today, 09:12"
+        );
+        assert_eq!(
+            note_date_label(&dated("2026-09-28T18:40:00+02:00"), today),
+            "Yesterday, 18:40"
+        );
+        assert_eq!(
+            note_date_label(&dated("2026-09-22T08:02:00+02:00"), today),
+            "Tue 22 Sep, 08:02"
+        );
     }
 
     #[test]

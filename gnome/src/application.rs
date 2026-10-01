@@ -60,7 +60,9 @@ pub fn build() -> adw::Application {
             window.borrow_mut().replace(created.clone());
             for (action, accels) in [
                 ("win.delete-entry", vec!["Delete"]),
-                ("win.new", vec!["<Control>n"]),
+                ("win.new-journal", vec!["<Control>n"]),
+                ("win.new-dream", vec!["<Control><Alt>n"]),
+                ("win.new-note", vec!["<Control><Shift>n"]),
                 ("win.search", vec!["<Control>f"]),
                 ("win.previous", vec!["<Alt>Up"]),
                 ("win.next", vec!["<Alt>Down"]),

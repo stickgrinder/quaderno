@@ -4,7 +4,7 @@
 //! vault-spec §5.1). Kept apart from the widgets so it can be unit-tested.
 
 use jiff::Zoned;
-use quaderno_vault::{Choice, Color, EntryType, Rating, SubjectKind};
+use quaderno_vault::{Choice, Color, DreamFlag, EntryType, Rating, SubjectKind};
 
 /// Which sections the details panel offers for an entry type (spec §5.1).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -139,6 +139,26 @@ pub fn rating_icon(rating: Rating, value: u8) -> Option<&'static str> {
     value
         .checked_sub(1)
         .and_then(|index| icons.get(usize::from(index)).copied())
+}
+
+/// The translated name of a dream flag, with the `dream_flag` gettext context
+/// (vault-spec §6.2, Appendix B).
+pub fn dream_flag_label(flag: DreamFlag) -> String {
+    let label = match flag {
+        DreamFlag::Lucid => "Lucid",
+        DreamFlag::Nightmare => "Nightmare",
+        DreamFlag::Recurring => "Recurring",
+    };
+    gettextrs::pgettext("dream_flag", label)
+}
+
+/// The Phosphor icon name of a dream flag (vault-spec Appendix B).
+pub fn dream_flag_icon(flag: DreamFlag) -> &'static str {
+    match flag {
+        DreamFlag::Lucid => "lightbulb-filament",
+        DreamFlag::Nightmare => "ghost",
+        DreamFlag::Recurring => "repeat",
+    }
 }
 
 /// The translated name of one of the twelve fixed colours, with the `color`
@@ -360,6 +380,15 @@ mod tests {
         );
         assert_eq!(choice_display_label(&choice(Some("Calm"), None)), "Calm");
         assert_eq!(choice_display_label(&choice(None, None)), "");
+    }
+
+    #[test]
+    fn dream_flags_have_labels_and_icons() {
+        assert_eq!(dream_flag_label(DreamFlag::Lucid), "Lucid");
+        assert_eq!(dream_flag_label(DreamFlag::Recurring), "Recurring");
+        assert_eq!(dream_flag_icon(DreamFlag::Lucid), "lightbulb-filament");
+        assert_eq!(dream_flag_icon(DreamFlag::Nightmare), "ghost");
+        assert_eq!(dream_flag_icon(DreamFlag::Recurring), "repeat");
     }
 
     #[test]

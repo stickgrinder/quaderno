@@ -83,7 +83,7 @@ Artboard: Unlock. `AdwStatusPage` with a lock icon, "Quaderno is locked", the va
 - Info bar for a backdated entry: `AdwBanner`-like `GtkRevealer` with text and "Use creation date" button (artboard Dream).
 - Body: `GtkSourceView` inside `GtkScrolledWindow`, centred column (max width from the Line width setting), Markdown language, a custom style scheme that dims Markdown syntax characters, word wrap on, spell checking via `libspelling`.
 - Formatting bar at the bottom: heading, bold, italic, list, quote, link buttons (they insert Markdown), plus the footer text (words · created · updated).
-- Quick notes use the same editor with a smaller header (artboard Notes): no date info bar, no details panel except tags, plus the "Expand into entry" split button and the "Expanded into" card.
+- Quick notes use the same editor with a smaller header (artboard Notes): no date info bar, no dream flags, no details panel except tags, plus the "Expand into entry" split button, an "Expanded into" card when the note has been expanded, and a hint that notes are not counted in Insights. An entry made from a note shows a "From quick note" banner with a link to the note (or "From a deleted note").
 
 ### 3.6 Details panel
 
@@ -103,7 +103,16 @@ disables the whole panel.
 
 ### 3.7 Quick notes view
 
-Artboard Notes: list of note cards (`GtkListView` with `card` style rows), `AdwToggleGroup` Open / Expanded / All, editor as in §3.5.
+Artboard Notes. The Quick notes section (or the Notes chip) turns the list pane
+into the notes view: the title becomes "Quick notes", the All/Journal/Dreams/Notes
+chips are replaced by an `AdwToggleGroup` Open / Expanded / All (Open is the
+default; a note is *expanded* when at least one live entry was made from it), and
+rows become cards (the note text, then a dim "Today, 09:12 #tag #tag" footer)
+with no journal-day headers. The editor is as in §3.5; notes get a smaller header
+(no date info bar, no dream flags), an "Expand into entry" split button and, when
+expanded, an "Expanded into" card, plus a hint that notes are not counted in
+Insights. An entry made from a note shows a "From quick note" banner (or "From a
+deleted note" if the note was deleted), with a link back.
 
 ### 3.8 Collections pages
 

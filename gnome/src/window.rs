@@ -12,8 +12,8 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 use quaderno_vault::{
-    Access, Choice, ChoiceKind, Color, Entry, EntryType, Rating, Subject, SubjectKind, Vault,
-    VaultError,
+    Access, Choice, ChoiceKind, Color, DreamFlag, Entry, EntryType, Rating, Subject, SubjectKind,
+    Vault, VaultError,
 };
 use sourceview5::prelude::*;
 use uuid::Uuid;
@@ -133,7 +133,7 @@ mod imp {
         #[template_child]
         pub sidebar_toggle: TemplateChild<gtk::ToggleButton>,
         #[template_child]
-        pub new_button: TemplateChild<gtk::Button>,
+        pub new_button: TemplateChild<adw::SplitButton>,
         #[template_child]
         pub search_button: TemplateChild<gtk::ToggleButton>,
         #[template_child]
@@ -143,6 +143,12 @@ mod imp {
         #[template_child]
         pub filter_group: TemplateChild<adw::ToggleGroup>,
         #[template_child]
+        pub notes_filter_group: TemplateChild<adw::ToggleGroup>,
+        #[template_child]
+        pub list_page: TemplateChild<adw::NavigationPage>,
+        #[template_child]
+        pub list_title: TemplateChild<adw::WindowTitle>,
+        #[template_child]
         pub sections_list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub entry_list: TemplateChild<gtk::ListBox>,
@@ -150,6 +156,14 @@ mod imp {
         pub editor_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub type_badge: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub flags_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub flag_lucid: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub flag_nightmare: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub flag_recurring: TemplateChild<gtk::ToggleButton>,
         #[template_child]
         pub date_button: TemplateChild<gtk::MenuButton>,
         #[template_child]
@@ -163,7 +177,15 @@ mod imp {
         #[template_child]
         pub save_label: TemplateChild<gtk::Label>,
         #[template_child]
+        pub expand_button: TemplateChild<adw::SplitButton>,
+        #[template_child]
         pub backdated_banner: TemplateChild<adw::Banner>,
+        #[template_child]
+        pub source_banner: TemplateChild<adw::Banner>,
+        #[template_child]
+        pub expanded_card: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub note_info_card: TemplateChild<gtk::Box>,
         #[template_child]
         pub editor_scroll: TemplateChild<gtk::ScrolledWindow>,
         #[template_child]
@@ -200,6 +222,9 @@ mod imp {
         pub selected: RefCell<Option<uuid::Uuid>>,
         pub current_dated: RefCell<Option<jiff::Zoned>>,
         pub current_created: RefCell<Option<jiff::Timestamp>>,
+        pub current_type: RefCell<Option<EntryType>>,
+        pub source_note: Cell<Option<Uuid>>,
+        pub note_filter: Cell<timeline::NoteFilter>,
         pub dirty: Cell<bool>,
         pub loading: Cell<bool>,
         pub save_source: RefCell<Option<glib::SourceId>>,
@@ -247,17 +272,28 @@ mod imp {
                 search_bar: Default::default(),
                 search_entry: Default::default(),
                 filter_group: Default::default(),
+                notes_filter_group: Default::default(),
+                list_page: Default::default(),
+                list_title: Default::default(),
                 sections_list: Default::default(),
                 entry_list: Default::default(),
                 editor_stack: Default::default(),
                 type_badge: Default::default(),
+                flags_box: Default::default(),
+                flag_lucid: Default::default(),
+                flag_nightmare: Default::default(),
+                flag_recurring: Default::default(),
                 date_button: Default::default(),
                 date_calendar: Default::default(),
                 time_entry: Default::default(),
                 today_button: Default::default(),
                 yesterday_button: Default::default(),
                 save_label: Default::default(),
+                expand_button: Default::default(),
                 backdated_banner: Default::default(),
+                source_banner: Default::default(),
+                expanded_card: Default::default(),
+                note_info_card: Default::default(),
                 editor_scroll: Default::default(),
                 footer_label: Default::default(),
                 heading_button: Default::default(),
@@ -273,6 +309,9 @@ mod imp {
                 selected: RefCell::new(None),
                 current_dated: RefCell::new(None),
                 current_created: RefCell::new(None),
+                current_type: RefCell::new(None),
+                source_note: Cell::new(None),
+                note_filter: Cell::new(timeline::NoteFilter::Open),
                 dirty: Cell::new(false),
                 loading: Cell::new(false),
                 save_source: RefCell::new(None),
@@ -317,6 +356,7 @@ mod imp {
             obj.setup_sections();
             obj.setup_main();
             obj.setup_details();
+            obj.setup_notes();
             obj.setup_breakpoints();
         }
     }
@@ -352,13 +392,6 @@ impl QuadernoWindow {
         menu.append(Some(&gettextrs::gettext("Lock")), Some("app.lock"));
         menu.append(Some(&gettextrs::gettext("Quit")), Some("app.quit"));
         self.imp().menu_button.set_menu_model(Some(&menu));
-
-        let entry_menu = gio::Menu::new();
-        entry_menu.append(
-            Some(&gettextrs::gettext("Delete")),
-            Some("win.delete-entry"),
-        );
-        self.imp().entry_menu.set_menu_model(Some(&entry_menu));
 
         let delete = gio::SimpleAction::new("delete-entry", None);
         let window = self.clone();
@@ -696,11 +729,6 @@ impl QuadernoWindow {
             });
 
         let window = self.clone();
-        self.imp().new_button.connect_clicked(move |_| {
-            window.new_entry();
-        });
-
-        let window = self.clone();
         self.imp().entry_list.connect_row_activated(move |_, row| {
             let index = row.index();
             let id = window
@@ -727,7 +755,6 @@ impl QuadernoWindow {
     }
 
     fn setup_shortcuts(&self) {
-        self.register_action("new", |window| window.new_entry());
         self.register_action("search", |window| window.open_search());
         self.register_action("previous", |window| window.select_relative(-1));
         self.register_action("next", |window| window.select_relative(1));
@@ -1693,6 +1720,300 @@ impl QuadernoWindow {
         self.imp().toast_overlay.add_toast(toast);
     }
 
+    // ---- dreams and quick notes (M5) ------------------------------------
+
+    fn setup_notes(&self) {
+        let imp = self.imp();
+
+        // New split button: primary makes a journal page, the menu the rest
+        // (product spec §4.1).
+        let window = self.clone();
+        imp.new_button
+            .connect_clicked(move |_| window.new_entry_of(EntryType::Journal));
+        let new_menu = gio::Menu::new();
+        new_menu.append(
+            Some(&gettextrs::gettext("Journal page")),
+            Some("win.new-journal"),
+        );
+        new_menu.append(Some(&gettextrs::gettext("Dream")), Some("win.new-dream"));
+        new_menu.append(
+            Some(&gettextrs::gettext("Quick note")),
+            Some("win.new-note"),
+        );
+        imp.new_button.set_menu_model(Some(&new_menu));
+        self.register_action("new-journal", |window| {
+            window.new_entry_of(EntryType::Journal)
+        });
+        self.register_action("new-dream", |window| window.new_entry_of(EntryType::Dream));
+        self.register_action("new-note", |window| window.new_entry_of(EntryType::Note));
+
+        // Quick notes Open / Expanded / All (ui-spec §3.7).
+        imp.notes_filter_group.set_active_name(Some("open"));
+        let window = self.clone();
+        imp.notes_filter_group
+            .connect_active_name_notify(move |group| {
+                window
+                    .imp()
+                    .note_filter
+                    .set(match group.active_name().as_deref() {
+                        Some("expanded") => timeline::NoteFilter::Expanded,
+                        Some("all") => timeline::NoteFilter::All,
+                        _ => timeline::NoteFilter::Open,
+                    });
+                window.refresh();
+            });
+
+        // Dream flag chips (ui-spec §3.5): on is 1, off clears to NULL.
+        for (flag, button) in [
+            (DreamFlag::Lucid, imp.flag_lucid.clone()),
+            (DreamFlag::Nightmare, imp.flag_nightmare.clone()),
+            (DreamFlag::Recurring, imp.flag_recurring.clone()),
+        ] {
+            button.set_icon_name(&icons::resolve(details::dream_flag_icon(flag)));
+            let label = details::dream_flag_label(flag);
+            button.set_tooltip_text(Some(&label));
+            button.update_property(&[gtk::accessible::Property::Label(&label)]);
+            let window = self.clone();
+            button.connect_toggled(move |button| {
+                if window.imp().panel_loading.get() {
+                    return;
+                }
+                window.set_dream_flag(flag, button.is_active());
+            });
+        }
+
+        // Expand into entry (product spec §6).
+        let window = self.clone();
+        imp.expand_button
+            .connect_clicked(move |_| window.expand_selected(EntryType::Journal));
+        let expand_menu = gio::Menu::new();
+        expand_menu.append(
+            Some(&gettextrs::gettext("Journal page")),
+            Some("win.expand-journal"),
+        );
+        expand_menu.append(Some(&gettextrs::gettext("Dream")), Some("win.expand-dream"));
+        imp.expand_button.set_menu_model(Some(&expand_menu));
+        self.register_action("expand-journal", |window| {
+            window.expand_selected(EntryType::Journal)
+        });
+        self.register_action("expand-dream", |window| {
+            window.expand_selected(EntryType::Dream)
+        });
+
+        // "From quick note" banner.
+        let window = self.clone();
+        imp.source_banner.connect_button_clicked(move |_| {
+            if let Some(id) = window.imp().source_note.get() {
+                window.select_entry(id);
+            }
+        });
+
+        // The note hint card.
+        let info_icon = gtk::Image::from_icon_name("dialog-information-symbolic");
+        info_icon.set_valign(gtk::Align::Start);
+        let info_label = gtk::Label::new(Some(&gettextrs::gettext(
+            "Quick notes are not counted in Insights. Expanding creates a new entry, copies the text and tags, and links both ways.",
+        )));
+        info_label.set_wrap(true);
+        info_label.set_xalign(0.0);
+        info_label.add_css_class("dim-label");
+        info_label.add_css_class("caption");
+        info_label.set_margin_top(6);
+        info_label.set_margin_bottom(6);
+        info_label.set_margin_start(6);
+        info_label.set_margin_end(6);
+        imp.note_info_card.append(&info_icon);
+        imp.note_info_card.append(&info_label);
+
+        self.apply_view_mode();
+    }
+
+    /// Switches the list pane between the timeline and the quick-notes view
+    /// (ui-spec §3.7).
+    fn apply_view_mode(&self) {
+        let notes = self.active_filter() == Filter::Notes;
+        let title = if notes {
+            gettextrs::gettext("Quick notes")
+        } else {
+            gettextrs::gettext("Timeline")
+        };
+        self.imp().list_title.set_title(&title);
+        self.imp().list_page.set_title(&title);
+        self.imp().filter_group.set_visible(!notes);
+        self.imp().notes_filter_group.set_visible(notes);
+    }
+
+    fn new_entry_of(&self, entry_type: EntryType) {
+        let created = {
+            let mut vault = self.imp().vault.borrow_mut();
+            let Some(vault) = vault.as_mut() else {
+                return;
+            };
+            let now = jiff::Zoned::now();
+            vault.create_entry(entry_type, "", &now).ok()
+        };
+        if let Some(id) = created {
+            self.imp().selected.replace(None);
+            self.refresh();
+            self.select_entry(id);
+        }
+    }
+
+    fn set_dream_flag(&self, flag: DreamFlag, on: bool) {
+        let Some(id) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let _ = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_dream_flag(id, flag, on.then_some(true)).is_ok(),
+                None => false,
+            }
+        };
+    }
+
+    /// Expands the selected quick note into a journal page or dream
+    /// (product spec §6, vault spec §5.2).
+    fn expand_selected(&self, target: EntryType) {
+        let Some(note) = *self.imp().selected.borrow() else {
+            return;
+        };
+        let created = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.expand_note(note, target).ok(),
+                None => None,
+            }
+        };
+        if let Some(id) = created {
+            self.refresh();
+            self.select_entry(id);
+            let toast = adw::Toast::new(&gettextrs::gettext("Entry created"));
+            self.imp().toast_overlay.add_toast(toast);
+        }
+    }
+
+    /// Rebuilds the entry menu for the selected type; notes get "Expand into"
+    /// (ui-spec §3.5).
+    fn rebuild_entry_menu(&self, entry_type: EntryType) {
+        let menu = gio::Menu::new();
+        menu.append(
+            Some(&gettextrs::gettext("Delete")),
+            Some("win.delete-entry"),
+        );
+        if entry_type == EntryType::Note {
+            let expand = gio::Menu::new();
+            expand.append(
+                Some(&gettextrs::gettext("Journal page")),
+                Some("win.expand-journal"),
+            );
+            expand.append(Some(&gettextrs::gettext("Dream")), Some("win.expand-dream"));
+            menu.append_submenu(Some(&gettextrs::gettext("Expand into")), &expand);
+        }
+        self.imp().entry_menu.set_menu_model(Some(&menu));
+    }
+
+    /// Refreshes the type-specific editor header: dream flags, the expand
+    /// button, the "From quick note" banner and the "Expanded into" card.
+    fn update_entry_header(&self, entry: &Entry) {
+        let imp = self.imp();
+        imp.panel_loading.set(true);
+
+        let is_dream = entry.entry_type == EntryType::Dream;
+        let is_note = entry.entry_type == EntryType::Note;
+        imp.flags_box.set_visible(is_dream);
+        imp.flag_lucid.set_active(entry.lucid == Some(true));
+        imp.flag_nightmare.set_active(entry.nightmare == Some(true));
+        imp.flag_recurring.set_active(entry.recurring == Some(true));
+        imp.expand_button.set_visible(is_note);
+        imp.note_info_card.set_visible(is_note);
+
+        // Source note link.
+        match entry.source_id {
+            Some(note_id) => {
+                imp.source_note.set(Some(note_id));
+                let note = {
+                    let vault = imp.vault.borrow();
+                    vault.as_ref().and_then(|vault| vault.entry(note_id).ok())
+                };
+                match note {
+                    Some(note) => {
+                        imp.source_banner.set_title(&format!(
+                            "{} {}",
+                            gettextrs::gettext("From quick note:"),
+                            quaderno_vault::text::title(&note.content)
+                        ));
+                        imp.source_banner
+                            .set_button_label(Some(&gettextrs::gettext("Open")));
+                    }
+                    None => {
+                        imp.source_banner
+                            .set_title(&gettextrs::gettext("From a deleted note"));
+                        imp.source_banner.set_button_label(None);
+                    }
+                }
+                imp.source_banner.set_revealed(true);
+            }
+            None => {
+                imp.source_note.set(None);
+                imp.source_banner.set_revealed(false);
+            }
+        }
+
+        // "Expanded into" card (notes only).
+        let card = &imp.expanded_card;
+        while let Some(child) = card.first_child() {
+            card.remove(&child);
+        }
+        card.set_visible(false);
+        if is_note {
+            let expanded = {
+                let vault = imp.vault.borrow();
+                match vault.as_ref() {
+                    Some(vault) => vault.expanded_entries(entry.id).unwrap_or_default(),
+                    None => Vec::new(),
+                }
+            };
+            if !expanded.is_empty() {
+                let title = gtk::Label::new(Some(&gettextrs::gettext("Expanded into")));
+                title.set_xalign(0.0);
+                title.add_css_class("heading");
+                title.set_margin_top(6);
+                title.set_margin_start(6);
+                title.set_margin_end(6);
+                card.append(&title);
+                for expanded_id in expanded {
+                    let summary = {
+                        let vault = imp.vault.borrow();
+                        vault
+                            .as_ref()
+                            .and_then(|vault| vault.entry(expanded_id).ok())
+                            .map(|entry| {
+                                (
+                                    entry_type_label(entry.entry_type),
+                                    quaderno_vault::text::title(&entry.content),
+                                )
+                            })
+                    };
+                    if let Some((kind, title)) = summary {
+                        let button = gtk::Button::with_label(&format!("{kind} · {title}"));
+                        button.add_css_class("flat");
+                        button.set_halign(gtk::Align::Start);
+                        button.set_margin_start(6);
+                        button.set_margin_end(6);
+                        button.set_margin_bottom(6);
+                        let window = self.clone();
+                        button.connect_clicked(move |_| window.select_entry(expanded_id));
+                        card.append(&button);
+                    }
+                }
+                card.set_visible(true);
+            }
+        }
+
+        imp.panel_loading.set(false);
+    }
+
     fn setup_breakpoints(&self) {
         if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1400sp") {
             let breakpoint = adw::Breakpoint::new(condition);
@@ -1751,6 +2072,7 @@ impl QuadernoWindow {
             Filter::Notes => "notes",
         };
         self.imp().filter_group.set_active_name(Some(name));
+        self.apply_view_mode();
         self.refresh();
     }
 
@@ -1765,23 +2087,26 @@ impl QuadernoWindow {
 
     /// Rebuilds the entry list and search index from the vault.
     pub fn refresh(&self) {
+        self.apply_view_mode();
         let borrow = self.imp().vault.borrow();
         let Some(vault) = borrow.as_ref() else {
             return;
         };
 
         let query = self.imp().search_entry.text().to_string();
+        let notes_mode = self.active_filter() == Filter::Notes;
         let mut index = timeline::SearchIndex::new();
-        let mut rows = Vec::new();
+        let mut rows: Vec<(Entry, Vec<String>)> = Vec::new();
         for entry in vault.entries(false).unwrap_or_default() {
             let subjects = vault.entry_subjects(entry.id, None).unwrap_or_default();
             let choices = vault.entry_choices(entry.id).unwrap_or_default();
             let colors = vault.entry_colors(entry.id).unwrap_or_default();
 
-            let first_tag = subjects
+            let tags: Vec<String> = subjects
                 .iter()
-                .find(|subject| subject.kind == SubjectKind::Tag)
-                .map(|subject| subject.name.clone());
+                .filter(|subject| subject.kind == SubjectKind::Tag)
+                .map(|subject| subject.name.clone())
+                .collect();
 
             let mut parts = vec![entry.content.clone()];
             parts.extend(subjects.iter().map(|subject| subject.name.clone()));
@@ -1793,30 +2118,90 @@ impl QuadernoWindow {
             parts.extend(colors.iter().map(|color| color.as_str().to_owned()));
             index.add(entry.id, parts);
 
-            if timeline::passes(&entry, self.active_filter()) {
-                rows.push((entry, first_tag));
+            if notes_mode {
+                if entry.entry_type == EntryType::Note {
+                    rows.push((entry, tags));
+                }
+            } else if timeline::passes(&entry, self.active_filter()) {
+                rows.push((entry, tags));
             }
         }
 
         if !query.is_empty() {
-            let matching: std::collections::HashSet<Uuid> =
-                index.search(&query).into_iter().collect();
+            let matching: HashSet<Uuid> = index.search(&query).into_iter().collect();
             rows.retain(|(entry, _)| matching.contains(&entry.id));
         }
 
+        let expanded: HashSet<Uuid> = vault
+            .expanded_note_ids()
+            .unwrap_or_default()
+            .into_iter()
+            .collect();
         let day_end = vault.day_end().unwrap_or((3, 0));
         let today = jiff::Zoned::now().date();
-        let groups = timeline::group(rows, day_end, today);
         self.imp().search_index.replace(Some(index));
         drop(borrow);
 
-        self.populate_list(groups);
+        if notes_mode {
+            let notes = timeline::note_list(rows, &expanded, self.imp().note_filter.get());
+            self.populate_note_list(notes, today);
+        } else {
+            let groups = timeline::group(rows, day_end, today);
+            self.populate_list(groups);
+        }
 
         if self.imp().selected.borrow().is_none()
             && let Some(id) = self.imp().row_ids.borrow().iter().flatten().next().copied()
         {
             self.select_entry(id);
         }
+    }
+
+    /// Builds the quick-notes card list (ui-spec §3.7).
+    fn populate_note_list(&self, notes: Vec<timeline::EntrySummary>, today: jiff::civil::Date) {
+        let list = &self.imp().entry_list;
+        while let Some(child) = list.first_child() {
+            list.remove(&child);
+        }
+        let mut row_ids: Vec<Option<Uuid>> = Vec::new();
+        for summary in notes {
+            let card = gtk::Box::new(gtk::Orientation::Vertical, 4);
+            card.add_css_class("card");
+            card.set_margin_top(6);
+            card.set_margin_bottom(6);
+            card.set_margin_start(6);
+            card.set_margin_end(6);
+            let body = if summary.excerpt.is_empty() {
+                summary.title.clone()
+            } else {
+                format!("{}\n{}", summary.title, summary.excerpt)
+            };
+            let text = gtk::Label::new(Some(&body));
+            text.set_wrap(true);
+            text.set_lines(3);
+            text.set_ellipsize(gtk::pango::EllipsizeMode::End);
+            text.set_xalign(0.0);
+            card.append(&text);
+
+            let footer = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+            let date = gtk::Label::new(Some(&timeline::note_date_label(&summary.dated_at, today)));
+            date.add_css_class("dim-label");
+            date.add_css_class("caption");
+            footer.append(&date);
+            for tag in &summary.tags {
+                let tag_label = gtk::Label::new(Some(&format!("#{tag}")));
+                tag_label.add_css_class("dim-label");
+                tag_label.add_css_class("caption");
+                footer.append(&tag_label);
+            }
+            card.append(&footer);
+
+            let row = gtk::ListBoxRow::new();
+            row.set_child(Some(&card));
+            list.append(&row);
+            row_ids.push(Some(summary.id));
+        }
+        self.imp().row_ids.replace(row_ids);
     }
 
     fn populate_list(&self, groups: Vec<timeline::DayGroup>) {
@@ -1854,7 +2239,7 @@ impl QuadernoWindow {
                 suffix.add_css_class("caption");
                 suffix.set_valign(gtk::Align::Start);
                 action.add_suffix(&suffix);
-                if let Some(tag) = &summary.first_tag {
+                if let Some(tag) = summary.tags.first() {
                     let tag_label = gtk::Label::new(Some(&format!("#{tag}")));
                     tag_label.add_css_class("dim-label");
                     tag_label.add_css_class("caption");
@@ -1870,29 +2255,13 @@ impl QuadernoWindow {
         self.imp().row_ids.replace(row_ids);
     }
 
-    fn new_entry(&self) {
-        let created = {
-            let mut vault = self.imp().vault.borrow_mut();
-            let Some(vault) = vault.as_mut() else {
-                return;
-            };
-            let now = jiff::Zoned::now();
-            vault.create_entry(EntryType::Journal, "", &now).ok()
-        };
-        if let Some(id) = created {
-            self.imp().selected.replace(None);
-            self.refresh();
-            self.select_entry(id);
-        }
-    }
-
     fn select_entry(&self, id: Uuid) {
         if *self.imp().selected.borrow() == Some(id) {
             return;
         }
         self.depart_current();
 
-        let (content, entry_type, dated_at, created_at) = {
+        let entry = {
             let vault = self.imp().vault.borrow();
             let Some(vault) = vault.as_ref() else {
                 return;
@@ -1900,43 +2269,43 @@ impl QuadernoWindow {
             let Ok(entry) = vault.entry(id) else {
                 return;
             };
-            (
-                entry.content,
-                entry.entry_type,
-                entry.dated_at,
-                entry.created_at,
-            )
+            entry
         };
 
         self.imp().loading.set(true);
         if let Some(buffer) = self.imp().editor_buffer.borrow().as_ref() {
-            buffer.set_text(&content);
+            buffer.set_text(&entry.content);
         }
         self.imp()
             .date_calendar
-            .select_day(&gdatetime_for(dated_at.date()));
+            .select_day(&gdatetime_for(entry.dated_at.date()));
         self.imp()
             .time_entry
-            .set_text(&dated_at.strftime("%H:%M").to_string());
+            .set_text(&entry.dated_at.strftime("%H:%M").to_string());
         self.imp().loading.set(false);
         self.imp().dirty.set(false);
 
         self.imp()
             .type_badge
-            .set_label(&entry_type_label(entry_type));
+            .set_label(&entry_type_label(entry.entry_type));
         self.imp()
             .date_button
-            .set_label(&dated_at.strftime("%d %b %Y").to_string());
+            .set_label(&entry.dated_at.strftime("%d %b %Y").to_string());
         self.imp()
             .save_label
             .set_label(&gettextrs::gettext("Saved"));
-        self.imp().current_dated.replace(Some(dated_at));
-        self.imp().current_created.replace(Some(created_at));
+        self.imp()
+            .current_dated
+            .replace(Some(entry.dated_at.clone()));
+        self.imp().current_created.replace(Some(entry.created_at));
+        self.imp().current_type.replace(Some(entry.entry_type));
         self.imp().selected.replace(Some(id));
         self.imp().editor_stack.set_visible_child_name("entry");
         self.imp().navigation_split.set_show_content(true);
         self.update_banner();
         self.set_footer();
+        self.update_entry_header(&entry);
+        self.rebuild_entry_menu(entry.entry_type);
         self.refresh_details();
     }
 
@@ -2031,6 +2400,11 @@ impl QuadernoWindow {
     }
 
     fn update_banner(&self) {
+        // Quick notes have no date info bar (ui-spec §3.5).
+        if *self.imp().current_type.borrow() == Some(EntryType::Note) {
+            self.imp().backdated_banner.set_revealed(false);
+            return;
+        }
         let (Some(dated), Some(created)) = (
             self.imp().current_dated.borrow().clone(),
             *self.imp().current_created.borrow(),
