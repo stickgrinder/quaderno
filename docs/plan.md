@@ -55,10 +55,12 @@ _Deferred/decided:_ M3 covers journal pages only (New creates a journal page; th
 _Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwToggleGroup` cannot deselect (ui-spec §3.6 updated); the token fields use `AdwWrapBox` for inline chips + text; the icons ship the whole Phosphor regular set converted to `ph-*-symbolic` under `scalable/actions` (the only subdirectory the `hicolor` fallback scans for resource icons), because `symbolic/actions` is not in its `index.theme`; the <760sp `AdwBottomSheet` from ui-spec §2.2 is deferred to M6 (the <1100sp overlay is in); the "Add" picker lists visible unlinked choices, stays open for multiple picks and offers no create row (list management is M6); the "Create …" row is hidden when the query exactly matches an existing name, but Shift+Enter still creates; a `subjects_with_usage` query was added to the vault for the "N entries · last <date>" subtitle; the colour and rating labels were added to `gnome/po/it.po` (the dream-flag labels come with M5), the rest of the Italian UI strings are M7.
 
 ### M5 · Dreams and quick notes
-- [ ] Dream type: flags in header, "Mood on waking".
-- [ ] Quick notes view (Open / Expanded / All), expand into journal page or dream, "Expanded into" / "From quick note" links.
+- [x] Dream type: flags in header, "Mood on waking".
+- [x] Quick notes view (Open / Expanded / All), expand into journal page or dream, "Expanded into" / "From quick note" links.
 
 **Accept:** product spec §6 works end to end, including deleting an expanded note.
+
+_Deferred/decided:_ the New button is an `AdwSplitButton` (primary journal page; menu Dream / Quick note) with Ctrl+N, Ctrl+Alt+N, Ctrl+Shift+N; dream flags are on = 1 and off = NULL (no explicit false); the Quick notes view reuses the list pane in a notes mode (title, Open/Expanded/All chips, card rows with a date/tags footer and no day headers) instead of a separate page; tags stay in the details panel (the artboard's inline tag row was not added); expanding is the header split button plus an "Expand into" submenu in the entry menu, with "Append to an existing entry…" left to Later (product spec §2); an "Expanded into" card lists each live expansion and a "From quick note" banner links back, showing "From a deleted note" when the source is gone; a `expanded_note_ids` query backs the Open/Expanded filter; the dream-flag labels were added to `gnome/po/it.po`. Fixing the notes view also uncovered and fixed a pre-existing bug: the `Adw.Toggle` chips had no `name`, so the All/Journal/Dreams/Notes filters never actually changed the list.
 
 ### M6 · Preferences and collections
 - [ ] Preferences dialog, all three pages (product spec §8), including day-end setting and change passphrase.
