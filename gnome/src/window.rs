@@ -4694,7 +4694,38 @@ impl QuadernoWindow {
         self.imp().search_index.replace(None);
         self.imp().search_entry.set_text("");
         self.imp().search_button.set_active(false);
+        // Dismiss any dialogs or popovers still open, so nothing sits on top of
+        // the unlock page.
+        self.close_transient_windows();
         self.show_unlock();
+    }
+
+    /// Closes every dialog and popover attached to this window.
+    fn close_transient_windows(&self) {
+        let me = self.upcast_ref::<gtk::Window>();
+        let toplevels = gtk::Window::list_toplevels();
+        for widget in toplevels {
+            if let Some(other) = widget.downcast_ref::<gtk::Window>()
+                && let Some(transient) = other.transient_for()
+                && transient == *me
+            {
+                other.set_visible(false);
+                other.destroy();
+            }
+        }
+        // Popovers that are children of this window's widget tree.
+        self.close_popovers(self.upcast_ref::<gtk::Widget>());
+    }
+
+    fn close_popovers(&self, widget: &gtk::Widget) {
+        if let Some(popover) = widget.downcast_ref::<gtk::Popover>() {
+            popover.popdown();
+        }
+        let mut child = widget.first_child();
+        while let Some(current) = child {
+            child = current.next_sibling();
+            self.close_popovers(&current);
+        }
     }
 
     /// Called when the session locks: locks the vault unless the setting is off.
