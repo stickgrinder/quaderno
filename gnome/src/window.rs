@@ -251,6 +251,7 @@ mod imp {
         pub collection_filters: RefCell<Vec<(u32, SubjectKind)>>,
         pub collection_kind: Cell<Option<SubjectKind>>,
         pub collection_subject: RefCell<Option<Uuid>>,
+        pub open_popovers: RefCell<Vec<gtk::Popover>>,
         pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
         pub panel: RefCell<Option<PanelWidgets>>,
         pub panel_loading: Cell<bool>,
@@ -345,6 +346,7 @@ mod imp {
                 collection_filters: RefCell::new(Vec::new()),
                 collection_kind: Cell::new(None),
                 collection_subject: RefCell::new(None),
+                open_popovers: RefCell::new(Vec::new()),
                 search_index: RefCell::new(None),
                 entry_menu: Default::default(),
                 toast_overlay: Default::default(),
@@ -3872,8 +3874,19 @@ impl QuadernoWindow {
         content.append(&scrolled);
         popover.set_child(Some(&content));
         popover.set_parent(anchor);
+        // Track it, so lock can pop it even if its anchor is later rebuilt and
+        // the widget tree no longer reaches it.
+        self.track_popover(&popover);
         popover.popup();
         search.grab_focus();
+    }
+
+    /// Keeps a reference to an open popover for the window's lifetime, dropping
+    /// any that have already closed.
+    fn track_popover(&self, popover: &gtk::Popover) {
+        let mut open = self.imp().open_popovers.borrow_mut();
+        open.retain(|existing| existing.parent().is_some() && existing.is_visible());
+        open.push(popover.clone());
     }
 
     fn setup_breakpoints(&self) {
@@ -4710,9 +4723,18 @@ impl QuadernoWindow {
 
     /// Closes every dialog and popover attached to this window.
     fn close_transient_windows(&self) {
+        // `AdwDialog` (Preferences, AlertDialogs, the font chooser) is a widget
+        // overlaid on the window, not a toplevel, so it must be closed through
+        // the window's dialog list.
+        for dialog in adw::prelude::AdwApplicationWindowExt::dialogs(self)
+            .iter::<adw::Dialog>()
+            .flatten()
+        {
+            dialog.force_close();
+        }
+
         let me = self.upcast_ref::<gtk::Window>();
-        let toplevels = gtk::Window::list_toplevels();
-        for widget in toplevels {
+        for widget in gtk::Window::list_toplevels() {
             if let Some(other) = widget.downcast_ref::<gtk::Window>()
                 && let Some(transient) = other.transient_for()
                 && transient == *me
@@ -4731,6 +4753,12 @@ impl QuadernoWindow {
                 token.popover.popdown();
             }
         }
+        // Popovers tracked while open (the icon picker and any other anchored to
+        // a widget that may have been rebuilt since).
+        for popover in self.imp().open_popovers.borrow().iter() {
+            popover.popdown();
+        }
+        self.imp().open_popovers.borrow_mut().clear();
         // Every other popover in the window's widget tree.
         self.close_popovers(self.upcast_ref::<gtk::Widget>());
     }
