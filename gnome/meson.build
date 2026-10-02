@@ -28,12 +28,15 @@ custom_target('quaderno',
     'Cargo.toml',
     'build.rs',
     'data/quaderno.css',
+    'data/phosphor-tags.tsv',
+    'data/icon-synonyms.tsv',
     # The vendored Phosphor SVGs are only ever added as a whole set, so meson
     # does not track the directory; `build.rs` re-converts them whenever cargo
     # is re-run.
     'src/main.rs',
     'src/application.rs',
     'src/details.rs',
+    'src/icon_search.rs',
     'src/icons.rs',
     'src/keyring.rs',
     'src/picker.rs',

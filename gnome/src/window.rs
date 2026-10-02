@@ -21,6 +21,7 @@ use uuid::Uuid;
 use zeroize::Zeroizing;
 
 use crate::details;
+use crate::icon_search;
 use crate::icons;
 use crate::keyring::Keyring;
 use crate::picker;
@@ -34,6 +35,11 @@ fn quaderno_settings() -> gio::Settings {
 /// The width the font preview would have at the "wide" line width; the other
 /// choices scale it by the same fraction as the editor.
 const PREVIEW_WIDTH: f64 = 520.0;
+
+/// A callback that rebuilds a preferences list from the vault.
+type Refresh = Rc<dyn Fn()>;
+/// A self-referential holder, so a list's refresh can hand itself to its rows.
+type RefreshCell = Rc<RefCell<Option<Refresh>>>;
 
 /// The kind of chip whose remove button is being built.
 #[derive(Clone, Copy)]
@@ -2585,14 +2591,6 @@ impl QuadernoWindow {
         group
     }
 
-    fn present_preferences(&self) {
-        let dialog = adw::PreferencesDialog::new();
-        dialog.set_title(&gettextrs::gettext("Preferences"));
-        dialog.add(&self.build_general_page());
-        dialog.add(&self.build_privacy_page());
-        dialog.present(Some(self));
-    }
-
     fn build_privacy_page(&self) -> adw::PreferencesPage {
         let page = adw::PreferencesPage::new();
         page.set_title(&gettextrs::gettext("Privacy & data"));
@@ -3014,6 +3012,598 @@ impl QuadernoWindow {
 
     fn toast(&self, message: &str) {
         self.imp().toast_overlay.add_toast(adw::Toast::new(message));
+    }
+
+    fn present_preferences(&self) {
+        let dialog = adw::PreferencesDialog::new();
+        dialog.set_title(&gettextrs::gettext("Preferences"));
+        dialog.add(&self.build_general_page());
+        dialog.add(&self.build_entries_page());
+        dialog.add(&self.build_privacy_page());
+        dialog.present(Some(self));
+    }
+
+    // ---- preferences: Entries (list management, icon picker) -------------
+
+    fn build_entries_page(&self) -> adw::PreferencesPage {
+        let page = adw::PreferencesPage::new();
+        page.set_title(&gettextrs::gettext("Entries"));
+        page.set_icon_name(Some("view-list-symbolic"));
+        page.add(&self.build_choice_group(ChoiceKind::Emotion, &gettextrs::gettext("Emotions")));
+        page.add(
+            &self.build_choice_group(ChoiceKind::Activity, &gettextrs::gettext("Day activities")),
+        );
+        page.add(&self.fixed_scales_note());
+        page
+    }
+
+    fn fixed_scales_note(&self) -> adw::PreferencesGroup {
+        let group = adw::PreferencesGroup::new();
+        let row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("About these lists"))
+            .subtitle(gettextrs::gettext(
+                "Mood, energy, cognitive load, sleep and colours are fixed scales so statistics stay comparable. People, places, things and tags are managed from their Collections pages.",
+            ))
+            .build();
+        row.add_prefix(&gtk::Image::from_icon_name("dialog-information-symbolic"));
+        group.add(&row);
+        group
+    }
+
+    /// Builds a group of a kind's choices with a refresh closure that rebuilds
+    /// its rows after a change.
+    fn build_choice_group(&self, kind: ChoiceKind, title: &str) -> adw::PreferencesGroup {
+        let group = adw::PreferencesGroup::builder().title(title).build();
+        let rows: Rc<RefCell<Vec<gtk::Widget>>> = Rc::new(RefCell::new(Vec::new()));
+        let refresh: Rc<dyn Fn()> = {
+            let window = self.clone();
+            let group = group.clone();
+            let rows = rows.clone();
+            let cell: RefreshCell = Rc::new(RefCell::new(None));
+            let built = {
+                let cell = cell.clone();
+                Rc::new(move || {
+                    let Some(refresh) = cell.borrow().clone() else {
+                        return;
+                    };
+                    for row in rows.borrow().iter() {
+                        group.remove(row);
+                    }
+                    rows.borrow_mut().clear();
+                    for choice in window.choices(kind) {
+                        let row = window.build_choice_row(&choice, kind, refresh.clone());
+                        group.add(&row);
+                        rows.borrow_mut().push(row.upcast());
+                    }
+                })
+            };
+            cell.replace(Some(built.clone()));
+            built
+        };
+        let add_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Add"))
+            .icon_name("list-add-symbolic")
+            .build();
+        {
+            let window = self.clone();
+            let refresh = refresh.clone();
+            add_button.connect_clicked(move |_| window.present_add_choice(kind, refresh.clone()));
+        }
+        group.set_header_suffix(Some(&add_button));
+        refresh();
+        group
+    }
+
+    fn build_choice_row(
+        &self,
+        choice: &Choice,
+        kind: ChoiceKind,
+        refresh: Rc<dyn Fn()>,
+    ) -> adw::ActionRow {
+        let label = details::choice_display_label(choice);
+        let usage = self.choices_usage(choice.id);
+        // Choice names are plain text (they can contain `&`), so markup must be
+        // off before the title is set.
+        let row = adw::ActionRow::new();
+        row.set_use_markup(false);
+        row.set_title(&label);
+
+        let prefix = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        let handle = gtk::Image::from_icon_name("list-drag-handle-symbolic");
+        handle.add_css_class("dim-label");
+        prefix.append(&handle);
+        let icon_button = gtk::Button::new();
+        icon_button.add_css_class("flat");
+        icon_button.add_css_class("circular");
+        icon_button.set_child(Some(&gtk::Image::from_icon_name(&icons::resolve(
+            &choice.icon,
+        ))));
+        icon_button.set_tooltip_text(Some(&gettextrs::gettext("Change icon")));
+        {
+            let window = self.clone();
+            let on_pick = refresh.clone();
+            let id = choice.id;
+            let current = choice.icon.clone();
+            let used: HashSet<String> = self
+                .choices(kind)
+                .into_iter()
+                .filter(|other| other.id != id)
+                .map(|other| other.icon)
+                .collect();
+            icon_button.connect_clicked(move |button| {
+                let window2 = window.clone();
+                let on_pick = on_pick.clone();
+                window.present_icon_picker(
+                    button,
+                    &current,
+                    used.clone(),
+                    Rc::new(move |icon| {
+                        window2.set_choice_icon_value(id, &icon);
+                        on_pick();
+                    }),
+                );
+            });
+        }
+        row.add_prefix(&prefix);
+
+        row.set_subtitle(&choice_subtitle(usage));
+
+        let menu_button = gtk::MenuButton::builder()
+            .icon_name("view-more-symbolic")
+            .valign(gtk::Align::Center)
+            .build();
+        let menu = gtk::Box::new(gtk::Orientation::Vertical, 0);
+        menu.set_margin_top(6);
+        menu.set_margin_bottom(6);
+        menu.set_margin_start(6);
+        menu.set_margin_end(6);
+        menu.append(&self.menu_button(&gettextrs::gettext("Rename…"), {
+            let window = self.clone();
+            let choice = choice.clone();
+            let refresh = refresh.clone();
+            move || window.present_rename_choice(&choice, refresh.clone())
+        }));
+        if choice.label.is_some() {
+            menu.append(&self.menu_button(&gettextrs::gettext("Reset name"), {
+                let window = self.clone();
+                let id = choice.id;
+                let refresh = refresh.clone();
+                move || {
+                    window.reset_choice_name(id);
+                    refresh();
+                }
+            }));
+        }
+        menu.append(&self.menu_button(&gettextrs::gettext("Move up"), {
+            let window = self.clone();
+            let id = choice.id;
+            let refresh = refresh.clone();
+            move || {
+                window.move_choice(kind, id, -1);
+                refresh();
+            }
+        }));
+        menu.append(&self.menu_button(&gettextrs::gettext("Move down"), {
+            let window = self.clone();
+            let id = choice.id;
+            let refresh = refresh.clone();
+            move || {
+                window.move_choice(kind, id, 1);
+                refresh();
+            }
+        }));
+        let hide_label = if choice.hidden {
+            gettextrs::gettext("Show")
+        } else {
+            gettextrs::gettext("Hide")
+        };
+        menu.append(&self.menu_button(&hide_label, {
+            let window = self.clone();
+            let id = choice.id;
+            let hidden = choice.hidden;
+            let refresh = refresh.clone();
+            move || {
+                window.set_choice_hidden_value(id, !hidden);
+                refresh();
+            }
+        }));
+        menu.append(&self.menu_button(&gettextrs::gettext("Delete…"), {
+            let window = self.clone();
+            let id = choice.id;
+            let can_delete = usage == 0;
+            let refresh = refresh.clone();
+            move || {
+                if can_delete {
+                    window.confirm_delete_choice(id, refresh.clone());
+                } else {
+                    window.toast(&gettextrs::gettext(
+                        "This item is used by entries. Hide it, or merge it from its collection.",
+                    ));
+                }
+            }
+        }));
+        let popover = gtk::Popover::new();
+        popover.set_child(Some(&menu));
+        menu_button.set_popover(Some(&popover));
+        row.add_suffix(&menu_button);
+
+        if choice.hidden {
+            let badge = gtk::Label::new(Some(&gettextrs::gettext("Hidden")));
+            badge.add_css_class("dim-label");
+            badge.add_css_class("caption");
+            badge.set_valign(gtk::Align::Center);
+            row.add_suffix(&badge);
+        }
+        row
+    }
+
+    fn menu_button(&self, label: &str, action: impl Fn() + 'static) -> gtk::Button {
+        let button = gtk::Button::with_label(label);
+        button.add_css_class("flat");
+        button.set_halign(gtk::Align::Fill);
+        let action = Rc::new(action);
+        button.connect_clicked(move |button| {
+            action();
+            if let Some(popover) = button
+                .ancestor(gtk::Popover::static_type())
+                .and_downcast::<gtk::Popover>()
+            {
+                popover.popdown();
+            }
+        });
+        button
+    }
+
+    fn choices(&self, kind: ChoiceKind) -> Vec<Choice> {
+        let vault = self.imp().vault.borrow();
+        vault
+            .as_ref()
+            .and_then(|vault| vault.choices(kind, true).ok())
+            .unwrap_or_default()
+    }
+
+    fn choices_usage(&self, id: Uuid) -> i64 {
+        let vault = self.imp().vault.borrow();
+        vault
+            .as_ref()
+            .and_then(|vault| vault.choice_usage(id).ok())
+            .unwrap_or(0)
+    }
+
+    fn set_choice_icon_value(&self, id: Uuid, icon: &str) {
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_choice_icon(id, icon).is_ok(),
+                None => false,
+            }
+        };
+        if saved {
+            self.refresh();
+        }
+    }
+
+    fn reset_choice_name(&self, id: Uuid) {
+        let reset = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.reset_choice_label(id).is_ok(),
+                None => false,
+            }
+        };
+        if reset {
+            self.refresh();
+        }
+    }
+
+    fn set_choice_hidden_value(&self, id: Uuid, hidden: bool) {
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.set_choice_hidden(id, hidden).is_ok(),
+                None => false,
+            }
+        };
+        if saved {
+            self.refresh();
+        }
+    }
+
+    /// Moves a choice one position up or down by renumbering the kind's order.
+    fn move_choice(&self, kind: ChoiceKind, id: Uuid, delta: i32) {
+        let mut choices = self.choices(kind);
+        let Some(index) = choices.iter().position(|choice| choice.id == id) else {
+            return;
+        };
+        let target = index as i32 + delta;
+        if target < 0 || target as usize >= choices.len() {
+            return;
+        }
+        choices.swap(index, target as usize);
+        let saved = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => {
+                    let mut ok = true;
+                    for (position, choice) in choices.iter().enumerate() {
+                        ok &= vault
+                            .set_choice_sort_order(choice.id, (position as i64 + 1) * 10)
+                            .is_ok();
+                    }
+                    ok
+                }
+                None => false,
+            }
+        };
+        if saved {
+            self.refresh();
+        }
+    }
+
+    fn confirm_delete_choice(&self, id: Uuid, refresh: Rc<dyn Fn()>) {
+        let dialog = adw::AlertDialog::new(
+            Some(&gettextrs::gettext("Delete this item?")),
+            Some(&gettextrs::gettext(
+                "It is not used by any entry, so deleting it cannot change past entries.",
+            )),
+        );
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("delete", &gettextrs::gettext("Delete"));
+        dialog.set_response_appearance("delete", adw::ResponseAppearance::Destructive);
+        dialog.set_default_response(Some("cancel"));
+        dialog.set_close_response("cancel");
+        let window = self.clone();
+        dialog.connect_response(None, move |_, response| {
+            if response == "delete" {
+                let deleted = {
+                    let mut vault = window.imp().vault.borrow_mut();
+                    match vault.as_mut() {
+                        Some(vault) => vault.soft_delete_choice(id).is_ok(),
+                        None => false,
+                    }
+                };
+                if deleted {
+                    window.refresh();
+                    refresh();
+                }
+            }
+        });
+        dialog.present(Some(self));
+    }
+
+    fn present_rename_choice(&self, choice: &Choice, refresh: Rc<dyn Fn()>) {
+        let dialog = adw::AlertDialog::new(Some(&gettextrs::gettext("Rename")), None);
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("rename", &gettextrs::gettext("Rename"));
+        dialog.set_response_appearance("rename", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("rename"));
+        dialog.set_close_response("cancel");
+        let entry = gtk::Entry::new();
+        entry.set_text(&details::choice_display_label(choice));
+        entry.set_margin_top(6);
+        dialog.set_extra_child(Some(&entry));
+        {
+            let dialog = dialog.clone();
+            let entry = entry.clone();
+            entry.connect_changed(move |entry| {
+                dialog.set_response_enabled("rename", !entry.text().trim().is_empty());
+            });
+        }
+        let window = self.clone();
+        let id = choice.id;
+        let refresh = refresh.clone();
+        dialog.connect_response(None, move |_, response| {
+            if response == "rename" {
+                let name = entry.text().to_string();
+                let renamed = {
+                    let mut vault = window.imp().vault.borrow_mut();
+                    match vault.as_mut() {
+                        Some(vault) => vault.rename_choice(id, &name).is_ok(),
+                        None => false,
+                    }
+                };
+                if renamed {
+                    window.refresh();
+                    refresh();
+                }
+            }
+        });
+        dialog.present(Some(self));
+    }
+
+    fn present_add_choice(&self, kind: ChoiceKind, refresh: Rc<dyn Fn()>) {
+        let dialog = adw::AlertDialog::new(Some(&gettextrs::gettext("Add an item")), None);
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("add", &gettextrs::gettext("Add"));
+        dialog.set_response_appearance("add", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("add"));
+        dialog.set_close_response("cancel");
+        let entry = gtk::Entry::new();
+        entry.set_placeholder_text(Some(&gettextrs::gettext("Name")));
+        entry.set_margin_top(6);
+        dialog.set_extra_child(Some(&entry));
+        dialog.set_response_enabled("add", false);
+        {
+            let dialog = dialog.clone();
+            let entry = entry.clone();
+            entry.connect_changed(move |entry| {
+                dialog.set_response_enabled("add", !entry.text().trim().is_empty());
+            });
+        }
+        let window = self.clone();
+        dialog.connect_response(None, move |_, response| {
+            if response == "add" {
+                let name = entry.text().trim().to_string();
+                if name.is_empty() {
+                    return;
+                }
+                // Suggest an icon from the name (product spec §9).
+                let icon = icon_search::IconIndex::shared()
+                    .suggest(&name)
+                    .unwrap_or_else(|| "question".to_owned());
+                let created = {
+                    let mut vault = window.imp().vault.borrow_mut();
+                    match vault.as_mut() {
+                        Some(vault) => vault.create_choice(kind, &name, &icon).ok(),
+                        None => None,
+                    }
+                };
+                if created.is_some() {
+                    window.refresh();
+                    refresh();
+                }
+            }
+        });
+        dialog.present(Some(self));
+    }
+
+    /// The icon picker popover: search + a grid, matching per product spec §9.
+    fn present_icon_picker(
+        &self,
+        anchor: &gtk::Button,
+        current: &str,
+        used: HashSet<String>,
+        on_pick: Rc<dyn Fn(String)>,
+    ) {
+        let popover = gtk::Popover::new();
+        let store = gio::ListStore::new::<gtk::StringObject>();
+        let selection = gtk::SingleSelection::new(Some(store.clone()));
+        let factory = gtk::SignalListItemFactory::new();
+        factory.connect_setup(|_, item| {
+            if let Some(item) = item.downcast_ref::<gtk::ListItem>() {
+                let button = gtk::Button::new();
+                button.add_css_class("flat");
+                button.set_size_request(40, 40);
+                item.set_child(Some(&button));
+            }
+        });
+        factory.connect_bind(|_, item| {
+            let Some(item) = item.downcast_ref::<gtk::ListItem>() else {
+                return;
+            };
+            let Some(data) = item.item().and_downcast::<gtk::StringObject>() else {
+                return;
+            };
+            let Some(button) = item.child().and_downcast::<gtk::Button>() else {
+                return;
+            };
+            let name = data.string().to_string();
+            button.set_child(Some(&gtk::Image::from_icon_name(&icons::resolve(&name))));
+            button.set_tooltip_text(Some(&name));
+        });
+        let grid = gtk::GridView::new(Some(selection), Some(factory));
+        grid.set_single_click_activate(true);
+        grid.set_max_columns(8);
+        grid.set_min_columns(4);
+        grid.set_valign(gtk::Align::Start);
+        {
+            let on_pick = on_pick.clone();
+            let popover = popover.clone();
+            grid.connect_activate(move |grid, position| {
+                if let Some(object) = grid.model().and_then(|model| model.item(position))
+                    && let Some(data) = object.downcast_ref::<gtk::StringObject>()
+                {
+                    on_pick(data.string().to_string());
+                    popover.popdown();
+                }
+            });
+        }
+
+        let search = gtk::SearchEntry::new();
+        search.set_placeholder_text(Some(&gettextrs::gettext("Search icons")));
+        let mut labels = vec![gettextrs::gettext("All icons")];
+        labels.extend(icon_search::IconIndex::shared().categories());
+        let category_list =
+            gtk::StringList::new(&labels.iter().map(String::as_str).collect::<Vec<_>>());
+        let dropdown = gtk::DropDown::new(Some(category_list), gtk::Expression::NONE);
+        // Plain labels: category names contain `&`, which markup would reject.
+        let dropdown_factory = gtk::SignalListItemFactory::new();
+        dropdown_factory.connect_setup(|_, item| {
+            if let Some(item) = item.downcast_ref::<gtk::ListItem>() {
+                item.set_child(Some(&gtk::Label::new(None)));
+            }
+        });
+        dropdown_factory.connect_bind(|_, item| {
+            let Some(item) = item.downcast_ref::<gtk::ListItem>() else {
+                return;
+            };
+            let Some(data) = item.item().and_downcast::<gtk::StringObject>() else {
+                return;
+            };
+            let Some(label) = item.child().and_downcast::<gtk::Label>() else {
+                return;
+            };
+            label.set_label(&data.string());
+        });
+        dropdown.set_factory(Some(&dropdown_factory));
+        dropdown.set_selected(0);
+
+        let update: Rc<dyn Fn()> = {
+            let store = store.clone();
+            let search = search.clone();
+            let dropdown = dropdown.clone();
+            let index = icon_search::IconIndex::shared();
+            let used = used.clone();
+            Rc::new(move || {
+                store.remove_all();
+                let query = search.text();
+                let icons = if !query.trim().is_empty() {
+                    index.search(&query, &used)
+                } else {
+                    let selected = dropdown.selected();
+                    if selected == 0 {
+                        index.search("", &used)
+                    } else {
+                        let category = dropdown
+                            .selected_item()
+                            .and_downcast::<gtk::StringObject>()
+                            .map(|object| object.string().to_string())
+                            .unwrap_or_default();
+                        index
+                            .by_category()
+                            .into_iter()
+                            .find(|(name, _)| *name == category)
+                            .map(|(_, icons)| icons)
+                            .unwrap_or_default()
+                    }
+                };
+                for name in icons {
+                    store.append(&gtk::StringObject::new(&name));
+                }
+            })
+        };
+        {
+            let update = update.clone();
+            search.connect_search_changed(move |_| update());
+        }
+        {
+            let update = update.clone();
+            dropdown.connect_selected_notify(move |_| update());
+        }
+        update();
+
+        let heading = gtk::Label::new(Some(&gettextrs::gettext("Matching icons")));
+        heading.set_xalign(0.0);
+        heading.add_css_class("heading");
+        if !current.is_empty() {
+            search.set_text(current);
+        }
+        let scrolled = gtk::ScrolledWindow::builder()
+            .child(&grid)
+            .min_content_width(360)
+            .min_content_height(340)
+            .hscrollbar_policy(gtk::PolicyType::Never)
+            .build();
+        let content = gtk::Box::new(gtk::Orientation::Vertical, 6);
+        content.set_size_request(380, -1);
+        content.append(&search);
+        content.append(&heading);
+        content.append(&dropdown);
+        content.append(&scrolled);
+        popover.set_child(Some(&content));
+        popover.set_parent(anchor);
+        popover.popup();
+        search.grab_focus();
     }
 
     fn setup_breakpoints(&self) {
@@ -3873,6 +4463,12 @@ impl QuadernoWindow {
             self.lock();
         }
     }
+}
+
+/// The subtitle of a choice row: how many entries use it.
+fn choice_subtitle(usage: i64) -> String {
+    gettextrs::ngettext("Used in {n} entry", "Used in {n} entries", usage as u32)
+        .replace("{n}", &usage.to_string())
 }
 
 /// The label of an auto-lock duration.

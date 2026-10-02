@@ -1,0 +1,1512 @@
+acorn	*new*,savings,nut,vegetable,veggies,food,groceries,market	finances,nature	weather & nature
+address-book	contacts,directory,roledex	communications	communication
+address-book-tabs	*new*,contacts,directory,roledex	communications	communication
+air-traffic-control	airport,travel,transportation,buildings	maps & travel	maps & travel
+airplane	vehicles,airports,flights,flying,planes,transit,transportation,traveling	maps & travel,objects	maps & travel
+airplane-in-flight	vehicles,airports,flights,flying,planes,transit,transportation,traveling,arrival	maps & travel,objects	maps & travel
+airplane-landing	vehicles,airports,flights,flying,planes,transit,transportation,traveling,arrival	maps & travel,objects	maps & travel
+airplane-takeoff	vehicles,airports,flights,flying,planes,transit,transportation,traveling,departure	maps & travel,objects	maps & travel
+airplane-taxiing	*new*,vehicles,airports,flights,flying,planes,transit,transportation,traveling,arrival	maps & travel,objects	maps & travel
+airplane-tilt	vehicles,airports,flights,flying,planes,transit,transportation,traveling,departure	maps & travel,objects	maps & travel
+airplay	apple,screencasting,television,tv	media,system	media
+alarm	times,timer,clock,schedule,events,watch	system	time
+alien	ufo,space,flying saucer,extra terrestrial,sci-fi	games	games
+align-bottom	alignment,arrangement,layout,flush bottom	design,editor	design
+align-bottom-simple	alignment,arrangement,layout,flush bottom	design,editor	design
+align-center-horizontal	alignment,arrangement,layout,centered,middle	design,editor	design
+align-center-horizontal-simple	alignment,arrangement,layout,centered,middle	design,editor	design
+align-center-vertical	alignment,arrangement,layout,centered,middle	design,editor	design
+align-center-vertical-simple	alignment,arrangement,layout,centered,middle	design,editor	design
+align-left	alignment,arrangement,layout,flush left	design,editor	design
+align-left-simple	alignment,arrangement,layout,flush left	design,editor	design
+align-right	alignment,arrangement,layout,flush right	design,editor	design
+align-right-simple	alignment,arrangement,layout,flush right	design,editor	design
+align-top	alignment,arrangement,layout,flush top	design,editor	design
+align-top-simple	alignment,arrangement,layout,flush top	design,editor	design
+amazon-logo	ecommerce,shopping,logos	brands	brands
+ambulance	*new*,first-aid,emt,medical,medicine,injury,safety,emergency,doctor,vehicles	health & wellness,maps & travel,objects	health & wellness
+anchor	nautical,boats,ships,hope,safety,insurance	communications,maps & travel,objects	maps & travel
+anchor-simple	nautical,boats,ships,hope,safety,insurance	communications,maps & travel,objects	maps & travel
+android-logo	logos,google,mobile,phone,cellular,cellphone	brands,technology & development,system	brands
+angle	*new*,geometry,trigonometry,degrees,radians,measurement,protractor,compass,arc	design,objects	design
+angular-logo	framework,javascript,google,web	brands,technology & development	brands
+aperture	photography,cameras,pictures,lens	design,media	media
+app-store-logo	macintosh,imac,iphone,ipad,macos,ios	brands	brands
+app-window	windows,software,programs,applications	communications,system	system & devices
+apple-logo	macintosh,imac,iphone,ipad,macos,ios	brands	brands
+apple-podcasts-logo	macintosh,imac,iphone,ipad,macos,ios	brands,media	brands
+approximate-equals	*new*,≈,is approximately equal to,congruent,equality,equivalent,equivalence,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+archive	saved,saving,archived,archiving,archival,downloaded,downloading	office,system	office & editing
+armchair	seat,furniture	objects,commerce	commerce
+arrow-arc-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-arc-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-double-up-left	directional,pointer,pointing,arrowhead,reply-all	arrows	arrows
+arrow-bend-double-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-left-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-left-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-right-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-right-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-bend-up-left	directional,pointer,pointing,arrowhead,reply,re	arrows	arrows
+arrow-bend-up-right	directional,pointer,pointing,arrowhead,forward,fwd	arrows	arrows
+arrow-circle-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-up-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-circle-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-clockwise	*updated*,directional,pointer,pointing,arrowhead,redo,refreshing,rotate,spin,flip	arrows	arrows
+arrow-counter-clockwise	*updated*,directional,pointer,pointing,arrowhead,undo,refreshing,rotate,spin,flip	arrows	arrows
+arrow-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-left-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-left-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-right-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-right-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-up-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-elbow-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-fat-down	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-left	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-line-down	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-line-left	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-line-right	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-line-up	directional,pointer,pointing,arrowhead,caps lock,outlined	arrows	arrows
+arrow-fat-lines-down	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-lines-left	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-lines-right	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-lines-up	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-right	directional,pointer,pointing,arrowhead,outlined	arrows	arrows
+arrow-fat-up	directional,pointer,pointing,arrowhead,shift,outlined	arrows	arrows
+arrow-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-down	directional,pointer,pointing,arrowhead,bottom	arrows	arrows
+arrow-line-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-up	directional,pointer,pointing,arrowhead,top	arrows	arrows
+arrow-line-up-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-line-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-down	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-down-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-down-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-in	import,directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-out	export,external,directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-up-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-square-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-u-down-left	directional,pointer,pointing,arrowhead,undo,return,u-turns	arrows	arrows
+arrow-u-down-right	directional,pointer,pointing,arrowhead,redo,u-turns	arrows	arrows
+arrow-u-left-down	directional,pointer,pointing,arrowhead,undo,return,u-turns	arrows	arrows
+arrow-u-left-up	directional,pointer,pointing,arrowhead,redo,u-turns	arrows	arrows
+arrow-u-right-down	directional,pointer,pointing,arrowhead,undo,return,u-turns	arrows	arrows
+arrow-u-right-up	directional,pointer,pointing,arrowhead,redo,u-turns	arrows	arrows
+arrow-u-up-left	directional,pointer,pointing,arrowhead,undo,return,u-turns	arrows	arrows
+arrow-u-up-right	directional,pointer,pointing,arrowhead,redo,u-turns	arrows	arrows
+arrow-up	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-up-left	directional,pointer,pointing,arrowhead	arrows	arrows
+arrow-up-right	directional,pointer,pointing,arrowhead	arrows	arrows
+arrows-clockwise	*updated*,directional,pointer,pointing,arrowhead,redo,refreshing,sync,synchronize,rotate,spin,flip	arrows	arrows
+arrows-counter-clockwise	*updated*,directional,pointer,pointing,arrowhead,undo,refreshing,rotate,spin,flip	arrows	arrows
+arrows-down-up	*updated*,directional,pointer,pointing,arrowhead	arrows	arrows
+arrows-horizontal	*updated*,directional,pointer,cursor,resize,expand,left,right	arrows	arrows
+arrows-in	*updated*,directional,pointer,pointing,arrowhead,collapse,minimize,resize,shrink	arrows	arrows
+arrows-in-cardinal	*updated*,directional,pointer,pointing,arrowhead,collapse,minimize,resize,shrink	arrows	arrows
+arrows-in-line-horizontal	*updated*,directional,pointer,pointing,arrowhead,close,center,align	arrows,design,editor	arrows
+arrows-in-line-vertical	*updated*,directional,pointer,pointing,arrowhead,close,center,align	arrows,design,editor	arrows
+arrows-in-simple	*updated*,directional,pointer,pointing,arrowhead,collapse,minimize,resize	arrows	arrows
+arrows-left-right	*updated*,directional,pointer,pointing,arrowhead	arrows	arrows
+arrows-merge	*updated*,arrowheads,join,combine	arrows	arrows
+arrows-out	*updated*,directional,pointer,pointing,arrowhead,expand,fullscreen,resize,grow	arrows	arrows
+arrows-out-cardinal	*updated*,directional,pointer,pointing,arrowhead,expand,fullscreen,resize,pan,move,grow	arrows	arrows
+arrows-out-line-horizontal	*updated*,directional,pointer,pointing,arrowhead,open,split	arrows,design,editor	arrows
+arrows-out-line-vertical	*updated*,directional,pointer,pointing,arrowhead,open,split	arrows,design,editor	arrows
+arrows-out-simple	*updated*,directional,pointer,pointing,arrowhead,expand,fullscreen,resize	arrows	arrows
+arrows-split	*updated*,arrowheads,fork	arrows	arrows
+arrows-vertical	*updated*,directional,pointer,cursor,resize,expand,up,down	arrows	arrows
+article	reading,writing,journals,periodicals,text,newspaper	media,objects	media
+article-medium	*updated*,reading,writing,journals,periodicals,text,newspaper	media,objects	media
+article-ny-times	*updated*,reading,writing,journals,periodicals,text,news,newspaper,nyt,new york times	media,objects	media
+asclepius	*new*,caduceus,staff,mythology,rx,medicine,drugs,pharmacy,pharmacist,pharmaceuticals,doctor,hospital,snake,mercury,hermes	health & wellness	health & wellness
+asterisk	star,wildcard,bullet point,6,emergency	communications	communication
+asterisk-simple	*updated*,star,wildcard,bullet point,5,emergency	communications	communication
+at	@,address,email,at symbol,commercial at,arobase	communications	communication
+atom	atomic,nucleus,nuclear,reactor,science,physics,electron,automation,react	technology & development,nature	weather & nature
+avocado	*new*,food,vegetable,veggie,fruit,groceries,market	commerce,nature	commerce
+axe	*new*,tools,carpentry,forestry,construction	commerce,objects	commerce
+baby	infant,child,children,toddler	people,health & wellness	people
+baby-carriage	*new*,pram,stroller,infant,child,children,toddler	commerce,people	commerce
+backpack	knapsack,camping,school,bag	commerce,objects	commerce
+backspace	keyboard,remove,delete	system	system & devices
+bag	suitcase,valise,baggage,folders,portfolio	commerce,objects	commerce
+bag-simple	suitcase,valise,baggage,folders,portfolio	commerce,objects	commerce
+balloon	helium,birthday,party	commerce,objects	commerce
+bandaids	bandages,medical,medicine,first aid,injury	health & wellness	health & wellness
+bank	banking,checking,money,savings,deposit,withdraw,places,locations	finances,maps & travel	math & finance
+barbell	gym,weights,dumbbells,strength training,workout,exercises,fitness	health & wellness	health & wellness
+barcode	upc,qr,products,shopping,scanner	commerce,system	commerce
+barn	*new*,animals,livestock,buildings,farming,agriculture	commerce,maps & travel	commerce
+barricade	construction,safety,gate	maps & travel,objects	maps & travel
+baseball	sports,mlb	games,health & wellness,objects	games
+baseball-cap	clothes,clothing,sports,hat	commerce,objects	commerce
+baseball-helmet	*new*,sports,mlb	games,health & wellness,objects	games
+basket	ecommerce,market,cart,buying,shopping,groceries,checkout,places,locations	commerce,objects	commerce
+basketball	sports,nba	games,health & wellness,objects	games
+bathtub	bath,shower,bathroom,faucet	objects	commerce
+battery-charging	charged,charger,charging,power	system	system & devices
+battery-charging-vertical	charged,charger,charging,power	system	system & devices
+battery-empty	charged,charger,charging,power,dead	system	system & devices
+battery-full	charged,charger,charging,power,filled	system	system & devices
+battery-high	charged,charger,charging,power	system	system & devices
+battery-low	charged,charger,charging,power	system	system & devices
+battery-medium	charged,charger,charging,power	system	system & devices
+battery-plus	charged,charger,charging,power	system	system & devices
+battery-plus-vertical	charged,charger,charging,power	system	system & devices
+battery-vertical-empty	charged,charger,charging,power,dead	system	system & devices
+battery-vertical-full	charged,charger,charging,power	system	system & devices
+battery-vertical-high	charged,charger,charging,power	system	system & devices
+battery-vertical-low	charged,charger,charging,power	system	system & devices
+battery-vertical-medium	charged,charger,charging,power	system	system & devices
+battery-warning	charged,charger,charging,power,empty,critical	system	system & devices
+battery-warning-vertical	charged,charger,charging,power,empty,critical	system	system & devices
+beach-ball	*new*,sports,ocean,party	games,health & wellness,objects	games
+beanie	*new*,clothes,clothing,sports,hat,winter	commerce,objects	commerce
+bed	hotels,accommodations,sleeping,places,locations,medical,hospital	health & wellness,maps & travel,objects	health & wellness
+beer-bottle	drinks,beverages,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+beer-stein	drinks,beverages,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+behance-logo	logos,illustration,ui,interface	brands,design	brands
+bell	alarm,notifications,times,timer,clock,schedule,events,ringer,calls	system,objects	system & devices
+bell-ringing	alarm,notifications,times,timer,clock,schedule,events,ringer,calls	system	system & devices
+bell-simple	alarm,notifications,times,timer,clock,schedule,events,ringer,calls	system,objects	system & devices
+bell-simple-ringing	alarm,notifications,times,timer,clock,schedule,events,ringer,calls	system	system & devices
+bell-simple-slash	alarm,notifications,times,timer,clock,schedule,events,ringer,silent,silenced,disabled	system	system & devices
+bell-simple-z	alarm,notifications,times,timer,clock,schedule,events,ringer,snooze	system	system & devices
+bell-slash	alarm,notifications,times,timer,clock,schedule,events,silent,silenced,ringer,calls,disabled	system	system & devices
+bell-z	alarm,notifications,times,timer,clock,schedule,events,ringer,snooze	system	system & devices
+belt	*new*,clothes,clothing	commerce,objects	commerce
+bezier-curve	shapes,drawing,path,pen,vector	design	design
+bicycle	bikers,bicycling,cyclists,transit,transportation,commuter,exercises,fitness	health & wellness,maps & travel,objects	maps & travel
+binary	*new*,digital,0,1,programming,coding,executable	technology & development,system	technology & development
+binoculars	telescope,glasses,search,find,explore	nature,objects,maps & travel	commerce
+biohazard	*new*,contamination,quarantine,toxic,poison,danger,caution	health & wellness	security & warnings
+bird	*updated*,animals,pets	nature	weather & nature
+blueprint	*new*,architecture,layout,floorplan,building,construction	commerce,design	design
+bluetooth	wireless,connection,connected,connectivity	system	system & devices
+bluetooth-connected	wireless,connection,connected,connectivity	system	system & devices
+bluetooth-slash	wireless,connection,connectivity,disconnected,disabled	system	system & devices
+bluetooth-x	wireless,connection,connectivity,disconnected,errors	system	system & devices
+boat	ferry,ship,cruise,vehicles,public transit,transportation,commuter,traveling,sailing,places,locations	maps & travel,objects	maps & travel
+bomb	*new*,gaming,grenade,explosive,war,weapon,fuse	games,objects	games
+bone	dogbone	nature,health & wellness	weather & nature
+book	reading,reader,novel,story,library	office,media,objects	education
+book-bookmark	reading,reader,novel,story,library,favorites,favorited	office,media,objects	education
+book-open	*updated*,reading,reader,novel,story,library	office,media,objects	education
+book-open-text	*updated*,reading,reader,novel,story,library	office,media,objects,maps & travel	education
+book-open-user	*new*,reading,reader,easy read,library,places,locations	office,media,objects	education
+bookmark	reading,reader,novel,story,placeholder,favorites,favorited,library	office,media,objects	education
+bookmark-simple	reading,reader,novel,story,placeholder,favorites,favorited,library	office,media,objects	education
+bookmarks	reading,reader,novel,story,placeholder,favorites,favorited,library	office,objects	education
+bookmarks-simple	reading,reader,novel,story,placeholder,favorites,favorited,library	office,objects	education
+books	reading,reader,bookshelf,library,places,locations	office,maps & travel,media,objects	education
+boot	hiking,shoes,sports,exercise	commerce,objects,health & wellness	commerce
+boules	*new*,balls,sports,pétanque,raffa,bocce,boule lyonnaise,lawn bowls	games,health & wellness,objects	games
+bounding-box	polygon,shapes,outline,corners,rectangle	design	design
+bowl-food	ramen,food,meal,eating,restaurants,dining,locations	commerce,maps & travel,objects	commerce
+bowl-steam	*new*,food,meal,eating,restaurants,dining,locations	commerce,objects,maps & travel	commerce
+bowling-ball	*new*,sports,alley	games,health & wellness,objects	games
+box-arrow-down	saved,saving,archived,archiving,archival,downloaded,downloading	office,system	office & editing
+box-arrow-up	*new*,unarchive,archival,upload	office,system	office & editing
+boxing-glove	*new*,sports,combat,martial arts,fight,gym	games,health & wellness,objects	games
+brackets-angle	code,angle brackets,angle braces	technology & development,editor	technology & development
+brackets-curly	code,curly brackets,curly braces	technology & development,editor	technology & development
+brackets-round	code,parentheses,round brackets,round braces	technology & development,editor	technology & development
+brackets-square	code,square brackets,square braces,array	technology & development,editor	technology & development
+brain	mind,mental	health & wellness,nature	health & wellness
+brandy	drinks,beverages,whiskey,cocktail,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+bread	*new*,food,meal,bakery,sandwich,gluten,loaf,toast,slice	commerce,maps & travel	commerce
+bridge	travel,transportation,infrastucture	maps & travel,objects	commerce
+briefcase	suitcase,valise,baggage,folders,portfolio	office,objects	office & editing
+briefcase-metal	suitcase,valise,baggage,folders,portfolio	office,objects	office & editing
+broadcast	radio,hotspot,wifi,emit	communications,media,system	communication
+broom	sweeping,cleaning	objects	commerce
+browser	web browsers,windows,internet,website,webpage,chrome,edge,firefox	communications,system	system & devices
+browsers	web browsers,windows,internet,website,webpage,chrome,edge,firefox	communications,system	system & devices
+bug	debug,errors,insect,ladybug	technology & development,nature	technology & development
+bug-beetle	debug,errors,insect,ladybug	technology & development,nature	technology & development
+bug-droid	debug,errors,insect,android,google	technology & development,nature	technology & development
+building	*new*,places,locations,company,business,buildings	commerce,maps & travel	commerce
+building-apartment	*new*,places,locations,buildings	commerce,maps & travel	commerce
+building-office	*new*,places,locations,company,business,buildings	commerce,maps & travel	commerce
+buildings	places,locations,company,business	commerce,maps & travel	commerce
+bulldozer	*new*,vehicles,construction,earth mover,dig,digger	commerce,objects	commerce
+bus	vehicles,automobile,public transit,transportation,commuter,traveling,places,locations	maps & travel,objects	maps & travel
+butterfly	animals,insects,moth	nature	weather & nature
+cable-car	*new*,vehicles,gondola,skiing,mountains,public transit,transportation,commuter,traveling,places,locations	maps & travel,objects	maps & travel
+cactus	*updated*,plants,cacti,desert,western	nature	weather & nature
+cake	dessert,birthday,celebration,event	objects	commerce
+calculator	addition,sum,subtraction,difference,multiply,multiplication,product,divide,division,divisor,dividend,quotient,equals,equality,mathematics,arithmetic,+,-,±,×,÷,=	technology & development,finances,office,objects	math & finance
+calendar	dates,times,events,schedule,12	office,system	time
+calendar-blank	dates,times,events,schedule,none	office,system	time
+calendar-check	dates,times,events,schedule,todo,checklist	office,system	time
+calendar-dot	*new*,dates,times,events,schedule,today	office,system	time
+calendar-dots	*new*,dates,times,events,schedule	office,system	time
+calendar-heart	*new*,dates,times,events,schedule,favorite,star	office,system	time
+calendar-minus	*new*,dates,times,events,schedule,remove,delete	office,system	time
+calendar-plus	dates,times,events,schedule,add	office,system	time
+calendar-slash	*new*,dates,times,events,schedule,remove,delete,cancel. unavailable	office,system	time
+calendar-star	*new*,dates,times,events,schedule,favorite,star	office,system	time
+calendar-x	dates,times,events,schedule,closed,cancelled	office,system	time
+call-bell	service bell,reception,attendant,concierge bell	maps & travel,objects	commerce
+camera	photography,pictures,lens	media,system,objects	media
+camera-plus	photography,pictures,album,add	media,system	media
+camera-rotate	photography,pictures,orientation,portrait,landscape,selfie,flip	media,system	media
+camera-slash	photography,pictures,lens,disabled	media,system	media
+campfire	camping,flame,bonfire,outdoors	nature	weather & nature
+car	*updated*,cars,vehicles,automobile,transit,transportation,traveling	maps & travel,objects	maps & travel
+car-battery	*new*,charged,charger,charging,power,voltage,electricity	commerce,objects	commerce
+car-profile	cars,vehicles,automobile,transit,transportation,traveling	maps & travel,objects	maps & travel
+car-simple	cars,vehicles,automobile,transit,transportation,traveling	maps & travel,objects	maps & travel
+cardholder	wallet,money,payment,paying,purchase	commerce,finances,objects	commerce
+cards	card,slides,slideshow,windows,website,webpage,layers	design,system	office & editing
+cards-three	*new*,card,slides,slideshow,windows,website,webpage,layers,stack	design,system	office & editing
+caret-circle-double-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-double-left	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-double-right	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-double-up	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-left	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-right	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-up	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-circle-up-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-double-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-double-left	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-double-right	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-double-up	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-left	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-line-down	*new*,chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-line-left	*new*,chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-line-right	*new*,chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-line-up	*new*,chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-right	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-up	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+caret-up-down	chevron,directional,pointer,pointing,arrowhead,triangle	arrows	arrows
+carrot	food,vegetable,veggie,groceries,market	commerce,nature	commerce
+cash-register	*new*,retail,point-of-sale,pos,transaction,sales,till	commerce,objects	commerce
+cassette-tape	recording,audio,album,music	media,objects	media
+castle-turret	*updated*,chess,rook	maps & travel,objects,games	games
+cat	pets,animals,kitty,kitten	nature	weather & nature
+cell-signal-full	wireless,cellular,phone,mobile,network,connection,connectivity,reception,service	system	system & devices
+cell-signal-high	wireless,cellular,phone,mobile,network,connection,connectivity,reception,service	system	system & devices
+cell-signal-low	wireless,cellular,phone,mobile,network,connection,connectivity,reception,service	system	system & devices
+cell-signal-medium	wireless,cellular,phone,mobile,network,connection,connectivity,reception,service	system	system & devices
+cell-signal-none	wireless,cellular,phone,mobile,network,connection,connectivity,reception,service	system	system & devices
+cell-signal-slash	wireless,cellular,phone,mobile,network,connection,connectivity,disconnected,disabled,reception,service	system	system & devices
+cell-signal-x	wireless,cellular,phone,mobile,network,connection,connectivity,reception,disconnected,errors,service	system	system & devices
+cell-tower	*new*,wireless,cellular,broadcast,phone,mobile,network,connection,connectivity	system	communication
+certificate	*updated*,awards,certification,degree,diploma	objects	education
+chair	seat,furniture	objects,commerce	commerce
+chalkboard	blackboard,whiteboard,classroom,teacher,education,school,college,university	maps & travel,objects	education
+chalkboard-simple	*updated*,blackboard,whiteboard,classroom,teacher,education,school,college,university	maps & travel,objects	education
+chalkboard-teacher	blackboard,whiteboard,classroom,education,school,college,university	maps & travel,objects,people	education
+champagne	glass,drinks,beverages,wine,places,locations,bars,restaurants,food,dining	maps & travel,commerce,objects	commerce
+charging-station	ev,charge,fuel,pump	maps & travel,objects	maps & travel
+chart-bar	graphs,graphing,charts,statistics,histogram,analyze,analysis	finances,office	math & finance
+chart-bar-horizontal	graphs,graphing,charts,statistics,histogram,analyze,analysis	finances,office	math & finance
+chart-donut	graphs,graphing,charts,statistics,analyze,analysis,circle	finances,office	math & finance
+chart-line	graphs,graphing,charts,statistics,analyze,analysis,stocks	finances,office	math & finance
+chart-line-down	*updated*,graphs,graphing,charts,statistics,analyze,analysis,stocks	finances,office	math & finance
+chart-line-up	*updated*,graphs,graphing,charts,statistics,analyze,analysis,stocks	finances,office	math & finance
+chart-pie	graphs,graphing,charts,statistics,circle,analyze,analysis	finances,office	math & finance
+chart-pie-slice	*updated*,graphs,graphing,charts,statistics,circle,analyze,analysis	finances,office	math & finance
+chart-polar	graphs,graphing,charts,statistics,analyze,analysis,circle	finances,office	math & finance
+chart-scatter	graphs,graphing,charts,statistics,analyze,analysis	finances,office	math & finance
+chat	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-centered	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-centered-dots	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-centered-slash	*new*,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-centered-text	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-circle	send,sent,messages,messaging,sms,texting,comment,round,bubble	communications	communication
+chat-circle-dots	send,sent,messages,messaging,sms,texting,comment,round,bubble	communications	communication
+chat-circle-slash	*new*,messages,messaging,sms,texting,comment,round,bubble	communications	communication
+chat-circle-text	send,sent,messages,messaging,sms,texting,comment,round,bubble	communications	communication
+chat-dots	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-slash	*new*,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chat-teardrop	send,sent,messages,messaging,sms,texting,comment,bubble	communications	communication
+chat-teardrop-dots	send,sent,messages,messaging,sms,texting,comment,bubble	communications	communication
+chat-teardrop-slash	*new*,messages,messaging,sms,texting,comment,bubble	communications	communication
+chat-teardrop-text	send,sent,messages,messaging,sms,texting,comment,bubble	communications	communication
+chat-text	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chats	send,sent,messages,messaging,sms,texting,comment,square,bubble	communications	communication
+chats-circle	send,sent,messages,messaging,sms,texting,comment,round,bubble	communications	communication
+chats-teardrop	send,sent,messages,messaging,sms,texting,comment,bubble	communications	communication
+check	todo,to-do,task,list,checkbox,ok,done	system	system & devices
+check-circle	todo,to-do,task,list,checkbox,round,ok,done	system	system & devices
+check-fat	todo,to-do,task,list,checkbox,ok,done	system	system & devices
+check-square	todo,to-do,task,list,checkbox,rectangle,ok,done	system	system & devices
+check-square-offset	*updated*,todo,to-do,task,list,checkbox,rectangle,ok,done	system	system & devices
+checkerboard	*new*,crossword	games	games
+checks	*updated*,todo,task,to-do,list,checkbox,ok,done	system	system & devices
+cheers	*new*,glass,drinks,beverages,champagne,toast,places,locations,bars,restaurants,food,dining	commerce,maps & travel	commerce
+cheese	*new*,dairy,wedge,food,dining	commerce	commerce
+chef-hat	*new*,cooking,cuisine,kitchen,clothes,clothing	commerce,objects	commerce
+cherries	*new*,food,fruit,cherry,groceries,market	nature,commerce	commerce
+church	christ,christianity,cathedral,religion,worship	maps & travel	maps & travel
+cigarette	*new*,smoking,tobacco	commerce,health & wellness	commerce
+cigarette-slash	*new*,non-smoking,tobacco	commerce,health & wellness	commerce
+circle	round,shapes,polygons	design	design
+circle-dashed	missing,round,shapes,polygons	design	design
+circle-half	round,shapes,contrast,brightness	design,editor	design
+circle-half-tilt	round,shapes,contrast,brightness	design,editor	design
+circle-notch	round,shapes,loading,loader,spinner,waiting,progress	system	design
+circles-four	round,shapes,polygons,4	design	design
+circles-three	round,shapes,polygons,3,asana	design	design
+circles-three-plus	round,shapes,polygons,3,+	design	design
+circuitry	processor,microchip,computer,circuit,electronics,motherboard	technology & development	system & devices
+city	*new*,skyline,skyscrapers,places,locations,buildings	maps & travel,commerce	commerce
+clipboard	copy,copied,checklist	office,editor,system	office & editing
+clipboard-text	copy,copied,checklist	office,editor,system	office & editing
+clock	times,timer,alarm,schedule,events,watch	system,objects	time
+clock-afternoon	times,timer,alarm,schedule,events,watch	system	time
+clock-clockwise	times,timer,alarm,schedule,events,restore,fast forward,update	system	time
+clock-countdown	times,timer,alarm,schedule,events,watch	system	time
+clock-counter-clockwise	times,timer,alarm,schedule,events,backup,rewind,history	system	time
+clock-user	*new*,times,timer,shift,schedule,events,watch	system	time
+closed-captioning	subtitles,television,tv,transcribed,transcription,accessibility,a11y	media	media
+cloud	serverless,backup,storage,meteorology,cloudy,overcast	system,weather	weather & nature
+cloud-arrow-down	serverless,backup,storage,download	system	system & devices
+cloud-arrow-up	serverless,backup,storage,upload	system	system & devices
+cloud-check	serverless,backup,storage,sync,synchronized	system	system & devices
+cloud-fog	meteorology,cloudy,overcast,foggy,mist,haze	weather	weather & nature
+cloud-lightning	meteorology,cloudy,overcast,stormy,thunderstorm	weather	weather & nature
+cloud-moon	meteorology,cloudy,partly cloudy,night,evening	weather	weather & nature
+cloud-rain	meteorology,cloudy,rainy,raining,stormy,rainstorm	weather	weather & nature
+cloud-slash	serverless,backup,storage,sync,disabled	system	system & devices
+cloud-snow	meteorology,cloudy,snowy,snowing,stormy,snowstorm	weather	weather & nature
+cloud-sun	meteorology,cloudy,partly cloudy,partly sunny	weather	weather & nature
+cloud-warning	serverless,backup,storage,errors	system	system & devices
+cloud-x	serverless,backup,storage,errors	system	system & devices
+clover	*new*,four leaf clover,plants,luck,lucky,irish	nature	weather & nature
+club	clubs,suits,cards,gambling,casino,gaming	games	games
+coat-hanger	clothing,clothes,closet	commerce,objects	commerce
+coda-logo	project management,productivity,documentation,wiki,logos	brands	brands
+code	angle brackets,angle braces,snippets	technology & development,editor	technology & development
+code-block	angle brackets,angle braces,snippets	technology & development,editor	technology & development
+code-simple	angle brackets,angle braces,snippets	technology & development,editor	technology & development
+codepen-logo	ide,logos	brands,technology & development	brands
+codesandbox-logo	ide,logos	brands,technology & development	brands
+coffee	tea,java,beverages,drinks,cafe,cup,mug,espresso,cappuccino,latte,places,locations,bars,restaurants,food,dining	commerce,objects,maps & travel	commerce
+coffee-bean	*new*,tea,java,beverages,drinks,cafe,cup,mug,espresso,cappuccino,latte,places,locations,bars,restaurants,food,dining	commerce,maps & travel,nature	commerce
+coin	coins,cents,change,money,currency,payment,paying,purchase,price,sell	commerce,finances	commerce
+coin-vertical	cents,change,money,currency,payment,paying,purchase,price,sell	commerce,finances	commerce
+coins	cents,change,money,currency,payment,paying,purchase,price,sell	commerce,finances	commerce
+columns	2,shapes,polygons,box,stack,list,table,cards	design	design
+columns-plus-left	*new*,2,shapes,polygons,box,stack,list,table,cards,prepend,insert	design	design
+columns-plus-right	*new*,2,shapes,polygons,box,stack,list,table,cards,append,insert	design	design
+command	apple,keyboard,shortcut,modifier,looped square,bowen knot,saint john's arms	editor,system	system & devices
+compass	navigation,directions,maps,safari,apple	maps & travel,objects	maps & travel
+compass-rose	*new*,navigation,directions,maps,cardinal,cartography	maps & travel,objects	maps & travel
+compass-tool	drawing,geometry,trigonometry,degrees,radians,measurement,protractor,compass,arc	design,objects	design
+computer-tower	desktop,pc,imac	technology & development,objects	system & devices
+confetti	tada,party,emoji	communications	games
+contactless-payment	purchase,credit card,nfc	commerce	commerce
+control	ctrl,key,keyboard,shortcut,caret	system	system & devices
+cookie	privacy,dessert,food,dining	maps & travel,objects,technology & development	commerce
+cooking-pot	stew,kitchen,steaming,restaurants,food,dining	objects,commerce	commerce
+copy	duplicated,copied,clipboard	editor,system	office & editing
+copy-simple	duplicated,copied,clipboard	editor,system	office & editing
+copyleft	🄯,intellectual property,copr.,symbol	commerce,media	media
+copyright	©,intellectual property,copr.,symbol	commerce,media	media
+corners-in	*updated*,collapse,windowed,minimized	system	media
+corners-out	*updated*,expand,fullscreen,maximized	system	media
+couch	furniture,seat	objects,commerce	commerce
+court-basketball	*new*,sports,nba	games,health & wellness,maps & travel	games
+cow	*new*,animals,livestock,beef,bull,milk,dairy	commerce,nature	weather & nature
+cowboy-hat	*new*,clothes,clothing,stetson	commerce,objects	commerce
+cpu	processor,microchip,computer,circuit	technology & development	technology & development
+crane	*new*,construction,industry	commerce,technology & development	commerce
+crane-tower	*new*,construction,industry	commerce,technology & development	commerce
+credit-card	debit,visa,mastercard,money,payment,paying,purchase,swipe	commerce,finances	commerce
+cricket	*new*,sports,ball,bat	games,health & wellness	games
+crop	photography,clip,screenshots	design,editor	design
+cross	dagger,crucifix,christ,christianity,religion,worship,symbol	design,communications	communication
+crosshair	geolocation,gps,aiming,targeting	maps & travel,system	maps & travel
+crosshair-simple	geolocation,gps,aiming,targeting	maps & travel,system	maps & travel
+crown	*updated*,king,queen,royalty,monarch,ruler,leader,chess	games,objects	games
+crown-cross	*new*,king,queen,royalty,monarch,ruler,leader,chess	games,objects	games
+crown-simple	*updated*,king,queen,royalty,monarch,ruler,leader,chess	games,objects	games
+cube	square,box,3d,volume,blocks	design,games,objects	design
+cube-focus	augmented reality,ar,virual reality,vr,3d,scan	games,objects	games
+cube-transparent	square,box,3d,volume,blocks,necker	design,games,objects	design
+currency-btc	money,btc,bitcoin,crypto,cryptocurrency,payment,paying,purchase	commerce,finances	commerce
+currency-circle-dollar	money,usd,payment,paying,purchase	commerce,finances	commerce
+currency-cny	money,yuan,payment,paying,purchase	commerce,finances	commerce
+currency-dollar	money,usd,payment,paying,purchase	commerce,finances	commerce
+currency-dollar-simple	money,usd,payment,paying,purchase	commerce,finances	commerce
+currency-eth	money,ethereum,crypto,cryptocurrency,payment,paying,purchase	commerce,finances	commerce
+currency-eur	money,euros,payment,paying,purchase	commerce,finances	commerce
+currency-gbp	money,pounds sterling,payment,paying,purchase	commerce,finances	commerce
+currency-inr	money,rupees,payment,paying,purchase	commerce,finances	commerce
+currency-jpy	money,yen,payment,paying,purchase	commerce,finances	commerce
+currency-krw	money,won,payment,paying,purchase	commerce,finances	commerce
+currency-kzt	money,kazakhstan,tenge,payment,paying,purchase	commerce,finances	commerce
+currency-ngn	money,nigeria,naira,payment,paying,purchase	commerce,finances	commerce
+currency-rub	money,rubles,payment,paying,purchase	commerce,finances	commerce
+cursor	pointer,arrowhead,mouse,click	design,system	system & devices
+cursor-click	pointer,arrowhead,mouse	design,system	system & devices
+cursor-text	i-beam,input,select	editor,system	office & editing
+cylinder	shapes,tube	design	design
+database	saved,saving,archived,archiving,archival,hard disk,storage,hdd,servers,databases	technology & development,system	technology & development
+desk	*new*,furniture,workspace,table	commerce,objects,office	commerce
+desktop	computer,pc,imac,tower	technology & development,objects	system & devices
+desktop-tower	*updated*,computer,pc,imac	technology & development,objects	system & devices
+detective	incognito,police,law enforcement,spy,secret	people,system	security & warnings
+dev-to-logo	reading,writing,social media,logos	brands,technology & development	brands
+device-mobile	cellphone,cellular	objects	system & devices
+device-mobile-camera	cellphone,cellular	objects	system & devices
+device-mobile-slash	*new*,cellphone,cellular	objects,system	system & devices
+device-mobile-speaker	cellphone,cellular	objects	system & devices
+device-rotate	*new*,orientation,landscape,portrait,spin,flip	objects,system	system & devices
+device-tablet	cellphone,cellular,ipad,phablet	objects	system & devices
+device-tablet-camera	cellphone,cellular,ipad,phablet	objects	system & devices
+device-tablet-speaker	cellphone,cellular,ipad,phablet	objects	system & devices
+devices	responsive,cellphone,cellular,tablet,destop	objects	system & devices
+diamond	rectangle,shapes,polygons,diamonds,suits,cards,gambling,casino,gaming	design,games	games
+diamonds-four	shapes,grid,component	design	design
+dice-five	die,rolling,gamble,gambling,casino,gaming,5	games,objects	games
+dice-four	die,rolling,gamble,gambling,casino,gaming,4	games,objects	games
+dice-one	die,rolling,gamble,gambling,casino,gaming,1	games,objects	games
+dice-six	die,rolling,gamble,gambling,casino,gaming,6	games,objects	games
+dice-three	die,rolling,gamble,gambling,casino,gaming,3	games,objects	games
+dice-two	die,rolling,gamble,gambling,casino,gaming,2	games,objects	games
+disc	cd-rom,compact disk,album,record	technology & development,media,objects	media
+disco-ball	*new*,danging,club,70s	games,maps & travel,objects	games
+discord-logo	logos,messages,messaging,chat	brands,communications	brands
+divide	division,divisor,dividend,quotient,mathematics,arithmetic,calculator	technology & development,finances	math & finance
+dna	double helix,gene,genetics	health & wellness,nature	health & wellness
+dog	pets,animals,puppy	nature	weather & nature
+door	entrance,exit	objects	commerce
+door-open	entrance,exit	objects	commerce
+dot	dots,circles,shapes,polygons	system	system & devices
+dot-outline	dots,circles,shapes,polygons	system	system & devices
+dots-nine	grid,circles,shapes,polygons,9	design	system & devices
+dots-six	*updated*,drag handle,knurling,circles,shapes,polygons,6	system	system & devices
+dots-six-vertical	*updated*,drag handle,knurling,circles,shapes,polygons,6	system	system & devices
+dots-three	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+dots-three-circle	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+dots-three-circle-vertical	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+dots-three-outline	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+dots-three-outline-vertical	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+dots-three-vertical	menu,overflow,circles,shapes,polygons,3,ellipsis,ellipses,more	system	system & devices
+download	saved,saving,archived,archiving,archival,downloaded,downloading,hard drive,disk	system	system & devices
+download-simple	*updated*,saved,saving,archived,archiving,archival,downloaded,downloading,hard drive,disk,import	system	system & devices
+dress	clothes,clothing	commerce,objects	commerce
+dresser	*new*,furniture,bedroom,storage,drawers,wardrobe	commerce,objects	commerce
+dribbble-logo	logos,round,basketball,sports,design	brands,design	brands
+drone	*new*,aerial,uav,photography,remote	games,objects,technology & development	games
+drop	droplet,teardrop,raindrop,raining,meteorology,water,blur	nature,weather	weather & nature
+drop-half	droplet,teardrop,raindrop,humidity,water,contrast,brightness	design,editor,nature,weather	design
+drop-half-bottom	droplet,teardrop,raindrop,humidity,water,contrast,brightness	design,editor,nature,weather	design
+drop-simple	*new*,droplet,teardrop,raindrop,raining,humidity,meteorology,water,blur	design,editor,nature,weather	weather & nature
+drop-slash	*new*,droplet,teardrop,raindrop,raining,humidity,meteorology,water,blur,disabled	design,editor,nature,weather	design
+dropbox-logo	cloud,storage,backup,logos	brands	brands
+ear	hearing,audio,sound	media,system	media
+ear-slash	hearing,audio,sound,mute,accessible	media,system	media
+egg	chicken,food,meal,baby,hatch	commerce,nature	commerce
+egg-crack	chicken,food,meal,baby,hatch,break	commerce,nature	commerce
+eject	disconnect	media	media
+eject-simple	disconnect	media	media
+elevator	lift	objects,maps & travel	maps & travel
+empty	*new*,∅,empty set,member,mathematics,arithmetic,calculator,null	finances,technology & development	math & finance
+engine	*updated*,motor,repair,vehicles,automobile	maps & travel,objects	maps & travel
+envelope	mail,email,send,sent,message,post,letter	communications	communication
+envelope-open	mail,email,send,sent,message,read,post,letter	communications	communication
+envelope-simple	mail,email,send,sent,message,post,letter	communications	communication
+envelope-simple-open	mail,email,send,sent,message,read,post,letter	communications	communication
+equalizer	music,audio,meter,volume,spectrum,eq,deezer	media,system	media
+equals	=,equality,equivalent,equivalence,mathematics,arithmetic,calculator	technology & development,finances	math & finance
+eraser	write,writing,editing,undo,deleted	design,editor	design
+escalator-down	stairs	maps & travel,objects	maps & travel
+escalator-up	stairs	maps & travel,objects	maps & travel
+exam	text,examination,paper,school,grade	objects	education
+exclamation-mark	*new*,!,alert,warning,caution,interjection,punctuation,symbol	system	security & warnings
+exclude	venn-diagram,difference,intersection	design,editor	design
+exclude-square	venn-diagram,difference,intersection	design,editor	design
+export	share,send to,arrows	communications,system	communication
+eye	visible,hidden,show,hide,visibility,view	design,editor	design
+eye-closed	visible,hidden,show,hide,visibility,view,invisible,private	design,editor	design
+eye-slash	visible,hidden,show,hide,visibility,view,invisible,eyelashes,disabled,private	design,editor	design
+eyedropper	colors,color picker,sample,arts	design,editor,objects	design
+eyedropper-sample	colors,color picker,arts	design,editor,objects	design
+eyeglasses	vision,spectacles	health & wellness,objects	commerce
+eyes	*new*,look,glance	people	people
+face-mask	ppe,facemask,covid-19,coronavirus,flu,cold	health & wellness	health & wellness
+facebook-logo	logos,social media	brands,communications	brands
+factory	industry,manufacture,buildings,places,locations	commerce,maps & travel	commerce
+faders	music,audio,sliders,filters,equalizer,volume,settings,preferences	media,system	media
+faders-horizontal	music,audio,sliders,filters,equalizer,volume,settings,preferences	media,system	media
+fallout-shelter	*new*,radiation,radioactive,nuclear,bunker,contamination,quarantine,toxic,danger,caution	health & wellness	security & warnings
+fan	desk fan,air conditioning	commerce,objects	commerce
+farm	*new*,farmer,field,farming,agriculture	commerce,nature,maps & travel	commerce
+fast-forward	audio,music,seek,scrub,scan,ahead,skip	media,system	media
+fast-forward-circle	audio,music,seek,scrub,scan,ahead,skip	media,system	media
+feather	bird	nature,objects	weather & nature
+fediverse-logo	*new*,social media,decentralized	brands,communications	brands
+figma-logo	*updated*,logos,drawing,art,illustration,ui,interface,prototype,prototyping	brands,design	brands
+file	documents,files,save,write,page	office,editor	office & editing
+file-archive	documents,zip,compression	system,office,editor	office & editing
+file-arrow-down	documents,files,save,write,download,directional,pointer,pointing,arrowhead	office,editor	office & editing
+file-arrow-up	documents,files,save,write,upload,directional,pointer,pointing,arrowhead	office,editor	office & editing
+file-audio	documents,music,sound	office,editor,media	office & editing
+file-c	*new*,documents,code	office,editor,technology & development	office & editing
+file-c-sharp	*new*,documents,code,c#	office,editor,technology & development	office & editing
+file-cloud	documents,sync	office,editor,system	office & editing
+file-code	documents	office,editor,technology & development	office & editing
+file-cpp	*new*,documents,code,c++	office,editor,technology & development	office & editing
+file-css	documents,code	office,editor,technology & development	office & editing
+file-csv	documents,data	office,editor	office & editing
+file-dashed	documents,files,browse,draft,open,dotted	office,editor	office & editing
+file-doc	documents,word,microsoft	office,editor	office & editing
+file-html	*updated*,documents,code	office,editor,technology & development	office & editing
+file-image	documents,pictures,photograph	office,editor,media	office & editing
+file-ini	*new*,documents	office,editor,technology & development	office & editing
+file-jpg	documents,pictures,photograph,jpeg	office,editor,media	office & editing
+file-js	documents,code,javascript	office,editor,technology & development	office & editing
+file-jsx	documents,code,javascript	office,editor,technology & development	office & editing
+file-lock	documents,secure,locked,private	office,editor,system	office & editing
+file-magnifying-glass	documents,files,search,find,locate,browse,missing	office,editor	office & editing
+file-md	*new*,documents,notes,markdown	office,editor,technology & development	office & editing
+file-minus	documents,files,delete,write,remove,-	office,editor	office & editing
+file-pdf	documents,files,acrobat	office,editor	office & editing
+file-plus	documents,files,save,write,add,new,create,+	office,editor	office & editing
+file-png	documents,pictures,photograph	office,editor,media	office & editing
+file-ppt	documents,powerpoint,microsoft	office,editor	office & editing
+file-py	*new*,documents,code,python	office,editor,technology & development	office & editing
+file-rs	documents,code,rust	office,editor,technology & development	office & editing
+file-sql	documents,database	system,technology & development	office & editing
+file-svg	documents,images,vector	system,media	office & editing
+file-text	documents,files,save,write	office,editor	office & editing
+file-ts	documents,code,typescript	office,editor,technology & development	office & editing
+file-tsx	documents,code,typescript	office,editor,technology & development	office & editing
+file-txt	*new*,documents	office,editor,technology & development	office & editing
+file-video	documents,movie	office,editor,media	office & editing
+file-vue	documents,code	office,editor,technology & development	office & editing
+file-x	documents,files,cancelled,deleted,removed,errors	office,editor	office & editing
+file-xls	documents,excel,microsoft	office,editor	office & editing
+file-zip	documents,archive,compression	office,editor,system	office & editing
+files	documents,open,library	office,editor	office & editing
+film-reel	videography,films,movies,recording	media,objects	media
+film-script	screenplay,movie	office,media	media
+film-slate	*updated*,clapper,movie	media,objects	media
+film-strip	camera,photography,darkroom,movie,analog	media	media
+fingerprint	security,secured,authentication,authenticated,login,locked,biometrics,encrypted,encryption	system	security & warnings
+fingerprint-simple	security,secured,authentication,authenticated,login,locked,biometrics,encrypted,encryption	system	security & warnings
+finn-the-human	adventure time,cartoons,television,tv,character	games	games
+fire	flame,burning,match,lighter	nature,weather	weather & nature
+fire-extinguisher	safety,prevention,emergency,hazard,danger,caution	objects	security & warnings
+fire-simple	flame,burning,match,lighter	nature,weather	weather & nature
+fire-truck	*new*,first-aid,emt,medical,medicine,injury,safety,emergency,firefighter	health & wellness	health & wellness
+first-aid	hospital,cross,medical,medicine,injury,safety,emergency,doctor	health & wellness	health & wellness
+first-aid-kit	bandages,medical,medicine,injury,safety,emergency,doctor	health & wellness	health & wellness
+fish	animals,pets,food,seafood,restaurants,dining	nature,commerce	weather & nature
+fish-simple	animals,pets,food,seafood,restaurants,dining	nature,commerce	weather & nature
+flag	country,countries,finished,completed,flags	objects,maps & travel,system	maps & travel
+flag-banner	ribbon,country,countries,finished,completed,flags,swallowtail	objects,maps & travel,system	maps & travel
+flag-banner-fold	*new*,ribbon,country,countries,finished,completed,flags,swallowtail	objects,maps & travel,system	maps & travel
+flag-checkered	flags,race,racing,finish line	maps & travel,objects,games	maps & travel
+flag-pennant	flags,race,sports,team	objects,maps & travel,system,games	maps & travel
+flame	fire,burning,match,lighter	nature,weather	weather & nature
+flashlight	torch,find,search,locate	system,objects	system & devices
+flask	beaker,science,chemistry,experiment,erlenmeyer	technology & development,nature,objects	health & wellness
+flip-horizontal	*new*,mirror,rotate,invert	design,editor	design
+flip-vertical	*new*,mirror,rotate,invert	design,editor	design
+floppy-disk	diskette,directory,directories,folders,documents,files,save,write	office,editor,system	office & editing
+floppy-disk-back	*updated*,diskette,directory,directories,folders,documents,files,save,write	office,editor,system	office & editing
+flow-arrow	*updated*,flowchart,arrowhead	arrows,design,office	design
+flower	plants,green,environmental	nature	weather & nature
+flower-lotus	plants,green,environmental,spirituality	nature	weather & nature
+flower-tulip	plants,green,environmental	nature	weather & nature
+flying-saucer	ufo,space,aliens,extra terrestrial,sci-fi	games,objects	games
+folder	directory,directories,files,folders	office,editor,system	office & editing
+folder-dashed	directory,directories,files,folders,missing,temporary,dotted	office,editor,system	office & editing
+folder-lock	directory,directories,files,folders,private,secure	office,editor,system	office & editing
+folder-minus	directory,directories,files,delete,write,remove,-	office,editor,system	office & editing
+folder-open	directory,directories,files,folders,load	office,editor,system	office & editing
+folder-plus	directory,directories,files,save,write,add,new,create,+	office,editor,system	office & editing
+folder-simple	directory,directories,files,folders	office,editor,system	office & editing
+folder-simple-dashed	directory,directories,files,folders,missing,temporary,dotted	office,editor,system	office & editing
+folder-simple-lock	directory,directories,files,folders,private,secure	office,editor,system	office & editing
+folder-simple-minus	directory,directories,files,delete,write,remove,-	office,editor,system	office & editing
+folder-simple-plus	directory,directories,files,save,write,add,new,create,+	office,editor,system	office & editing
+folder-simple-star	directory,directories,files,folders,favorite,starred	office,editor,system	office & editing
+folder-simple-user	directory,directories,files,folders,personal	office,editor,system	office & editing
+folder-star	directory,directories,files,folders,favorite,starred	office,editor,system	office & editing
+folder-user	directory,directories,files,folders,personal	office,editor,system	office & editing
+folders	directory,directories,files,folders,copy,copied,duplicated	office,editor,system	office & editing
+football	sports,american football,nfl	games,health & wellness,objects	games
+football-helmet	*new*,sports,american football,nfl	games,health & wellness,objects	games
+footprints	path,trail,walk,route,hike,hiking	health & wellness,maps & travel	people
+fork-knife	food,meal,eating,restaurants,dining,utensils	commerce,maps & travel,objects	commerce
+four-k	*new*,uhd,resolution,video	media	media
+frame-corners	expand,fullscreen,maximized,resize,windowed,capture	system	media
+framer-logo	logos,interface,ui,motion,prototype,prototyping	brands,design	brands
+function	mathematics,arithmetic,f-stop	technology & development	math & finance
+funnel	filters,refine,sorting	editor,objects	office & editing
+funnel-simple	filters,refine,sorting	editor,objects	office & editing
+funnel-simple-x	*new*,filters,refine,sorting	editor,objects	office & editing
+funnel-x	*new*,filters,refine,sorting	editor,objects	office & editing
+game-controller	gaming,video games,nintendo switch,sony playstation,microsoft xbox	games,media,objects	games
+garage	vehicles,automobile,buildings,transportation	commerce,maps & travel	commerce
+gas-can	jerrycan,petrol,fuel,gasoline	maps & travel,objects	maps & travel
+gas-pump	gas station,petrol,fuel,gasoline	maps & travel,objects	maps & travel
+gauge	dashboard,meter,speed,speedometer,odometer,performance	technology & development,objects,system	system & devices
+gavel	judge,justice,legal,law,court,hammer,government	commerce,objects	commerce
+gear	8,settings,setup,preferences,cogs,gears,machinery,mechanical	system	system & devices
+gear-fine	setup,preferences,cogs,gears,machinery,mechanical	system	design
+gear-six	6,settings,setup,preferences,cogs,gears,machinery,mechanical	system	system & devices
+gender-female	woman,feminine,venus	people	people
+gender-intersex	transgender,non-binary	people	people
+gender-male	man,masculine,mars	people	people
+gender-neuter	agender,non-binary,asexual	people	people
+gender-nonbinary	intersex,non-binary	people	people
+gender-transgender	intersex,non-binary	people	people
+ghost	pac-man,spirit,scary,halloween	games,objects	games
+gif	gifs,.gif,giphy	media	media
+gift	presents,holiday,birthday	commerce,objects	commerce
+git-branch	*updated*,github,vcs,source control,version control,versioning,branches	technology & development	technology & development
+git-commit	github,vcs,source control,version control,versioning,commits	technology & development	technology & development
+git-diff	*updated*,github,vcs,source control,version control,versioning,difference,compare	technology & development	technology & development
+git-fork	*updated*,github,vcs,source control,version control,versioning,split	technology & development	technology & development
+git-merge	*updated*,github,vcs,source control,version control,versioning,split	technology & development	technology & development
+git-pull-request	*updated*,github,vcs,source control,version control,versioning,merge request	technology & development	technology & development
+github-logo	octocat,vcs,source control,version control,versioning,branches	technology & development,brands	brands
+gitlab-logo	vcs,source control,version control,versioning,branches	brands,technology & development	brands
+gitlab-logo-simple	vcs,source control,version control,versioning,branches	brands,technology & development	brands
+globe	world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography,internet	maps & travel	maps & travel
+globe-hemisphere-east	world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography,europe,africa,asia,australia	maps & travel	maps & travel
+globe-hemisphere-west	world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography,north america,south america	maps & travel	maps & travel
+globe-simple	world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography	maps & travel	maps & travel
+globe-simple-x	*new*,world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography,internet	maps & travel	maps & travel
+globe-stand	world,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography	maps & travel	maps & travel
+globe-x	*new*,world,earth,global,planet,circle,round,internationalization,i18n,languages,country,countries,geography,internet	maps & travel	maps & travel
+goggles	swim,swimming,sports,exercise,olympics,aquatics	health & wellness,objects	maps & travel
+golf	*new*,sports,pga,tee,ball	games,health & wellness,objects	games
+goodreads-logo	*updated*,reading,books,social media,logos	brands	brands
+google-cardboard-logo	virtual reality,vr,logos	brands	games
+google-chrome-logo	web browsers,internet	brands	brands
+google-drive-logo	cloud,storage,backup,logos	brands	brands
+google-logo	logos,search engine,phone,mobile,android	brands	brands
+google-photos-logo	album,pictures,photography	brands,media	brands
+google-play-logo	logos,games,apps,applications,play store,app store,phone,mobile,android	brands,system,media	brands
+google-podcasts-logo	audio	brands,media	brands
+gps	*new*,geolocation,location,navigation	maps & travel,system	maps & travel
+gps-fix	*new*,geolocation,location,navigation	maps & travel,system	maps & travel
+gps-slash	*new*,geolocation,location,navigation,disabled	maps & travel,system	maps & travel
+gradient	fade,ombre,opacity	design	design
+graduation-cap	classroom,teacher,education,school,college,university,degree,graduate,hat	maps & travel,objects	education
+grains	wheat,gluten,farm,farming,agriculture	commerce,nature	commerce
+grains-slash	gluten-free,wheat,gluten,farm,farming,agriculture	commerce	commerce
+graph	nodes,tree	office,technology & development	math & finance
+graphics-card	*new*,graphics card,microchip,computer,circuit	technology & development	technology & development
+greater-than	*new*,>,greater than,gt,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+greater-than-or-equal	*new*,≥,greater than or equal,gte,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+grid-four	4,apps,applications,squares,tiles,cells,tables,tabular,spreadsheets,excel	design,system	design
+grid-nine	9,apps,applications,squares,tiles,cells,tables,tabular,spreadsheets,excel	design,system	design
+guitar	music,instrument	media,objects	media
+hair-dryer	*new*,blow dryer,beauty,grooming,salon	commerce,objects	commerce
+hamburger	fast food,party,places,locations,restaurants,food,dining	commerce,maps & travel	commerce
+hammer	tools,carpentry,construction	objects,system,commerce	commerce
+hand	pointers,cursors,emoji,backhand	system,people	people
+hand-arrow-down	*new*,take,receive,remove,withdraw,emoji	people,commerce,finances	people
+hand-arrow-up	*new*,give,insert,deposit,donation,emoji	people,commerce,finances	people
+hand-coins	donation,payment,money,paying,purchase	people,commerce,finances	commerce
+hand-deposit	*new*,give,insert,donation,atm,emoji	people,commerce,finances	people
+hand-eye	*updated*,emoji,hamsa,evil eye	people	people
+hand-fist	emoji,power,protest,blm	people	people
+hand-grabbing	pointers,cursors,emoji,drag,hold	system,people	people
+hand-heart	donation,care,emoji	people	health & wellness
+hand-palm	pointers,cursors,emoji,palm,stop,wait,hamsa,5	system,people	people
+hand-peace	*new*,emoji,victory	people,communications	people
+hand-pointing	pointers,cursors,emoji,fingers,clicks,mouse	system,people	people
+hand-soap	dispenser,pump,sanitizer,disinfectant,lotion,bottle	health & wellness,objects	health & wellness
+hand-swipe-left	pointers,cursors,gesture	people,system	system & devices
+hand-swipe-right	pointers,cursors,gesture	people,system	system & devices
+hand-tap	pointers,cursors,gesture	people,system	system & devices
+hand-waving	emoji,palm,wave,hello,goodbye	system,people	people
+hand-withdraw	*new*,take,remove,withdrawal,atm,emoji	people,commerce,finances	people
+handbag	suitcases,valises,baggage,purses	commerce,objects	commerce
+handbag-simple	suitcases,valises,baggage,purses	commerce,objects	commerce
+hands-clapping	emoji,clap,applause	system,people	people
+hands-praying	emoji,religion,worship,prayer,thanks,thank you	people	people
+handshake	emoji,deal,agreement	people,commerce	people
+hard-drive	saved,saving,archived,archiving,archival,hard disk,storage,hdd,servers,databases	system	system & devices
+hard-drives	saved,saving,archived,archiving,archival,hard disk,storage,hdd,servers,databases	system	system & devices
+hard-hat	*new*,safety,construction,industry,helmet,ppe	commerce,objects,technology & development	commerce
+hash	hashtag,octothorpe,pound sign,number sign,tic-tac-toe,symbol	communications	communication
+hash-straight	hashtag,octothorpe,pound sign,number sign,tic-tac-toe,symbol	communications	communication
+head-circuit	*new*,automaton,artificial intelligence,ai	technology & development	technology & development
+headlights	brights,high beams	maps & travel,objects	maps & travel
+headphones	music,audio,listening	media,objects	media
+headset	music,audio,listening,gaming,voice chat,microphone,headphones,support,customer-service,call-center	media,games,objects	media
+heart	wellness,love,healthy,like,favorites,favorited,suits,cards,gambling,casino,gaming,emoji	communications,games,health & wellness	games
+heart-break	love,hate,crack,split,divorce,emoji	communications	games
+heart-half	wellness,love,healthy,like,favorites,favorited	communications,games,health & wellness	games
+heart-straight	wellness,love,healthy,like,favorites,favorited,suits,cards,gambling,casino,gaming,emoji	communications,games,health & wellness	games
+heart-straight-break	love,hate,crack,split,divorce,emoji	communications	games
+heartbeat	wellness,healthy,ecg,ekg,vitals,monitor	health & wellness,system	health & wellness
+hexagon	6,shapes,polygons	design	design
+high-definition	*new*,hd,resolution,video	media	media
+high-heel	*updated*,pumps,clothes,clothing,shoes	commerce,objects	commerce
+highlighter	*new*,marker,write,writing,editing	design,editor,office	design
+highlighter-circle	write,writing,editing,drawing	design,editor,office	design
+hockey	*new*,sports,nhl,stick,puck	games,health & wellness,objects	games
+hoodie	clothes,clothing,sweatshirt	commerce,objects	commerce
+horse	animals,equestrian,chess,knight,sports	games,health & wellness,nature	games
+hospital	*new*,places,locations,medical,medicine,emergency,doctor,buildings	maps & travel,health & wellness	maps & travel
+hourglass	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-high	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-low	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-medium	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-simple	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-simple-high	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-simple-low	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+hourglass-simple-medium	times,timer,alarms,clock,schedule,events,waiting,progress	system,objects	time
+house	homes,buildings,places,locations	maps & travel,system	maps & travel
+house-line	*updated*,homes,buildings,places,locations	maps & travel,system	maps & travel
+house-simple	homes,buildings,places,locations	maps & travel,system	maps & travel
+hurricane	*new*,meteorology,cyclone,storm,disaster,wind	weather	weather & nature
+ice-cream	food,dessert,cone	commerce,maps & travel,objects	commerce
+identification-badge	license,credentials,nametag,user,verification	people	people
+identification-card	license,badge,credentials,nametag,user,verification	people	people
+image	*updated*,pictures,photographs,photography,wallpapers,gallery,landscape	media,system	media
+image-broken	*new*,pictures,photographs,photography,wallpapers,gallery,landscape,missing,error,404	media,system	media
+image-square	pictures,photographs,photography,wallpapers,gallery,landscape	media,system	media
+images	*updated*,pictures,photographs,photography,wallpapers,gallery,landscape,album	media,system	media
+images-square	pictures,photographs,photography,wallpapers,gallery,landscape,album	media,system	media
+infinity	infinite,lemniscate,figure-eight,mathematics,arithmetic,calculator,∞	technology & development,finances	math & finance
+info	information,help,support	system	security & warnings
+instagram-logo	logos,social media,photography,camera	brands,communications	brands
+intersect	round,join,union,merge,combine,intersecting,intersection	design,editor	design
+intersect-square	venn-diagram,join,intersection	design,editor	design
+intersect-three	venn-diagram,join,intersection,gender,pronouns	people,design,editor	design
+intersection	*new*,∩,intersection,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+invoice	*new*,receipt,expense,bill	commerce,finances,office	commerce
+island	*new*,geography,beach,ocean,tropical,palm,vacation,trip,locations,places	maps & travel,nature	weather & nature
+jar	*new*,mason jar,kitchen,pantry,canning,preserves,food,condiments	commerce,objects	commerce
+jar-label	*new*,mason jar,kitchen,pantry,canning,preserves,food,condiments	commerce,objects	commerce
+jeep	*updated*,vehicles,automobile,suv,cars,trucks,wrangler,off-road,transit,transportation,traveling	maps & travel,objects	maps & travel
+joystick	*new*,gaming,game controller,video games,arcade game,atari	games,media,objects	games
+kanban	scheduling,tasks,project management,process,lean,agile	office	office & editing
+key	padlock,security,secured,authentication,authenticated,login,locked,encrypted,encryption	objects,system	security & warnings
+key-return	keyboard,enter	system	system & devices
+keyboard	typing,type,keys,input	system	system & devices
+keyhole	lock,security,secured,authentication,authenticated,login,locked,encrypted,encryption,privacy,private	objects,system	security & warnings
+knife	tools,food,meal,eating,restaurants,dining,utensils	commerce,objects	commerce
+ladder	stairs,steps,climbing	objects	commerce
+ladder-simple	stairs,steps,climbing	objects	commerce
+lamp	light,furniture,appliances	objects,commerce	commerce
+lamp-pendant	*new*,light,furniture,appliances	commerce,objects	commerce
+laptop	computer,notebook,pc,macbook	technology & development,objects	system & devices
+lasso	*new*,select,selection,loop,rope,cowboy	design,objects	design
+lastfm-logo	*new*,scrobble,music,social media	brands,media	brands
+layout	wireframe,sidebar,ui,interface	design,editor	design
+leaf	plants,trees,branches,leaves,nodes,green,environmental	nature	weather & nature
+lectern	*new*,lecture,podium,pulpit,stand,speech,presentation,keynote	objects,finances,office	education
+lego	*new*,toys,blocks,bricks	games	games
+lego-smiley	*new*,face,emoji,toys,blocks,bricks	games,communications,people	games
+less-than	*new*,<,less than,lt,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+less-than-or-equal	*new*,≤,less than or equal,lte,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+letter-circle-h	*new*,hospital,letter,glyph,character	editor,maps & travel,design	communication
+letter-circle-p	*new*,parking lot,valet,vehicles,letter,glyph,character	editor,maps & travel,design	communication
+letter-circle-v	*new*,vegan,letter,glyph,character	editor,design,commerce	communication
+lifebuoy	lifebelt,lifesaver,safety,help,support,nautical,boats,ships	health & wellness,objects,system	health & wellness
+lightbulb	flashlight,bulbs,lighting,led,energy,idea	system,objects	system & devices
+lightbulb-filament	flashlight,bulbs,lighting,led,energy,idea	system,objects	system & devices
+lighthouse	buildings,nautical,navigation,boats,ships,safety	maps & travel	maps & travel
+lightning	meteorology,stormy,thunderstorm,thunderbolt,charged,charger,charging,power,electricity,flash	weather,system	system & devices
+lightning-a	flash,auto	system	system & devices
+lightning-slash	thunderbolt,charged,charger,charging,power,electricity,disabled,flash	system	system & devices
+line-segment	shapes,drawing,path,pen,vector	design	design
+line-segments	shapes,drawing,path,pen,vector	design	design
+line-vertical	*new*,bar,pipe,|,divider. symbol	design,technology & development	design
+link	*updated*,anchor,hyperlink,hypertext,chains,chained	communications,objects	system & devices
+link-break	anchor,hyperlink,hypertext,chains,chained,errors,broken	communications,objects	system & devices
+link-simple	anchor,hyperlink,hypertext,chains,chained	communications,objects	system & devices
+link-simple-break	anchor,hyperlink,hypertext,chains,chained,errors,broken	communications,objects	system & devices
+link-simple-horizontal	anchor,hyperlink,hypertext,chains,chained	communications,objects	system & devices
+link-simple-horizontal-break	anchor,hyperlink,hypertext,chains,chained,errors,broken	communications,objects	system & devices
+linkedin-logo	logos,jobs,employment,social media	brands,communications	brands
+linktree-logo	*new*,social media,links	brands,communications	brands
+linux-logo	penguin,computer,animals	brands,technology & development	brands
+list	*updated*,hamburger menu,overflow menu,sidebar,3,ul,ol,unordered list,ordered list,checklist,lines	system,editor	office & editing
+list-bullets	*updated*,ul,unordered list,bulleted list,checklist	editor	office & editing
+list-checks	*updated*,checklist,todo	office,editor	office & editing
+list-dashes	*updated*,ul,unordered list,dashed list,checklist	editor	office & editing
+list-heart	*new*,favorites,wishlist,liked	editor,system	system & devices
+list-magnifying-glass	search,find,locate,query,inspect	editor,system	system & devices
+list-numbers	*updated*,ol,ordered list,numbered list,checklist	editor	office & editing
+list-plus	*updated*,ul,ol,unordered list,ordered list,checklist,add,+	editor	office & editing
+list-star	*new*,favorites,wishlist,liked	editor,system	system & devices
+lock	padlock,security,secured,authentication,authenticated,login,locked,encrypted,encryption,privacy,private	objects,system	security & warnings
+lock-key	padlock,security,secured,authentication,authenticated,login,locked,encrypted,encryption,privacy,private	objects,system	security & warnings
+lock-key-open	padlock,security,unsecured,authentication,unauthenticated,login,unlocked,unencrypted,encryption,privacy	objects,system	security & warnings
+lock-laminated	padlock,security,secured,authentication,authenticated,login,locked,encrypted,encryption,privacy,private	objects,system	security & warnings
+lock-laminated-open	padlock,security,unsecured,authentication,unauthenticated,login,unlocked,unencrypted,encryption,privacy,private	objects,system	security & warnings
+lock-open	padlock,security,unsecured,authentication,unauthenticated,login,unlocked,unencrypted,encryption,privacy	objects,system	security & warnings
+lock-simple	padlock,security,secured,authentication,authenticated,login,locked,encrypted,encryption,privacy,private	objects,system	security & warnings
+lock-simple-open	padlock,security,unsecured,authentication,unauthenticated,login,unlocked,unencrypted,encryption,privacy,private	objects,system	security & warnings
+lockers	locker room,gym,storage	maps & travel	maps & travel
+log	*new*,tree,stump,stick,branch	nature	weather & nature
+magic-wand	selection,wizard,games	design,games,objects	design
+magnet	magnetism,science,physics	technology & development,objects	technology & development
+magnet-straight	magnetism,science,physics	technology & development,objects	technology & development
+magnifying-glass	search,find,locate,query,inspect	editor,system	system & devices
+magnifying-glass-minus	search,find,locate,query,inspect,zoom out,-	editor,system	system & devices
+magnifying-glass-plus	search,find,locate,query,inspect,zoom in,+	editor,system	system & devices
+mailbox	*new*,email,letters,messaging,post	communications,objects,maps & travel	communication
+map-pin	maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-pin-area	*new*,maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-pin-line	maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-pin-plus	*new*,maps,places,markers,pins,locations,add,point of interest	maps & travel	maps & travel
+map-pin-simple	*new*,maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-pin-simple-area	*new*,maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-pin-simple-line	*new*,maps,places,markers,pins,locations,poi,point of interest	maps & travel	maps & travel
+map-trifold	maps,places,locations,cartography,geography	maps & travel	maps & travel
+markdown-logo	*new*,markup,editor,.md	technology & development,office,media,brands	technology & development
+marker-circle	write,writing,editing,drawing	design,editor,office	design
+martini	glass,drinks,beverages,cocktails,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+mask-happy	theater,costume,smile,smiling,thalia	communications,games	games
+mask-sad	theater,costume,cry,crying,melpomene	communications,games	games
+mastodon-logo	*new*,fediverse,social media,decentralized	brands,communications	brands
+math-operations	addition,sum,subtraction,difference,multiply,multiplication,product,divide,division,divisor,dividend,quotient,equals,equality,mathematics,arithmetic,calculator,+,-,±,×,÷,=	technology & development,finances	math & finance
+matrix-logo	*new*,matrix protocol,brands,logos	brands,communications	communication
+medal	ribbons,winning,victory,awards,rosette	objects,games	games
+medal-military	ribbons,winning,victory,awards,military	objects,games	games
+medium-logo	logos,reading,writing,news,social media	brands	brands
+megaphone	bullhorn,announcements,loudspeaker,broadcast	communications,objects	communication
+megaphone-simple	bullhorn,announcements,loudspeaker,broadcast	communications,objects	communication
+member-of	*new*,∈,is element of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+memory	*new*,ram,microchip,computer,circuit,electronics	technology & development	system & devices
+messenger-logo	logos,facebook,social media	brands,communications	brands
+meta-logo	*updated*,facebook,logos,social media,logos	brands	brands
+meteor	*new*,astronomy,asteroid,fireball	weather,nature	weather & nature
+metronome	music,beat,tempo,bpm	objects,media	media
+microphone	audio,recording,music,sound,podcast,studio	communications,media,system	media
+microphone-slash	audio,recording,music,sound,podcast,studio,muted,disabled	communications,media,system	media
+microphone-stage	audio,recording,music,sound,performance,concert	communications,media,system	media
+microscope	*new*,science,biology,experiment,magnify	nature,technology & development,objects,health & wellness	health & wellness
+microsoft-excel-logo	tables,spreadsheets,tabular	brands,office	brands
+microsoft-outlook-logo	email,logos	brands,communications,office	brands
+microsoft-powerpoint-logo	slides,slideshow,presentation	brands,office	brands
+microsoft-teams-logo	chat,video conference	brands,communications	brands
+microsoft-word-logo	documents,word processor,doc,docx	brands,editor,office	brands
+minus	-,subtraction,difference,mathematics,arithmetic,calculator,line,horizontal,divider	technology & development,finances,system	math & finance
+minus-circle	-,subtraction,difference,mathematics,arithmetic,calculator,round	technology & development,finances,system	math & finance
+minus-square	-,subtraction,difference,mathematics,arithmetic,calculator	finances,system	math & finance
+money	cash,dollars,paper bills,payment,paying,purchase	commerce,finances	commerce
+money-wavy	*new*,cash,dollars,paper bills,payment,paying,purchase	finances,commerce	commerce
+monitor	screen,television,tv,displays	system	system & devices
+monitor-arrow-up	*new*,screen,screencast,screenshare,upload,video,movie	system,media	system & devices
+monitor-play	screen,television,tv,displays,screencast,video,movie	system,media	system & devices
+moon	night,evening,clear,sleep,snooze,night mode,dark mode,astronomy,stargazing	nature,system,weather	weather & nature
+moon-stars	night,evening,clear,sleep,snooze,night mode,dark mode,astronomy,stargazing,constellation	nature,weather	weather & nature
+moped	scooter,vehicles,vespa,transportation,travel	maps & travel,objects	maps & travel
+moped-front	scooter,vehicles,vespa,transportation,travel	maps & travel,objects	maps & travel
+mosque	islam,muslim,religion,worship	maps & travel	maps & travel
+motorcycle	vehicles,motorbike,transportation,travel	maps & travel,objects	maps & travel
+mountains	*updated*,hills,outdoors,terrain,geology,adventure	nature,maps & travel	weather & nature
+mouse	*updated*,clicks,input	system	system & devices
+mouse-left-click	*new*,clicks,input	system	system & devices
+mouse-middle-click	*new*,clicks,input	system	system & devices
+mouse-right-click	*new*,clicks,input	system	system & devices
+mouse-scroll	*new*,clicks,input	system	system & devices
+mouse-simple	clicks,input	system	system & devices
+music-note	songs,audio,playlist,albums	media	media
+music-note-simple	songs,audio,playlist,albums	media	media
+music-notes	songs,audio,playlist,albums	media	media
+music-notes-minus	*new*,songs,audio,playlist,albums,remove,subtract	media	media
+music-notes-plus	songs,audio,playlist,albums,add	media	media
+music-notes-simple	songs,audio,playlist,albums	media	media
+navigation-arrow	location,directions,compass,gps	maps & travel	maps & travel
+needle	sewing,thread,awl,tailor	objects,commerce	commerce
+network	*new*,internet,ethernet,lan	system	system & devices
+network-slash	*new*,internet,ethernet,lan,error	system	system & devices
+network-x	*new*,internet,ethernet,lan,disabled	system	system & devices
+newspaper	reading,writing,journals,periodicals	media,objects	media
+newspaper-clipping	*updated*,reading,writing,journals,periodicals	media,objects	media
+not-equals	*new*,≠,equality,equivalent,equivalence,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+not-member-of	*new*,∉,is not element of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+not-subset-of	*new*,⊄,not subset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+not-superset-of	*new*,⊉,not superset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+notches	textarea,resize,drag handle,knurling	system,editor	design
+note	notes,note-taking,memorandum,post-it,reminders	office,editor	office & editing
+note-blank	notes,note-taking,memorandum,post-it,reminders	office,editor	office & editing
+note-pencil	notes,note-taking,memorandum,post-it,reminders	office,editor	office & editing
+notebook	notes,note-taking,memorandum,journal,diary,logs,logbook	office,editor	office & editing
+notepad	*updated*,logs,logbook,notes,note-taking,memorandum,journal,diary	office,editor	office & editing
+notification	badge,pip	system	system & devices
+notion-logo	documentation,productivity,wiki,logos	brands	brands
+nuclear-plant	*new*,renewable,energy,power,electricity	commerce,objects	commerce
+number-circle-eight	8,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-five	5,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-four	*updated*,4,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-nine	9,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-one	1,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-seven	7,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-six	6,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-three	3,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-two	2,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-circle-zero	0,round,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-eight	8,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-five	5,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-four	*updated*,4,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-nine	9,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-one	1,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-seven	7,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-six	6,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-eight	8,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-five	5,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-four	*updated*,4,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-nine	9,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-one	1,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-seven	7,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-six	6,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-three	3,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-two	2,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-square-zero	0,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-three	3,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-two	2,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+number-zero	0,numbers,numerals,digits,mathematics,arithmetic,calculator	finances	math & finance
+numpad	*new*,dialer,dialpad,call-center,telephone,landline,password,passcode	communications,system	communication
+nut	bolts,screws,machinery,tools,hexagon	objects,system	system & devices
+ny-times-logo	nyt,new york times,logos,reading,writing,news,newspaper	brands	brands
+octagon	8,shapes,polygons	design	design
+office-chair	furniture,seat	objects,commerce	commerce
+onigiri	*new*,rice ball,japanese,food,restaurant	commerce,maps & travel	commerce
+open-ai-logo	*new*,artificial intelligence,ai,chatgpt,llm,logos	technology & development,brands	brands
+option	keyboard,shortcut,modifier	system,editor	system & devices
+orange	*new*,food,fruit,juice,citrus,groceries,market	commerce,nature	commerce
+orange-slice	food,fruit,juice,citrus,groceries,market	maps & travel,commerce,nature	commerce
+oven	*new*,stove,stovetop,food,cooking,cuisine,kitchen	commerce,objects	commerce
+package	packages,boxes,delivery,mail,postal service,bundles,library,libraries,shipping	technology & development,objects	commerce
+paint-brush	colors,color picker,arts	design,editor,objects	design
+paint-brush-broad	fill,colors,color picker,arts	design,editor,objects	design
+paint-brush-household	colors,color picker,arts	design,editor,objects	design
+paint-bucket	*updated*,paintbucket,colors,color picker,fill,arts	design,editor,objects	design
+paint-roller	colors,color picker,fill,arts,theme	design,editor,objects	design
+palette	paint,colors,color picker,arts	design,editor,objects	design
+panorama	*new*,image,picture,photography,landscape,360	media	media
+pants	clothing,clothes,jeans	commerce,objects	commerce
+paper-plane	mail,email,send,sent,messages,messaging,toys,games	communications,maps & travel,objects	communication
+paper-plane-right	mail,email,send,sent,messages,messaging,toys,games	communications,maps & travel,objects	communication
+paper-plane-tilt	mail,email,send,sent,messages,messaging,toys,games	communications,maps & travel,objects	communication
+paperclip	attachments,mail,email,office	communications,editor,office,objects	office & editing
+paperclip-horizontal	attachments,mail,email,office	communications,editor,office,objects	office & editing
+parachute	skydiving,safety	objects,technology & development	games
+paragraph	pilcrow	editor	office & editing
+parallelogram	shapes,bandcamp,logos	brands,media,design	design
+park	bench,outdoors	maps & travel,nature	maps & travel
+password	security,secured,authentication,authenticated,login,locked,encrypted,encryption	system	security & warnings
+path	transit,travel,trail,gps,navigation,route,destination,vector	design,maps & travel	maps & travel
+patreon-logo	*updated*,crowdfunding,logos	brands	brands
+pause	music,audio,resume,start,stop	media,system	media
+pause-circle	music,audio,resume,start,stop,round	media,system	media
+paw-print	pets,pet store,pet shop,animals,cat,dog,veterinarian	nature,commerce,health & wellness	weather & nature
+paypal-logo	payments,paying,purchase,logos	brands,finances,commerce	brands
+peace	love,hippies,peace sign,symbols	communications	communication
+pen	ink,write,writing,editing,sign,signature	design,editor,office	design
+pen-nib	ink,write,writing,editing,sign,signature,fountain pen,illustrator	design,editor,office	design
+pen-nib-straight	ink,write,writing,editing,sign,signature,fountain pen,illustrator	design,editor,office	design
+pencil	write,writing,editing,sign,signature	design,editor,office	design
+pencil-circle	write,writing,editing,sign,signature	design,editor,office	design
+pencil-line	write,writing,editing,sign,signature	design,editor,office	design
+pencil-ruler	*new*,drawing,drafting,construction,tools	design,editor,office	design
+pencil-simple	write,writing,editing,sign,signature	design,editor,office	design
+pencil-simple-line	write,writing,editing,sign,signature	design,editor,office	design
+pencil-simple-slash	read-only,write,writing,editing	design,editor,office	design
+pencil-slash	read-only,write,writing,editing	design,editor,office	design
+pentagon	*new*,shapes,polygons,5	design	design
+pentagram	star,wicca,satan,satanism,religion,spirituality,evil,magic	games,design	design
+pepper	food,spicy,chile,vegetable	commerce,nature	commerce
+percent	%,percentage,percentile,ratio,delta,mathematics,arithmetic,calculator	technology & development,finances	math & finance
+person	walking,human,woman,man,body,transit,transportation,travel,commuter,user	maps & travel,people	people
+person-arms-spread	accessibility,vitruvian,stretch,sports	health & wellness,maps & travel,people	people
+person-simple	pedestrian,walking,human,woman,man,body,transit,transportation,travel,commuter,user,exercise	maps & travel,people,health & wellness	people
+person-simple-bike	pedestrian,biking,bicycle,human,woman,man,body,sports,exercise	maps & travel,people,health & wellness	people
+person-simple-circle	*new*,human,accessibility,a11y,vitruvius,vitruvian	people	people
+person-simple-hike	*new*,pedestrian,climbing,mountaineering,bouldering	nature,health & wellness,maps & travel,people	people
+person-simple-run	pedestrian,running,human,woman,man,body,transit,transportation,travel,commuter,user,exercise	maps & travel,people,health & wellness	people
+person-simple-ski	*new*,sports,skiing,winter,mountain	games,health & wellness	games
+person-simple-snowboard	*new*,sports,snowboarding,winter,mountain	games,health & wellness	games
+person-simple-swim	*new*,pedestrian,swimming,human,woman,man,body,sports,exercise	maps & travel,people,health & wellness	people
+person-simple-tai-chi	*new*,mindfulness,martial arts,meditation,sports,exercise,yoga	health & wellness,maps & travel,people	people
+person-simple-throw	pedestrian,tennis,human,woman,man,body,sports,exercise	maps & travel,people,health & wellness	people
+person-simple-walk	pedestrian,walking,human,woman,man,body,transit,transportation,travel,commuter,user,exercise	maps & travel,people,health & wellness	people
+perspective	3d,skew,warp,trapezoid	design,editor	design
+phone	calls,telephone,landline,talk	communications,system	communication
+phone-call	calls,calling,ringing,telephone,landline,talk	communications,system	communication
+phone-disconnect	calls,hang up,disconnected,telephone,landline,talk	communications,system	communication
+phone-incoming	calls,calling,telephone,landline,talk	communications,system	communication
+phone-list	*new*,calls,call-center,telephone,landline,talk	communications,system	communication
+phone-outgoing	calls,calling,telephone,landline,talk	communications,system	communication
+phone-pause	*new*,calls,hold,call-center,telephone,landline,talk	communications,system	communication
+phone-plus	calls,telephone,landline,talk,conference,add	communications,system	communication
+phone-slash	calls,disabled,disconnected,telephone,landline,talk	communications,system	communication
+phone-transfer	*new*,calls,call-center,telephone,landline,talk	communications,system	communication
+phone-x	calls,missed,errors,telephone,landline,talk	communications,system	communication
+phosphor-logo	logos	brands	brands
+pi	π,symbol,mathematics,circle	finances,technology & development	math & finance
+piano-keys	music,instrument,keyboard	media,objects	media
+picnic-table	*new*,bench,park,outdoors	maps & travel,nature	commerce
+picture-in-picture	pip,pop-out,minimize,maximize	media,system	media
+piggy-bank	savings,deposit,money,coins	finances,objects	commerce
+pill	capsule,medicine,rx,pharmacy,pharmacist,pharmaceuticals,prescription,drugs	health & wellness	health & wellness
+ping-pong	*new*,sports,paddle	games,health & wellness,objects	games
+pint-glass	*new*,water,beverage,drinks,beverages,food,dining	commerce,health & wellness,objects	commerce
+pinterest-logo	logos,vision board,mood board,social media	brands,communications	brands
+pinwheel	toys,whirligig	games,objects	games
+pipe	*new*,tube,plumber,plumbing,construction	commerce,objects	commerce
+pipe-wrench	*new*,plumber,plumbing,tools,construction	commerce,objects	commerce
+pix-logo	*new*,payments,paying,purchase,logos	commerce,finances	commerce
+pizza	fast food,party,places,locations,restaurants,food,dining	commerce,maps & travel	commerce
+placeholder	empty,notdef,tofu,rectangle slash,missing	design,editor	design
+planet	saturn,world,globe,astronomy,space	nature	weather & nature
+plant	sprout,vegan,farm,farming,garden,gardening	commerce,nature	weather & nature
+play	music,audio,resume,start	media,system	media
+play-circle	music,audio,resume,start,round	media,system	media
+play-pause	music,audio,resume,start,stop	media,system	media
+playlist	*updated*,music,audio,queue	media,system	media
+plug	outlet,socket,plugin,integration	system,objects	system & devices
+plug-charging	outlet,socket,plugin,integration,charge,charging	system,objects	system & devices
+plugs	outlet,socket,plugin,integration,disconnected	system,objects	system & devices
+plugs-connected	*updated*,outlet,socket,plugin,integration	system,objects	system & devices
+plus	addition,sum,mathematics,arithmetic,calculator,+	technology & development,finances,system	math & finance
+plus-circle	addition,sum,mathematics,arithmetic,calculator,round,+	technology & development,finances,system	math & finance
+plus-minus	plus or minus,plus/minus,add/subtract,addition,sum,subtraction,difference,mathematics,arithmetic,calculator,+,-,±	technology & development,finances	math & finance
+plus-square	addition,sum,mathematics,arithmetic,calculator,+	finances,technology & development,system	math & finance
+poker-chip	chips,tokens,cards,gambling,casino	games	games
+police-car	*updated*,vehicles,cars,automobiles,law enforcement	maps & travel,objects	maps & travel
+polygon	shapes,drawing	design	design
+popcorn	food,movies,theater	maps & travel,commerce	commerce
+popsicle	*new*,ice cream,dessert,summer,food	commerce,maps & travel	commerce
+potted-plant	sprout,vegan,garden,gardening	commerce,nature	commerce
+power	charged,charger,charging,on,off,on/off,switch,power switch	system	system & devices
+prescription	rx,medicine,drugs,pharmacy,pharmacist,pharmaceuticals,doctor	health & wellness	health & wellness
+presentation	whiteboard,flipchart,charts,statistics,analyze,analysis,meeting	finances,office	office & editing
+presentation-chart	whiteboard,flipchart,graphs,graphing,charts,statistics,analyze,analysis,meeting	finances,office	office & editing
+printer	printing	editor,office	office & editing
+prohibit	forbidden,prohibited,cancelled,prevent,stop,do not enter	maps & travel,system	security & warnings
+prohibit-inset	forbidden,prohibited,cancelled,prevent,stop,do not enter	maps & travel,system	security & warnings
+projector-screen	projection,presentation,slideshow,movies,charts,statistics,analyze,analysis	finances,media,office	office & editing
+projector-screen-chart	projection,presentation,slideshow,graphs,graphing,charts,statistics,analyze,analysis	finances,office	office & editing
+pulse	activity,heartbeat,medical,ecg,ekg,vitals,monitor,medicine	health & wellness	health & wellness
+push-pin	favorites,favorited,pushpin	office,maps & travel,objects	office & editing
+push-pin-simple	favorites,favorited,pushpin	office,maps & travel,objects	office & editing
+push-pin-simple-slash	favorites,favorited,pushpin,disabled	office,maps & travel,objects	office & editing
+push-pin-slash	favorites,favorited,pushpin,disabled	office,maps & travel,objects	office & editing
+puzzle-piece	board game,element,component,extension,plugin	games,technology & development	games
+qr-code	upc,barcode,products,shopping,scanner	system	system & devices
+question	information,help,support,questions	system	security & warnings
+question-mark	*new*,?,information,help,support,questions,punctuation,symbol	system	security & warnings
+queue	*updated*,music,audio,playlist	media,system	media
+quotes	quoations,quotation marks,double-quotes,writing,books	communications,editor,media	communication
+rabbit	*new*,hare,fast,animal	nature	weather & nature
+racquet	*new*,sports,tennis,squash,pickleball	games,health & wellness,objects	games
+radical	√,radix,radicand,square root,squareroot,mathematics,arithmetic,calculator	technology & development,finances	math & finance
+radio	broadcast,fm,am,xm,transmitter,receiver	communications,media,objects	communication
+radio-button	input,checkbox,checked	system	system & devices
+radioactive	radiation,danger,warning,nuclear,atomic	nature,health & wellness	security & warnings
+rainbow	meteorology,rainstorm,arc,pride,lgbtq+,leprechaun	weather	weather & nature
+rainbow-cloud	meteorology,rainstorm,cloudy,partly cloudy,partly sunny,pride,lgbtq+,leprechaun	weather	weather & nature
+ranking	*new*,medal,rank,leaderboard,winner,sports	games,objects	games
+read-cv-logo	resume,jobs,logos	brands	brands
+receipt	purchase,money,clipping,expense	commerce,finances	commerce
+receipt-x	purchase,money,clipping,expense,cancel	commerce,finances	commerce
+record	music,audio,recording,recorder,voice memo	media,system	media
+rectangle	4,shapes,polygons,box	design	design
+rectangle-dashed	*new*,4,shapes,polygons,box,missing	design	design
+recycle	recycling,trash,environmental,green	arrows,nature	arrows
+reddit-logo	logos,subreddit,snoo,social media	brands,communications	brands
+repeat	music,audio,recycle	media,system	media
+repeat-once	music,audio,recycle	media,system	media
+replit-logo	*new*,logos,ide,editor,coding	brands,technology & development	brands
+resize	*new*,maximize,expand,grow	design,editor	design
+rewind	music,audio,seek,scrub,scan,skip,back,backwards,reverse	media,system	media
+rewind-circle	music,audio,seek,scrub,scan,skip,back,backwards,reverse	media,system	media
+road-horizon	trip,drive,road,travel,transportation,highway	maps & travel	maps & travel
+robot	automaton,artificial intelligence,ai	technology & development,objects	technology & development
+rocket	spaceship,launch,deployment,rocketship	technology & development,maps & travel,objects	maps & travel
+rocket-launch	*updated*,spaceship,flying,blastoff,deployment,rocketship	technology & development,maps & travel,objects	maps & travel
+rows	2,shapes,polygons,box,stack,list,table,cards	design	design
+rows-plus-bottom	*new*,2,shapes,polygons,box,stack,list,table,cards,prepend,insert	design	design
+rows-plus-top	*new*,2,shapes,polygons,box,stack,list,table,cards,prepend,insert	design	design
+rss	radio,broadcast,web feed,news,aggregator	communications	communication
+rss-simple	radio,broadcast,web feed,news,aggregator	communications	communication
+rug	*updated*,tapestry,carpet	objects	commerce
+ruler	measure,scale,distance	design,editor,objects	design
+sailboat	*new*,sailing,ship,vehicles,transportation,sports,places,locations	maps & travel,objects	maps & travel
+scales	measure,balance,law,justice,government	commerce,maps & travel,objects	commerce
+scan	upc,barcode,products,shopping,scanner	system	system & devices
+scan-smiley	*new*,facial recognition,face unlock,scanner	system,people	system & devices
+scissors	*updated*,cut,snip,clipboard	design,editor,office,system	design
+scooter	vehicles,transportation,travel,transit	maps & travel,health & wellness	maps & travel
+screencast	apple,airplay,screencasting,screen share,television,tv	media,system	media
+screwdriver	*new*,tools,construction,flathead,drill	commerce,objects	commerce
+scribble	*new*,doodles,squiggle,drawing,sign,signature	design	design
+scribble-loop	doodles,drawing,sign,signature	design	design
+scroll	*updated*,parchment,paper,script,spell,fantasy	games,objects	games
+seal	badge,verified,verification,shapes,polygons,circle-wavy	design	security & warnings
+seal-check	badge,verified,verification,shapes,polygons,circle-wavy	design	security & warnings
+seal-percent	*new*,badge,discount,sale,shapes,polygons,circle-wavy	design	security & warnings
+seal-question	badge,unverified,verification,shapes,polygons,circle-wavy	design	security & warnings
+seal-warning	badge,unverified,verification,errors,shapes,polygons,circle-wavy	design	security & warnings
+seat	*new*,chair,car seat,airplane seat,transit,transportation,traveling	maps & travel,objects	maps & travel
+seatbelt	*new*,vehicles,safety	commerce,objects	commerce
+security-camera	*new*,cctv,surveillance,video,monitor,motion detector,safety	objects,system	security & warnings
+selection	marquis,select,square dashed	design,editor	design
+selection-all	marquis,select all	design,editor	design
+selection-background	marquis	design,editor	design
+selection-foreground	marquis	design,editor	design
+selection-inverse	marquis,invert	design,editor	design
+selection-plus	marquis,add	design,editor	design
+selection-slash	marquis,unselect	design,editor	design
+shapes	geometry,square,circle,triangle	design	design
+share	send to,export,arrows	communications,system	communication
+share-fat	export,send to	arrows,system,communications	communication
+share-network	send to,export	communications,system	communication
+shield	badge,security,secured,defense,defended,authentication,authenticated,guarded,locked,encrypted,encryption	system,objects	security & warnings
+shield-check	badge,security,defense,authentication,authenticated,guarded,locked,encrypted,encryption	system,objects	security & warnings
+shield-checkered	badge,security,defense,authentication,authenticated,guarded,locked,encrypted,encryption	system,objects	security & warnings
+shield-chevron	badge,security,defense,authentication,authenticated,guarded,locked,encrypted,encryption	system,objects	security & warnings
+shield-plus	badge,security,defense,authentication,authenticated,guarded,locked,encrypted,encryption	system,objects	security & warnings
+shield-slash	badge,security,unsecured,defense,undefended,authentication,unauthenticated,unguarded,unlocked,unencrypted,encryption,disabled	system,objects	security & warnings
+shield-star	badge,security,defense,authentication,authenticated,guarded,locked,encrypted,encryption	objects,system	security & warnings
+shield-warning	badge,security,unsecured,defense,undefended,authentication,unauthenticated,unguarded,unlocked,unencrypted,encryption,errors	system,objects	security & warnings
+shipping-container	*new*,shipping,transportation,places,locations	maps & travel,objects,commerce	maps & travel
+shirt-folded	clothes,clothing	commerce,objects	commerce
+shooting-star	wish,comet,meteor	nature	weather & nature
+shopping-bag	ecommerce,market,basket,cart,buying,checkout,places,locations	commerce,maps & travel,objects	commerce
+shopping-bag-open	ecommerce,market,basket,cart,buying,checkout,places,locations	commerce,maps & travel,objects	commerce
+shopping-cart	ecommerce,market,basket,buying,groceries,checkout,places,locations	commerce,maps & travel,objects	commerce
+shopping-cart-simple	ecommerce,market,basket,buying,groceries,checkout,places,locations	commerce,maps & travel,objects	commerce
+shovel	*new*,tools,digging,construction	commerce,objects	commerce
+shower	bath,bathtub,bathroom,faucet	objects	commerce
+shrimp	food,seafood,prawn	commerce,nature	weather & nature
+shuffle	music,audio,randomize,crossed	media,arrows,system	media
+shuffle-angular	music,audio,randomize,crossed	media,arrows,system	media
+shuffle-simple	music,audio,randomize,crossed	media,arrows,system	media
+sidebar	left rail,wireframe,ui,interface	design,editor	design
+sidebar-simple	left rail,wireframe,ui,interface	design,editor	design
+sigma	σ,symbol,mathematics,sum	finances,technology & development	math & finance
+sign-in	*updated*,signin,login,log in,enter	system	system & devices
+sign-out	*updated*,signout,logout,log out,exit	system	system & devices
+signature	*updated*,sign,autograph,verify	communications,office	communication
+signpost	direction,traffic,road sign,transit,transportation	maps & travel	maps & travel
+sim-card	*updated*,cellular,cellphone,mobile	communications,system	system & devices
+siren	alarm,police,lights,warning	objects,maps & travel	security & warnings
+sketch-logo	drawing,art,illustration,ui,interface,prototype,prototyping,gemstone,diamond	design	brands
+skip-back	music,audio,seek,scrub,scan,back,backwards,reverse,previous	media,system	media
+skip-back-circle	music,audio,seek,scrub,scan,back,backwards,reverse,previous	media,system	media
+skip-forward	music,audio,seek,scrub,scan,ahead,next	media,system	media
+skip-forward-circle	music,audio,seek,scrub,scan,ahead,next	media,system	media
+skull	death,dead,kill	games	games
+skype-logo	*new*,chat,video conference	brands,communications	brands
+slack-logo	logos,messaging	brands,communications	brands
+sliders	music,audio,faders,filters,equalizer,volume,settings,preferences	media,system	media
+sliders-horizontal	music,audio,faders,filters,equalizer,volume,settings,preferences	media,system	media
+slideshow	pictures,images,photography,gallery,carousel	media,system	media
+smiley	face,emoji,happy,grinning,smiling	communications,people	people
+smiley-angry	face,emoji,mad,frown	communications,people	people
+smiley-blank	face,emoji,unimpressed,no face	communications,people	people
+smiley-meh	face,emoji,unimpressed,neutral	communications,people	people
+smiley-melting	*new*,face,emoji,embarrassment,sarcasm,shame,hot,heat	communications,people	people
+smiley-nervous	*updated*,face,emoji,anxious,uncomfortable,uneasy,queasy,sick,ill	communications,people	people
+smiley-sad	face,emoji,unhappy,frowning	communications,people	people
+smiley-sticker	face,emoji,happy,grinning,smiling	communications,people	people
+smiley-wink	face,emoji,winking,flirting,cute	communications,people	people
+smiley-x-eyes	face,emoji,dead,killed,unconscious	communications,people	people
+snapchat-logo	logos,messaging,social media	brands,communications	brands
+sneaker	clothes,clothing,shoes,trainers,sports	commerce,objects,health & wellness	commerce
+sneaker-move	*updated*,clothes,clothing,shoes,trainers,sports	commerce,objects,health & wellness	commerce
+snowflake	meteorology,snowy,snowing,snowstorm	weather	weather & nature
+soccer-ball	*updated*,sports,football,mls	games,health & wellness,objects	games
+sock	*new*,clothes,clothing	commerce,objects	commerce
+solar-panel	*new*,renewable,energy,power,electricity	commerce,objects	commerce
+solar-roof	*new*,renewable,energy,power,electricity	commerce,objects	commerce
+sort-ascending	*updated*,sorted,sorting,increasing,a to z,arrows,list	editor	office & editing
+sort-descending	*updated*,sorted,sorting,decreasing,z to a,arrows,list	editor	office & editing
+soundcloud-logo	music,social media,logos	brands,media	brands
+spade	spades,suits,cards,gambling,casino,gaming	games	games
+sparkle	star,rate,ratings,favorites,favorited	communications,nature	weather & nature
+speaker-hifi	music,audio,sound,stereo	media,objects	media
+speaker-high	*updated*,music,audio,volume,sound	media,system	media
+speaker-low	*updated*,music,audio,volume,sound	media,system	media
+speaker-none	*updated*,music,audio,muted,volume,sound	media,system	media
+speaker-simple-high	music,audio,volume,sound	media,system	media
+speaker-simple-low	music,audio,volume,sound	media,system	media
+speaker-simple-none	music,audio,muted,volume,sound	media,system	media
+speaker-simple-slash	music,audio,muted,volume,sound,disabled	media,system	media
+speaker-simple-x	music,audio,muted,volume,sound,disabled,errors	media,system	media
+speaker-slash	*updated*,music,audio,muted,volume,sound,disabled	media,system	media
+speaker-x	*updated*,music,audio,muted,volume,sound,disabled,errors	media,system	media
+speedometer	*new*,gauge,dashboard,meter,speed,odometer,performance	technology & development,objects,system	system & devices
+sphere	*new*,circle,ball,3d,mesh,cad,model	design	design
+spinner	loading,loader,waiting,progress	system	system & devices
+spinner-ball	*new*,loading,loader,waiting,progress	system	system & devices
+spinner-gap	loading,loader,waiting,progress	system	system & devices
+spiral	*updated*,spin,rotate,dizzy	communications,design	games
+split-horizontal	resize,columns	arrows,design,editor	design
+split-vertical	resize,rows	arrows,design,editor	design
+spotify-logo	music,player,streaming	brands,media	brands
+spray-bottle	*new*,cleaner,cleaning	objects,health & wellness	design
+square	4,shapes,polygons,box	design	design
+square-half	4,shapes,polygons,box,columns,sidebar,split vertical	design	design
+square-half-bottom	4,shapes,polygons,box,columns,sidebar,split vertical	design	design
+square-logo	squareup,payment	brands,commerce,finances	brands
+square-split-horizontal	shapes,polygons,columns	design,editor	design
+square-split-vertical	shapes,polygons,rows	design,editor	design
+squares-four	4,shapes,polygons,apps,applications,grid,table,microsoft,logos	design,system	design
+stack	cards,layers	design,office,editor	design
+stack-minus	*new*,cards,layers,remove,delete	design,office,editor	design
+stack-overflow-logo	logos,code	brands,technology & development	brands
+stack-plus	*new*,cards,layers,add	design,office,editor	design
+stack-simple	cards,layers	design,office,editor	design
+stairs	staircase,steps,escalator,exit,signs	commerce,objects	commerce
+stamp	clone,seal,official	design,objects	design
+standard-definition	*new*,sd,resolution,video	media	media
+star	rate,ratings,favorites,favorited	communications,maps & travel,nature	communication
+star-and-crescent	islam,muslim,moon,religion,worship,symbol	communications,people	communication
+star-four	rate,ratings,favorites,favorited	communications,nature	weather & nature
+star-half	rate,ratings	communications	communication
+star-of-david	judaism,jewish,hexagram,religion,worship,symbol	communications,people	communication
+steam-logo	*new*,gaming,games	brands,games	brands
+steering-wheel	cars,vehicles,automobiles,driving	maps & travel,objects	maps & travel
+steps	stairs,staircase,exit,signs	commerce,objects	maps & travel
+stethoscope	hospital,medical,medicine,injury,safety,emergency,doctor,heart	health & wellness,objects	health & wellness
+sticker	stickers,sticker pack,labels	communications	communication
+stool	chair,seat,furniture	objects,commerce	commerce
+stop	music,audio	media,system	media
+stop-circle	music,audio,round	media,system	media
+storefront	shops,shopping,markets,stores,buildings,places,locations	commerce,maps & travel	commerce
+strategy	sports,strategem,plan,tic-tac-toe	games,finances	games
+stripe-logo	payment	brands,commerce,finances	brands
+student	pupil,graduate,classroom,teacher,education,school,college,university	people	education
+subset-of	*new*,⊆,subset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+subset-proper-of	*new*,⊂,proper subset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+subtitles	subtitles,television,tv,transcribed,transcription,accessibility,a11y	media	media
+subtitles-slash	*new*,subtitles,television,tv,transcribed,transcription,accessibility,a11y,disabled	media	media
+subtract	boolean,intersection,combine,split,merge,union	design,editor	design
+subtract-square	boolean,intersection,combine,split,merge,union	design,editor	design
+subway	*new*,vehicles,underground,train,tunnel,metro,light rail,public transit,transportation,commuter,traveling,places,locations	maps & travel,objects	maps & travel
+suitcase	briefcase,valise,baggage,folders,portfolio	office,objects	maps & travel
+suitcase-rolling	suitcase,luggage,travel,transportation	maps & travel,objects	maps & travel
+suitcase-simple	briefcase,valise,baggage,folders,portfolio	office,objects	maps & travel
+sun	day,daytime,daylight,clear,sunny,sunshine,light mode,brightness,lighten,brighten	nature,system,weather	weather & nature
+sun-dim	day,daytime,daylight,clear,sunny,sunshine,light mode,brightness,darken	nature,system,weather	weather & nature
+sun-horizon	day,daytime,daylight,clear,sunny,sunshine,sunrise,sunset	nature,weather	weather & nature
+sunglasses	vision,sun,spectacles	health & wellness,objects	commerce
+superset-of	*new*,⊇,superset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+superset-proper-of	*new*,⊃,proper superset of,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+swap	layers,replace,exchange,reverse	design,editor	system & devices
+swatches	colors,color picker,samples,pantone	design,editor,objects	design
+swimming-pool	swim,sports,exercise,olympics,aquatics	health & wellness,maps & travel,games	maps & travel
+sword	weapon,knife,dagger,gladius,video games,rpg,gaming,war	games,objects	games
+synagogue	jewish,judaism,temple,religion,worship	maps & travel	maps & travel
+syringe	needle,hypodermic,vaccine,medicine,doctor,shot,hospital	health & wellness	health & wellness
+t-shirt	clothes,clothing	objects,commerce	commerce
+table	tables,tabular,speadsheets,excel,grid,form	finances,office,editor	math & finance
+tabs	*updated*,browser,window,folders,files	system	system & devices
+tag	tags,hashtag,labels,sale,sell,price,discount	commerce,technology & development,objects	commerce
+tag-chevron	tags,hashtag,labels,sale	commerce,technology & development,objects	commerce
+tag-simple	tags,hashtag,labels,sale,sell,price,discount	commerce,technology & development,objects	commerce
+target	bullseye,radar,archery,accuracy,precision	maps & travel,objects	games
+taxi	*updated*,vehicles,cars,automobiles,livery,limousine,uber	maps & travel,objects	maps & travel
+tea-bag	*new*,drinks,beverages,sachet,caffeine,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+telegram-logo	logos,messages,messaging	brands,communications	brands
+television	screen,tv,displays	system,objects	media
+television-simple	*updated*,screen,tv,displays	system,objects	media
+tennis-ball	sports,mlb	games,health & wellness,objects	games
+tent	camping,outdoors,tarp	health & wellness,objects,nature,maps & travel	maps & travel
+terminal	command line,cli,bash,shell,caret,console	technology & development,system	technology & development
+terminal-window	command line,cli,bash,shell,caret,console	technology & development,system	technology & development
+test-tube	science,chemistry,experiment,vial	technology & development,nature,health & wellness,objects	health & wellness
+text-a-underline	typography,typeface,print,font,underscore,emphasis	design,editor	design
+text-aa	typography,typeface,print,font	design,editor	office & editing
+text-align-center	*updated*,typography,print,font,alignment,centered	design,editor	office & editing
+text-align-justify	*updated*,typography,print,font,alignment,justified	design,editor	office & editing
+text-align-left	*updated*,typography,print,font,alignment,flush left	design,editor	office & editing
+text-align-right	*updated*,typography,print,font,alignment,flush right	design,editor	office & editing
+text-b	typography,typeface,print,font,bold,boldface,emphasis	design,editor	office & editing
+text-columns	*updated*,typography,print,font,alignment,article	design,editor	office & editing
+text-h	heading,typography,print	design,editor	office & editing
+text-h-five	heading,h5,typography,print	design,editor	office & editing
+text-h-four	*updated*,heading,h4,typography,print	design,editor	office & editing
+text-h-one	heading,h1,typography,print	design,editor	office & editing
+text-h-six	heading,h6,typography,print	design,editor	office & editing
+text-h-three	heading,h3,typography,print	design,editor	office & editing
+text-h-two	heading,h2,typography,print	design,editor	office & editing
+text-indent	*updated*,alignment,tab,menu	design,editor	office & editing
+text-italic	typography,typeface,print,font,slant,oblique,stress,emphasis,calligraphy	design,editor	office & editing
+text-outdent	*updated*,alignment,tab,unindent,dedent,menu	design,editor	office & editing
+text-strikethrough	typography,typeface,print,font,struck,remove,delete,change	design,editor	office & editing
+text-subscript	*new*,typography,font,formatting,mathematics,power,exponent,calculator	design,editor,finances	office & editing
+text-superscript	*new*,typography,font,formatting,mathematics,calculator	design,editor,finances	office & editing
+text-t	typography,typeface,print,font	design,editor	office & editing
+text-t-slash	*new*,typography,typeface,print,font,formatting,clear	design,editor	office & editing
+text-underline	typography,typeface,print,font,underscore,emphasis	design,editor	office & editing
+textbox	input,cursor,field	editor,system	office & editing
+thermometer	meteorology,temperature,degrees,°,celcius,centigrade,kelvin,fahrenheit,hot,warm,cold	weather,health & wellness,objects	weather & nature
+thermometer-cold	meteorology,temperature,degrees,°,celcius,centigrade,kelvin,fahrenheit	weather,health & wellness,objects	weather & nature
+thermometer-hot	meteorology,temperature,degrees,°,celcius,centigrade,kelvin,fahrenheit,warm	weather,health & wellness,objects	weather & nature
+thermometer-simple	meteorology,temperature,degrees,°,celcius,centigrade,kelvin,fahrenheit,hot,warm,cold	weather,health & wellness,objects	weather & nature
+threads-logo	*new*,meta,instagram,social media	brands,communications	brands
+three-d	*new*,3d,cad,model	media,technology & development	media
+thumbs-down	dislike,hate,emoji,no	communications,people	communication
+thumbs-up	like,love,favorited,favorites,emoji,yes	communications,people	communication
+ticket	ticketstub,movie ticket,entry,admissions,events	commerce,maps & travel,objects	commerce
+tidal-logo	music,logos	brands,media	brands
+tiktok-logo	logos,social media	brands,communications	brands
+tilde	*new*,~,∼,proportional,comparison,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+timer	clock,alarm,schedule,events,stopwatch,sports	system,objects	time
+tip-jar	*new*,give,deposit,donation,savings,money	commerce,finances,objects	commerce
+tipi	teepee,lodge,tent,outdoors,camping,tarp	nature,objects,maps & travel	maps & travel
+tire	*new*,wheel,vehicles,transportation	commerce,objects	commerce
+toggle-left	switch,controls,settings,preferences	system	system & devices
+toggle-right	switch,controls,settings,preferences	system	system & devices
+toilet	bathroom,restroom,lavatory,water closet	health & wellness,objects	health & wellness
+toilet-paper	bathroom,restroom,lavatory,water closet	health & wellness,objects	health & wellness
+toolbox	tools,carpentry,construction	objects,system,commerce	commerce
+tooth	teeth,dentistry,medical,medicine,doctor,cavity	health & wellness	health & wellness
+tornado	*new*,meteorology,twister,storm,wind,disaster	weather	weather & nature
+tote	suitcases,valises,baggage,tote-bag,portfolios	commerce,objects	commerce
+tote-simple	suitcases,valises,baggage,tote-bag,portfolios	commerce,objects	commerce
+towel	*new*,clothing,linen,hotel,beach,pool,swimming,shower,bath	commerce,objects	commerce
+tractor	*new*,vehicles,farmer,field,farming,agriculture	commerce,objects	commerce
+trademark	tm,®,™,intellectual property	commerce	commerce
+trademark-registered	®,™,intellectual property	commerce	commerce
+traffic-cone	pylon,safety,transit,transportation	maps & travel	maps & travel
+traffic-sign	road signs,transit,transportation	maps & travel	maps & travel
+traffic-signal	stop light,safety,transit,transportation	maps & travel	maps & travel
+train	vehicles,subway,light rail,public transit,transportation,commuter,traveling,places,locations	maps & travel,objects	maps & travel
+train-regional	vehicles,subway,railroad,public transit,transportation,commuter,freight,shipping,traveling,places,locations	maps & travel,objects	maps & travel
+train-simple	vehicles,subway,light rail,public transit,transportation,commuter,traveling,places,locations	maps & travel,objects	maps & travel
+tram	vehicles,subway,railroad,public transit,transportation,commuter,light rail,shipping,traveling,places,locations	maps & travel,objects	maps & travel
+translate	translation,languages,internationalization,i18n,speech	communications,system	communication
+trash	garbage,remove,delete,destroy,recycle,recycling	office,system	office & editing
+trash-simple	garbage,remove,delete,destroy,recycle,recycling	office,system	office & editing
+tray	inbox,mailbox,bin	office,communications,system	office & editing
+tray-arrow-down	inbox,saved,saving,archived,archiving,archival,downloaded,downloading	office,system	office & editing
+tray-arrow-up	*new*,outbox,archival,unarchive,uploaded,uploading	office,system	office & editing
+treasure-chest	*new*,loot,lootbox,inventory,rewards,gaming,pirate	games,objects	games
+tree	plants,branches,leaves,green,environmental	nature	weather & nature
+tree-evergreen	plants,branches,leaves,pine,conifer,green,environmental	nature	weather & nature
+tree-palm	tropical,beach,plants,branches,leaves,green,environmental	nature	games
+tree-structure	data structures,family tree,genealogy,hierarchy,taxonomy,charts,flowchart	technology & development,office	technology & development
+tree-view	*new*,hierarchy	system	system & devices
+trend-down	graphs,graphing,charts,statistics,analyze,analysis,decrease,arrows	finances,office	math & finance
+trend-up	graphs,graphing,charts,statistics,analyze,analysis,increase,arrows	finances,office	math & finance
+triangle	3,shapes,polygons	design	design
+triangle-dashed	*new*,3,shapes,polygons,missing	design	design
+trolley	*new*,airport,briefcase,valise,baggage	office,objects	maps & travel
+trolley-suitcase	*new*,airport,briefcase,valise,baggage	office,objects	maps & travel
+trophy	ribbons,medals,winning,victory,awards,prize	games,objects	games
+truck	trucks,cars,vehicles,automobile,shipping,delivery	commerce,maps & travel,objects	maps & travel
+truck-trailer	*new*,vehicles,automobile,shipping,tractor,semi	commerce,maps & travel,objects	commerce
+tumblr-logo	*new*,social media,logos	brands,communications	brands
+twitch-logo	logos,streaming,livestream,gaming,video games,social media	brands,communications,games	brands
+twitter-logo	logos,social media,tweets,birds	brands,communications	brands
+umbrella	raining,rainy,insurance	objects,weather	weather & nature
+umbrella-simple	raining,rainy,insurance	objects,weather	weather & nature
+union	*new*,∪,union,set,member,mathematics,arithmetic,calculator	finances,technology & development	math & finance
+unite	*updated*,round,join,union,merge,combine,intersecting,intersection	design,editor	design
+unite-square	join,union,merge,combine,intersecting,intersection	design,editor	design
+upload	saved,saving,archived,archiving,archival,uploaded,uploading,hard drive,disk	system	system & devices
+upload-simple	*updated*,saved,saving,archived,archiving,archival,uploaded,uploading,hard drive,disk	system	system & devices
+usb	serial,port,plug,peripheral,device	objects,system	system & devices
+user	person,users,profile,account,contact,login	people	people
+user-check	*new*,person,users,profile,account,contact,login,verified	people	people
+user-circle	person,users,profile,account,contact,login	people	people
+user-circle-check	*new*,person,users,profile,account,contact,login,verified	people	people
+user-circle-dashed	*new*,person,users,profile,account,contact,login,pending,missing,removed	people	people
+user-circle-gear	person,users,profile,account,contact,settings,preferences	people	people
+user-circle-minus	person,users,profile,account,contact,delete,remove,-	people	people
+user-circle-plus	person,users,profile,account,contact,add,create,+	people	people
+user-focus	identification,biometrics,facial recognition,profile,person,account,autofocus	people	people
+user-gear	person,users,profile,account,contact,settings,preferences	people	people
+user-list	person,users,profiles,accounts,members,address book	people	people
+user-minus	person,users,profile,account,contact,delete,remove,-	people	people
+user-plus	person,users,profile,account,contact,add,create,+	people	people
+user-rectangle	person,users,profile,account,contact,login	people	people
+user-sound	*new*,person,users,profile,speech,speaking,voice	people	people
+user-square	person,users,profile,account,contact,login	people	people
+user-switch	person,users,profile,account,login,logout,signin,signout,settings,preferences	people	people
+users	user,group,team,people,profiles,accounts,contacts	people	people
+users-four	user,group,team,department,community,people,profiles,accounts,contacts	people	people
+users-three	user,group,team,community,people,profiles,accounts,contacts	people	people
+van	westfalia,microbus,vanagon,cars,vehicles,automobile,transit,transportation,traveling	maps & travel,objects	maps & travel
+vault	safe,bank,security,secured,authentication,authenticated,locked,encrypted,encryption	objects,system,finances	security & warnings
+vector-three	*new*,3d,xyz,cartesian,coordinates,plane,volume,dimensions,mathematics	arrows,technology & development,design	arrows
+vector-two	*new*,2d,xy,cartesian,coordinates,plane,dimensions,mathematics	arrows,technology & development,design	arrows
+vibrate	audio,volume,viration,ringer,calls,silent,silenced	system	system & devices
+video	training,course,education,tutorial	people	education
+video-camera	videography,films,movies,recording	media,system,objects	media
+video-camera-slash	videography,films,movies,recording,disabled	media,system	media
+video-conference	*new*,video call,zoom,skype,discord,facetime,meeting	media,system,communications	media
+vignette	photography,darkroom,movie,analog	design	design
+vinyl-record	recording,audio,album,music,ep,lp	media,office	media
+virtual-reality	virtual reality,vr,headset,metaverse	games,media	games
+virus	germs,disease,illness	health & wellness	health & wellness
+visor	*new*,goggles,vision	technology & development,media,objects	media
+voicemail	phonecalls,missed,recording,telephone,landline	system	communication
+volleyball	sports	games,health & wellness,objects	games
+wall	firewall,security,secured,blocks,bricks	objects,system	security & warnings
+wallet	money,payment,paying,purchase	commerce,finances,objects	commerce
+warehouse	storage,industry,manufacture,buildings,places,locations	commerce,maps & travel	commerce
+warning	alert,danger,dangerous,caution,errors	system	security & warnings
+warning-circle	alert,danger,dangerous,caution,errors,round	system	security & warnings
+warning-diamond	alert,danger,dangerous,caution,errors	system	security & warnings
+warning-octagon	alert,danger,dangerous,caution,errors,8,eight	system	security & warnings
+washing-machine	*new*,clothing,laundry,cleaning	commerce,maps & travel,objects	commerce
+watch	times,timer,alarm,schedule,events,clock,wristwatch,wearable	system,objects	time
+wave-sawtooth	synth,synthesizer,sound,audio,music,waveform	media	media
+wave-sine	synth,synthesizer,sound,audio,music,waveform	media	media
+wave-square	synth,synthesizer,sound,audio,music,waveform	media	media
+wave-triangle	synth,synthesizer,sound,audio,music,waveform	media	media
+waveform	*updated*,audio,sound,spectrum,spectrograph,music	media	media
+waveform-slash	*new*,audio,sound,spectrum,spectrograph,music	media	media
+waves	ocean,tides,surf	nature,weather	weather & nature
+webcam	camera,video conference	objects,system,communications	media
+webcam-slash	camera,video conference	communications,objects,system	media
+webhooks-logo	api	technology & development,brands	technology & development
+wechat-logo	weixin,logos	brands	brands
+whatsapp-logo	logos,messages,messaging	brands,communications	brands
+wheelchair	handicapped,medical,disabled,differently abled,accessible,accessibility,a11y	health & wellness,maps & travel,people	people
+wheelchair-motion	handicapped,medical,disabled,differently abled,accessible,accessibility,a11y	health & wellness,maps & travel,people	people
+wifi-high	wireless,internet,network,connection,connectivity	system	system & devices
+wifi-low	wireless,internet,network,connection,connectivity	system	system & devices
+wifi-medium	wireless,internet,network,connection,connectivity	system	system & devices
+wifi-none	wireless,internet,network,connection,connectivity	system	system & devices
+wifi-slash	wireless,internet,network,connection,connectivity,disabled,disconnected	system	system & devices
+wifi-x	wireless,internet,network,connection,connectivity,disconnected,errors	system	system & devices
+wind	meteorology,windy,stormy,blustery,gusty,air	weather	weather & nature
+windmill	*new*,turbine,energy,renewable,sustainability,countryside,landscape,green,power,buildings	commerce	commerce
+windows-logo	microsoft,computers	brands,technology & development	brands
+wine	drinks,beverages,vineyard,places,locations,bars,restaurants,food,dining	commerce,maps & travel,objects	commerce
+wrench	settings,setup,preferences,tools,machinery,mechanical,repairs	system,objects,commerce	commerce
+x	×,closed,cancelled,dismissed,times,multiply,mulitplication,product,mathematics,arithmetic,calculator	technology & development,finances,system	math & finance
+x-circle	closed,cancelled,dismissed,round	system	math & finance
+x-logo	*new*,twitter,logos,social media,tweets	brands,communications	brands
+x-square	closed,cancelled,dismissed	system	math & finance
+yarn	*new*,knitting,sewing	games,commerce	commerce
+yin-yang	symbol,good,evil,black,white	communications	communication
+youtube-logo	logos,google,videos,movies,social media	brands,communications,media	brands

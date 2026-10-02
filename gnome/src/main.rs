@@ -2,6 +2,7 @@
 
 mod application;
 mod details;
+mod icon_search;
 mod icons;
 mod keyring;
 mod picker;
