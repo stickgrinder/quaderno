@@ -116,7 +116,15 @@ deleted note" if the note was deleted), with a link back.
 
 ### 3.8 Collections pages
 
-`AdwNavigationPage` with a `GtkListView`: name, entry count, row menu (Rename, Merge into…, Delete). Multi-selection mode (selection button in the header) enables "Merge into…". Selecting a row opens the filtered timeline.
+Selecting a collection in the sidebar turns the list pane into that collection
+(People, Locations, Things or Tags): the title becomes the collection's name and
+the list shows each item with its entry count and a row menu (Rename…, Merge
+into…, Delete…). Delete is only offered for items with no linked entries;
+otherwise a toast points at merging. Selecting a row filters the pane to a
+timeline of that item's entries, with a back button in the header returning to
+the collection. This is a mode of the list pane, not a pushed
+`AdwNavigationPage`; multi-select merging is done one row at a time via
+"Merge into…".
 
 ### 3.9 Preferences
 

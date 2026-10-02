@@ -208,6 +208,14 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                 };
 
                 [start]
+                Gtk.Button collection_back {
+                  icon-name: "go-previous-symbolic";
+                  tooltip-text: _("Back");
+                  visible: false;
+                  styles ["flat"]
+                }
+
+                [start]
                 Gtk.ToggleButton sidebar_toggle {
                   icon-name: "sidebar-show-symbolic";
                   tooltip-text: _("Sections");

@@ -144,6 +144,8 @@ mod imp {
         #[template_child]
         pub sidebar_toggle: TemplateChild<gtk::ToggleButton>,
         #[template_child]
+        pub collection_back: TemplateChild<gtk::Button>,
+        #[template_child]
         pub new_button: TemplateChild<adw::SplitButton>,
         #[template_child]
         pub search_button: TemplateChild<gtk::ToggleButton>,
@@ -244,6 +246,9 @@ mod imp {
         pub save_source: RefCell<Option<glib::SourceId>>,
         pub row_ids: RefCell<Vec<Option<uuid::Uuid>>>,
         pub section_filters: RefCell<Vec<(u32, Filter)>>,
+        pub collection_filters: RefCell<Vec<(u32, SubjectKind)>>,
+        pub collection_kind: Cell<Option<SubjectKind>>,
+        pub collection_subject: RefCell<Option<Uuid>>,
         pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
         pub panel: RefCell<Option<PanelWidgets>>,
         pub panel_loading: Cell<bool>,
@@ -281,6 +286,7 @@ mod imp {
                 main_split: Default::default(),
                 navigation_split: Default::default(),
                 sidebar_toggle: Default::default(),
+                collection_back: Default::default(),
                 new_button: Default::default(),
                 search_button: Default::default(),
                 search_bar: Default::default(),
@@ -334,6 +340,9 @@ mod imp {
                 save_source: RefCell::new(None),
                 row_ids: RefCell::new(Vec::new()),
                 section_filters: RefCell::new(Vec::new()),
+                collection_filters: RefCell::new(Vec::new()),
+                collection_kind: Cell::new(None),
+                collection_subject: RefCell::new(None),
                 search_index: RefCell::new(None),
                 entry_menu: Default::default(),
                 toast_overlay: Default::default(),
@@ -768,15 +777,30 @@ impl QuadernoWindow {
         collections.set_child(Some(&heading));
         self.imp().sections_list.append(&collections);
 
-        for (icon, label) in [
-            ("avatar-default-symbolic", gettextrs::gettext("People")),
-            ("mark-location-symbolic", gettextrs::gettext("Locations")),
-            ("package-x-generic-symbolic", gettextrs::gettext("Things")),
-            ("tag-symbolic", gettextrs::gettext("Tags")),
+        for (icon, label, kind) in [
+            (
+                "avatar-default-symbolic",
+                gettextrs::gettext("People"),
+                SubjectKind::Person,
+            ),
+            (
+                "mark-location-symbolic",
+                gettextrs::gettext("Locations"),
+                SubjectKind::Place,
+            ),
+            (
+                "package-x-generic-symbolic",
+                gettextrs::gettext("Things"),
+                SubjectKind::Thing,
+            ),
+            ("tag-symbolic", gettextrs::gettext("Tags"), SubjectKind::Tag),
         ] {
             let row = self.section_row(icon, &label);
-            row.set_sensitive(false);
             self.imp().sections_list.append(&row);
+            self.imp()
+                .collection_filters
+                .borrow_mut()
+                .push((row.index() as u32, kind));
         }
 
         let window = self.clone();
@@ -793,8 +817,24 @@ impl QuadernoWindow {
                     .map(|(_, filter)| *filter);
                 if let Some(filter) = filter {
                     window.set_filter(filter);
+                    return;
+                }
+                let collection = window
+                    .imp()
+                    .collection_filters
+                    .borrow()
+                    .iter()
+                    .find(|(idx, _)| *idx == index)
+                    .map(|(_, kind)| *kind);
+                if let Some(kind) = collection {
+                    window.open_collection(kind);
                 }
             });
+
+        let window = self.clone();
+        self.imp()
+            .collection_back
+            .connect_clicked(move |_| window.close_subject_filter());
     }
 
     fn section_row(&self, icon: &str, label: &str) -> gtk::ListBoxRow {
@@ -865,8 +905,15 @@ impl QuadernoWindow {
                 .get(index as usize)
                 .copied()
                 .flatten();
-            if let Some(id) = id {
-                window.select_entry(id);
+            let Some(id) = id else {
+                return;
+            };
+            // In a collection list, a row opens the timeline filtered to it.
+            match window.imp().collection_kind.get() {
+                Some(kind) if window.imp().collection_subject.borrow().is_none() => {
+                    window.open_subject(kind, id);
+                }
+                _ => window.select_entry(id),
             }
         });
 
@@ -1958,16 +2005,231 @@ impl QuadernoWindow {
     /// Switches the list pane between the timeline and the quick-notes view
     /// (ui-spec §3.7).
     fn apply_view_mode(&self) {
-        let notes = self.active_filter() == Filter::Notes;
-        let title = if notes {
-            gettextrs::gettext("Quick notes")
-        } else {
-            gettextrs::gettext("Timeline")
+        let collection = self.imp().collection_kind.get();
+        let subject = *self.imp().collection_subject.borrow();
+        let notes = collection.is_none() && self.active_filter() == Filter::Notes;
+        let title = match (collection, subject.is_some()) {
+            (Some(_), true) => gettextrs::gettext("Timeline"),
+            (Some(kind), false) => collection_title(kind),
+            (None, _) if notes => gettextrs::gettext("Quick notes"),
+            _ => gettextrs::gettext("Timeline"),
         };
         self.imp().list_title.set_title(&title);
         self.imp().list_page.set_title(&title);
-        self.imp().filter_group.set_visible(!notes);
+        self.imp()
+            .filter_group
+            .set_visible(collection.is_none() && !notes);
         self.imp().notes_filter_group.set_visible(notes);
+        self.imp().collection_back.set_visible(subject.is_some());
+    }
+
+    /// Opens a collection (People, Locations, Things or Tags) in the list pane.
+    fn open_collection(&self, kind: SubjectKind) {
+        self.imp().collection_subject.replace(None);
+        self.imp().collection_kind.set(Some(kind));
+        self.refresh();
+    }
+
+    /// Opens the timeline filtered to one subject (product spec §7).
+    fn open_subject(&self, kind: SubjectKind, subject: Uuid) {
+        self.imp().collection_kind.set(Some(kind));
+        self.imp().collection_subject.replace(Some(subject));
+        self.refresh();
+    }
+
+    fn close_subject_filter(&self) {
+        self.imp().collection_subject.replace(None);
+        self.refresh();
+    }
+
+    fn rename_subject_value(&self, id: Uuid, name: &str) {
+        let renamed = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.rename_subject(id, name).is_ok(),
+                None => false,
+            }
+        };
+        if renamed {
+            self.refresh();
+        }
+    }
+
+    fn delete_subject(&self, id: Uuid) {
+        let deleted = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.soft_delete_subject(id).is_ok(),
+                None => false,
+            }
+        };
+        if deleted {
+            self.refresh();
+        } else {
+            self.toast(&gettextrs::gettext(
+                "This item is used by entries. Merge it instead of deleting it.",
+            ));
+        }
+    }
+
+    fn merge_subject_into(&self, keep: Uuid, merge: Uuid) {
+        let merged = {
+            let mut vault = self.imp().vault.borrow_mut();
+            match vault.as_mut() {
+                Some(vault) => vault.merge_subjects(keep, merge).is_ok(),
+                None => false,
+            }
+        };
+        if merged {
+            self.refresh();
+            self.toast(&gettextrs::gettext("Items merged"));
+        }
+    }
+
+    /// A dialog to choose which subject to merge another into.
+    fn present_merge(&self, kind: SubjectKind, merge: Uuid, candidates: Vec<(Uuid, String)>) {
+        let dialog = adw::AlertDialog::new(
+            Some(&gettextrs::gettext("Merge into…")),
+            Some(&gettextrs::gettext(
+                "Every entry linked to this item will link to the one you keep, and all its entries are kept.",
+            )),
+        );
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("merge", &gettextrs::gettext("Merge"));
+        dialog.set_response_appearance("merge", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("merge"));
+        dialog.set_close_response("cancel");
+
+        let labels: Vec<&str> = candidates.iter().map(|(_, name)| name.as_str()).collect();
+        let list = gtk::StringList::new(&labels);
+        let dropdown = gtk::DropDown::new(Some(list), gtk::Expression::NONE);
+        dropdown.set_selected(0);
+        let group = adw::PreferencesGroup::new();
+        let row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Keep"))
+            .build();
+        row.add_suffix(&dropdown);
+        group.add(&row);
+        dialog.set_extra_child(Some(&group));
+
+        let window = self.clone();
+        dialog.connect_response(None, move |_, response| {
+            if response == "merge"
+                && let Some((keep, _)) = candidates.get(dropdown.selected() as usize)
+            {
+                let keep = *keep;
+                let _ = kind;
+                window.merge_subject_into(keep, merge);
+            }
+        });
+        dialog.present(Some(self));
+    }
+
+    /// Fills the list pane with a collection's subjects.
+    fn populate_collection(&self, kind: SubjectKind) {
+        let usages = {
+            let vault = self.imp().vault.borrow();
+            vault
+                .as_ref()
+                .and_then(|vault| vault.subjects_with_usage(kind).ok())
+                .unwrap_or_default()
+        };
+        let candidates: Vec<(Uuid, String)> = usages
+            .iter()
+            .map(|usage| (usage.subject.id, usage.subject.name.clone()))
+            .collect();
+
+        let list = &self.imp().entry_list;
+        while let Some(child) = list.first_child() {
+            list.remove(&child);
+        }
+        let mut row_ids: Vec<Option<Uuid>> = Vec::new();
+        for usage in usages {
+            let row = adw::ActionRow::new();
+            row.set_use_markup(false);
+            row.set_title(&usage.subject.name);
+            row.set_subtitle(&choice_subtitle(usage.entry_count));
+            row.set_activatable(true);
+
+            let menu_button = gtk::MenuButton::builder()
+                .icon_name("view-more-symbolic")
+                .valign(gtk::Align::Center)
+                .build();
+            let menu = gtk::Box::new(gtk::Orientation::Vertical, 0);
+            menu.set_margin_top(6);
+            menu.set_margin_bottom(6);
+            menu.set_margin_start(6);
+            menu.set_margin_end(6);
+            let subject = usage.subject.clone();
+            menu.append(&self.menu_button(&gettextrs::gettext("Rename…"), {
+                let window = self.clone();
+                move || window.present_rename_subject(&subject)
+            }));
+            let others: Vec<(Uuid, String)> = candidates
+                .iter()
+                .filter(|(id, _)| *id != usage.subject.id)
+                .cloned()
+                .collect();
+            if !others.is_empty() {
+                menu.append(&self.menu_button(&gettextrs::gettext("Merge into…"), {
+                    let window = self.clone();
+                    let id = usage.subject.id;
+                    move || window.present_merge(kind, id, others.clone())
+                }));
+            }
+            menu.append(&self.menu_button(&gettextrs::gettext("Delete…"), {
+                let window = self.clone();
+                let id = usage.subject.id;
+                let used = usage.entry_count > 0;
+                move || {
+                    if used {
+                        window.toast(&gettextrs::gettext(
+                            "This item is used by entries. Merge it instead of deleting it.",
+                        ));
+                    } else {
+                        window.delete_subject(id);
+                    }
+                }
+            }));
+            let popover = gtk::Popover::new();
+            popover.set_child(Some(&menu));
+            menu_button.set_popover(Some(&popover));
+            row.add_suffix(&menu_button);
+
+            let list_row = gtk::ListBoxRow::new();
+            list_row.set_child(Some(&row));
+            list.append(&list_row);
+            row_ids.push(Some(usage.subject.id));
+        }
+        self.imp().row_ids.replace(row_ids);
+    }
+
+    fn present_rename_subject(&self, subject: &Subject) {
+        let dialog = adw::AlertDialog::new(Some(&gettextrs::gettext("Rename")), None);
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("rename", &gettextrs::gettext("Rename"));
+        dialog.set_response_appearance("rename", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("rename"));
+        dialog.set_close_response("cancel");
+        let entry = gtk::Entry::new();
+        entry.set_text(&subject.name);
+        entry.set_margin_top(6);
+        dialog.set_extra_child(Some(&entry));
+        {
+            let dialog = dialog.clone();
+            let entry = entry.clone();
+            entry.connect_changed(move |entry| {
+                dialog.set_response_enabled("rename", !entry.text().trim().is_empty());
+            });
+        }
+        let window = self.clone();
+        let id = subject.id;
+        dialog.connect_response(None, move |_, response| {
+            if response == "rename" {
+                window.rename_subject_value(id, &entry.text());
+            }
+        });
+        dialog.present(Some(self));
     }
 
     /// The entry type the New button creates: a dream before 10:00 when the
@@ -3664,6 +3926,8 @@ impl QuadernoWindow {
             Filter::Notes => "notes",
         };
         self.imp().filter_group.set_active_name(Some(name));
+        self.imp().collection_kind.set(None);
+        self.imp().collection_subject.replace(None);
         self.apply_view_mode();
         self.refresh();
     }
@@ -3685,8 +3949,19 @@ impl QuadernoWindow {
             return;
         };
 
+        // A collection with no subject chosen is its list of items.
+        if let Some(kind) = self.imp().collection_kind.get()
+            && self.imp().collection_subject.borrow().is_none()
+        {
+            drop(borrow);
+            self.populate_collection(kind);
+            return;
+        }
+        let subject_filter = *self.imp().collection_subject.borrow();
+
         let query = self.imp().search_entry.text().to_string();
-        let notes_mode = self.active_filter() == Filter::Notes;
+        let notes_mode =
+            self.active_filter() == Filter::Notes && self.imp().collection_kind.get().is_none();
         let mut index = timeline::SearchIndex::new();
         let mut rows: Vec<(Entry, Vec<String>)> = Vec::new();
         for entry in vault.entries(false).unwrap_or_default() {
@@ -3710,7 +3985,11 @@ impl QuadernoWindow {
             parts.extend(colors.iter().map(|color| color.as_str().to_owned()));
             index.add(entry.id, parts);
 
-            if notes_mode {
+            if let Some(subject) = subject_filter {
+                if subjects.iter().any(|s| s.id == subject) {
+                    rows.push((entry, tags));
+                }
+            } else if notes_mode {
                 if entry.entry_type == EntryType::Note {
                     rows.push((entry, tags));
                 }
@@ -4462,6 +4741,16 @@ impl QuadernoWindow {
         if idle >= Duration::from_secs(minutes as u64 * 60) {
             self.lock();
         }
+    }
+}
+
+/// The title of a collection (ui-spec §3.3).
+fn collection_title(kind: SubjectKind) -> String {
+    match kind {
+        SubjectKind::Person => gettextrs::gettext("People"),
+        SubjectKind::Place => gettextrs::gettext("Locations"),
+        SubjectKind::Thing => gettextrs::gettext("Things"),
+        SubjectKind::Tag => gettextrs::gettext("Tags"),
     }
 }
 
