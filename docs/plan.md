@@ -63,11 +63,13 @@ _Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwT
 _Deferred/decided:_ the New button is an `AdwSplitButton` (primary journal page; menu Dream / Quick note) with Ctrl+N, Ctrl+Alt+N, Ctrl+Shift+N; dream flags are on = 1 and off = NULL (no explicit false); the Quick notes view reuses the list pane in a notes mode (title, Open/Expanded/All chips, card rows with a date/tags footer and no day headers) instead of a separate page; tags stay in the details panel (the artboard's inline tag row was not added); expanding is the header split button plus an "Expand into" submenu in the entry menu, with "Append to an existing entry…" left to Later (product spec §2); an "Expanded into" card lists each live expansion and a "From quick note" banner links back, showing "From a deleted note" when the source is gone; a `expanded_note_ids` query backs the Open/Expanded filter; the dream-flag labels were added to `gnome/po/it.po`. Fixing the notes view also uncovered and fixed a pre-existing bug: the `Adw.Toggle` chips had no `name`, so the All/Journal/Dreams/Notes filters never actually changed the list.
 
 ### M6 · Preferences and collections
-- [ ] Preferences dialog, all three pages (product spec §8), including day-end setting and change passphrase.
-- [ ] List management with icon picker and matching icons (product spec §9).
-- [ ] Collections pages with rename, merge, delete-if-unused.
+- [x] Preferences dialog, all three pages (product spec §8), including day-end setting and change passphrase.
+- [x] List management with icon picker and matching icons (product spec §9).
+- [x] Collections pages with rename, merge, delete-if-unused.
 
 **Accept:** every preference persists and takes effect; merging two people keeps all their entries.
+
+_Deferred/decided:_ the General page's Serif option names Source Serif 4 and falls back to the system serif until the font is bundled with the packaging in M7; Line width is a fraction of the editor width (narrow 0.6, comfortable 0.78, wide 0.95) so it always takes effect; spell checking is a multi-select popover stored as a comma-separated list; "Remember passphrase" prompts for the passphrase when enabled (the vault never keeps it) and the reopen happens before the keyring is touched so a slow keyring never stalls the UI; Move… copies, verifies and replaces the file and updates the keyring and settings; the Entries page reorders with Move up/down (drag deferred) and its icon picker matches by name, the curated synonym table, then Phosphor tags and categories from vendored tables; the collections page is a mode of the list pane with per-row "Merge into…" rather than a pushed page and multi-select; backups and export are M7; a pre-existing bug was fixed (the `Adw.Toggle` chips had no name, so the All/Journal/Dreams/Notes filters never filtered).
 
 ### M7 · Backups, export, release
 - [ ] Automatic and manual backups; open-a-backup from the error screen.
