@@ -61,6 +61,7 @@ pub struct ChoiceControl {
     section: gtk::Box,
     flow: gtk::FlowBox,
     add_button: gtk::Button,
+    popover: gtk::Popover,
 }
 
 /// One token field (people, places, things, tags) and its suggestion popover.
@@ -69,6 +70,7 @@ pub struct TokenControl {
     row: gtk::Box,
     wrap: adw::WrapBox,
     entry: gtk::Text,
+    popover: gtk::Popover,
 }
 
 /// The widgets of the constructed details panel.
@@ -1295,6 +1297,7 @@ impl QuadernoWindow {
             section,
             flow,
             add_button,
+            popover,
         }
     }
 
@@ -1426,6 +1429,7 @@ impl QuadernoWindow {
             row,
             wrap,
             entry,
+            popover,
         }
     }
 
@@ -1549,6 +1553,10 @@ impl QuadernoWindow {
 
     fn refresh_token_control(&self, control: &TokenControl) {
         let wrap = &control.wrap;
+        // The popover is parented to the entry; removing the entry would leave
+        // the popover orphaned outside the window tree, where the lock handler
+        // cannot find it. Pop it down before the entry is detached.
+        control.popover.popdown();
         while let Some(child) = wrap.first_child() {
             wrap.remove(&child);
         }
@@ -4713,7 +4721,17 @@ impl QuadernoWindow {
                 other.destroy();
             }
         }
-        // Popovers that are children of this window's widget tree.
+        // The details panel's pickers, whose anchor widgets are rebuilt, so a
+        // widget-tree walk can miss them.
+        if let Some(panel) = self.imp().panel.borrow().as_ref() {
+            for choice in &panel.choices {
+                choice.popover.popdown();
+            }
+            for token in &panel.tokens {
+                token.popover.popdown();
+            }
+        }
+        // Every other popover in the window's widget tree.
         self.close_popovers(self.upcast_ref::<gtk::Widget>());
     }
 
