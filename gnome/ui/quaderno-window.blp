@@ -15,92 +15,97 @@ template $QuadernoWindow: Adw.ApplicationWindow {
       Gtk.StackPage {
         name: "welcome";
 
-        child: Gtk.ScrolledWindow {
-          hscrollbar-policy: never;
-          vscrollbar-policy: automatic;
+        child: Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {}
 
-          child: Adw.Clamp {
-            maximum-size: 460;
-            margin-top: 36;
-            margin-bottom: 36;
+          content: Gtk.ScrolledWindow {
+            hscrollbar-policy: never;
+            vscrollbar-policy: automatic;
 
-            child: Gtk.Box {
-              orientation: vertical;
-              spacing: 24;
+            child: Adw.Clamp {
+              maximum-size: 460;
+              margin-top: 36;
+              margin-bottom: 36;
 
-              Adw.StatusPage {
-                icon-name: "io.github.stickgrinder.Quaderno";
-                title: _("Create your journal");
-                description: _("Everything you write is encrypted with this passphrase and stays on this device.");
-              }
-
-              Adw.PreferencesGroup {
-                Adw.PasswordEntryRow passphrase_row {
-                  title: _("Passphrase");
-                }
-
-                Adw.PasswordEntryRow repeat_row {
-                  title: _("Repeat passphrase");
-                }
-              }
-
-              Gtk.Box {
+              child: Gtk.Box {
                 orientation: vertical;
-                spacing: 6;
+                spacing: 24;
 
-                Gtk.LevelBar strength_bar {
-                  max-value: 1.0;
+                Adw.StatusPage {
+                  icon-name: "io.github.stickgrinder.Quaderno";
+                  title: _("Create your journal");
+                  description: _("Everything you write is encrypted with this passphrase and stays on this device.");
                 }
 
-                Gtk.Label strength_label {
-                  xalign: 0;
-                  styles ["dim-label", "caption"]
-                }
-              }
+                Adw.PreferencesGroup {
+                  Adw.PasswordEntryRow passphrase_row {
+                    title: _("Passphrase");
+                  }
 
-              Adw.PreferencesGroup {
-                Adw.ActionRow location_row {
-                  title: _("Location");
-
-                  [suffix]
-                  Gtk.Button change_button {
-                    label: _("Change…");
-                    valign: center;
+                  Adw.PasswordEntryRow repeat_row {
+                    title: _("Repeat passphrase");
                   }
                 }
 
-                Adw.SwitchRow remember_row {
-                  title: _("Remember passphrase on this device");
-                  subtitle: _("Stored in GNOME Keyring");
-                }
-              }
+                Gtk.Box {
+                  orientation: vertical;
+                  spacing: 6;
 
-              Adw.PreferencesGroup {
-                Adw.ActionRow {
-                  title: _("A forgotten passphrase cannot be recovered");
-                  subtitle: _("There is no reset and no backdoor. If you lose it, the journal and its backups cannot be opened by anyone, including you.");
+                  Gtk.LevelBar strength_bar {
+                    max-value: 1.0;
+                  }
 
-                  [prefix]
-                  Gtk.CheckButton confirm_check {
-                    valign: center;
+                  Gtk.Label strength_label {
+                    xalign: 0;
+                    styles ["dim-label", "caption"]
                   }
                 }
-              }
 
-              Gtk.Box {
-                orientation: vertical;
-                spacing: 6;
+                Adw.PreferencesGroup {
+                  Adw.ActionRow location_row {
+                    title: _("Location");
 
-                Gtk.Button create_button {
-                  label: _("Create Journal");
-                  styles ["suggested-action", "pill"]
+                    [suffix]
+                    Gtk.Button change_button {
+                      label: _("Change…");
+                      valign: center;
+                    }
+                  }
+
+                  Adw.SwitchRow remember_row {
+                    title: _("Remember passphrase on this device");
+                    subtitle: _("Stored in GNOME Keyring");
+                  }
                 }
 
-                Gtk.Button open_button {
-                  label: _("Open Existing Journal…");
-                  styles ["flat", "pill"]
+                Adw.PreferencesGroup {
+                  Adw.ActionRow {
+                    title: _("A forgotten passphrase cannot be recovered");
+                    subtitle: _("There is no reset and no backdoor. If you lose it, the journal and its backups cannot be opened by anyone, including you.");
+
+                    [prefix]
+                    Gtk.CheckButton confirm_check {
+                      valign: center;
+                    }
+                  }
                 }
-              }
+
+                Gtk.Box {
+                  orientation: vertical;
+                  spacing: 6;
+
+                  Gtk.Button create_button {
+                    label: _("Create Journal");
+                    styles ["suggested-action", "pill"]
+                  }
+
+                  Gtk.Button open_button {
+                    label: _("Open Existing Journal…");
+                    styles ["flat", "pill"]
+                  }
+                }
+              };
             };
           };
         };
@@ -109,34 +114,39 @@ template $QuadernoWindow: Adw.ApplicationWindow {
       Gtk.StackPage {
         name: "unlock";
 
-        child: Adw.StatusPage unlock_page {
-          icon-name: "system-lock-screen-symbolic";
-          title: _("Quaderno is locked");
+        child: Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {}
 
-          child: Gtk.Box {
-            orientation: vertical;
-            spacing: 12;
-            halign: center;
-            valign: center;
-            width-request: 360;
+          content: Adw.StatusPage unlock_page {
+            icon-name: "system-lock-screen-symbolic";
+            title: _("Quaderno is locked");
 
-            Adw.PreferencesGroup {
-              Adw.PasswordEntryRow unlock_entry {
-                title: _("Passphrase");
-                activates-default: true;
+            child: Gtk.Box {
+              orientation: vertical;
+              spacing: 12;
+              halign: center;
+              valign: center;
+              width-request: 360;
+
+              Adw.PreferencesGroup {
+                Adw.PasswordEntryRow unlock_entry {
+                  title: _("Passphrase");
+                  activates-default: true;
+                }
               }
-            }
 
-            Gtk.Label unlock_error {
-              wrap: true;
-              visible: false;
-              styles ["error"]
-            }
+              Gtk.Label unlock_error {
+                wrap: true;
+                visible: false;
+                styles ["error"]
+              }
 
-            Gtk.Button unlock_button {
-              label: _("Unlock");
-              styles ["suggested-action", "pill"]
-            }
+              Gtk.Button unlock_button {
+                label: _("Unlock");
+                styles ["suggested-action", "pill"]
+              }
+            };
           };
         };
       }
@@ -144,20 +154,25 @@ template $QuadernoWindow: Adw.ApplicationWindow {
       Gtk.StackPage {
         name: "error";
 
-        child: Adw.StatusPage error_page {
-          icon-name: "dialog-error-symbolic";
-          title: _("Journal unavailable");
+        child: Adw.ToolbarView {
+          [top]
+          Adw.HeaderBar {}
 
-          child: Gtk.Box {
-            orientation: vertical;
-            spacing: 12;
-            halign: center;
-            valign: center;
+          content: Adw.StatusPage error_page {
+            icon-name: "dialog-error-symbolic";
+            title: _("Journal unavailable");
 
-            Gtk.Button locate_button {
-              label: _("Locate file…");
-              styles ["suggested-action", "pill"]
-            }
+            child: Gtk.Box {
+              orientation: vertical;
+              spacing: 12;
+              halign: center;
+              valign: center;
+
+              Gtk.Button locate_button {
+                label: _("Locate file…");
+                styles ["suggested-action", "pill"]
+              }
+            };
           };
         };
       }
