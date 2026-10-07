@@ -252,6 +252,7 @@ mod imp {
         pub collection_kind: Cell<Option<SubjectKind>>,
         pub collection_subject: RefCell<Option<Uuid>>,
         pub open_popovers: RefCell<Vec<gtk::Popover>>,
+        pub preferences: RefCell<Option<adw::PreferencesDialog>>,
         pub search_index: RefCell<Option<crate::timeline::SearchIndex>>,
         pub panel: RefCell<Option<PanelWidgets>>,
         pub panel_loading: Cell<bool>,
@@ -347,6 +348,7 @@ mod imp {
                 collection_kind: Cell::new(None),
                 collection_subject: RefCell::new(None),
                 open_popovers: RefCell::new(Vec::new()),
+                preferences: RefCell::new(None),
                 search_index: RefCell::new(None),
                 entry_menu: Default::default(),
                 toast_overlay: Default::default(),
@@ -3015,7 +3017,8 @@ impl QuadernoWindow {
             .build();
         {
             let window = self.clone();
-            move_button.connect_clicked(move |_| window.present_move_vault());
+            let file_row = file_row.clone();
+            move_button.connect_clicked(move |_| window.present_move_vault(file_row.clone()));
         }
         file_row.add_suffix(&move_button);
         data.add(&file_row);
@@ -3035,16 +3038,65 @@ impl QuadernoWindow {
 
         let entry = adw::PasswordEntryRow::new();
         entry.set_title(&gettextrs::gettext("Passphrase"));
+        let message = message_label();
         let group = adw::PreferencesGroup::new();
         group.add(&entry);
+        group.add(&message);
         dialog.set_extra_child(Some(&group));
         dialog.set_response_enabled("confirm", false);
-        {
-            let dialog = dialog.clone();
-            entry.connect_changed(move |entry| {
-                dialog.set_response_enabled("confirm", !entry.text().is_empty());
+
+        let path = self.imp().path.borrow().clone();
+        let window = self.clone();
+        let dialog_for_entry = dialog.clone();
+        let message_for_entry = message.clone();
+        let entry_for_entry = entry.clone();
+        let source: Rc<RefCell<Option<glib::SourceId>>> = Rc::new(RefCell::new(None));
+        entry.connect_changed(move |row| {
+            if let Some(source) = source.borrow_mut().take() {
+                source.remove();
+            }
+            dialog_for_entry.set_response_enabled("confirm", false);
+            let value = row.text().to_string();
+            if value.is_empty() {
+                set_message(&message_for_entry, "", false);
+                return;
+            }
+            let Some(path) = path.clone() else {
+                // No vault path to verify against: accept any non-empty value.
+                set_message(&message_for_entry, "", false);
+                dialog_for_entry.set_response_enabled("confirm", true);
+                return;
+            };
+            set_message(&message_for_entry, &gettextrs::gettext("Checking…"), false);
+            let window = window.clone();
+            let entry = entry_for_entry.clone();
+            let message = message_for_entry.clone();
+            let dialog = dialog_for_entry.clone();
+            let source2 = source.clone();
+            let id = glib::timeout_add_local(Duration::from_millis(500), move || {
+                source2.borrow_mut().take();
+                let entry = entry.clone();
+                let value = value.clone();
+                window.verify_passphrase(path.clone(), value.clone(), {
+                    let message = message.clone();
+                    let dialog = dialog.clone();
+                    Rc::new(move |ok| {
+                        if entry.text() != value {
+                            return;
+                        }
+                        if ok {
+                            set_message(&message, "", false);
+                        } else {
+                            set_message(&message, &gettextrs::gettext("Wrong passphrase."), true);
+                        }
+                        dialog.set_response_enabled("confirm", ok);
+                    })
+                });
+                glib::ControlFlow::Break
             });
-        }
+            *source.borrow_mut() = Some(id);
+        });
+
         dialog.connect_response(None, move |_, response| {
             if response == "confirm" {
                 action(entry.text().to_string());
@@ -3072,33 +3124,118 @@ impl QuadernoWindow {
         new.set_title(&gettextrs::gettext("New passphrase"));
         let repeat = adw::PasswordEntryRow::new();
         repeat.set_title(&gettextrs::gettext("Repeat new passphrase"));
+        let current_message = message_label();
+        let new_message = message_label();
+        let repeat_message = message_label();
         let group = adw::PreferencesGroup::new();
         group.add(&current);
+        group.add(&current_message);
         group.add(&new);
+        group.add(&new_message);
         group.add(&repeat);
+        group.add(&repeat_message);
         dialog.set_extra_child(Some(&group));
         dialog.set_response_enabled("change", false);
-        let update: Rc<dyn Fn()> = {
+
+        let current_ok = Rc::new(Cell::new(false));
+        let refresh: Rc<dyn Fn()> = {
             let dialog = dialog.clone();
-            let current = current.clone();
             let new = new.clone();
             let repeat = repeat.clone();
+            let new_message = new_message.clone();
+            let repeat_message = repeat_message.clone();
+            let current_ok = current_ok.clone();
             Rc::new(move || {
-                let valid = new.text().chars().count() >= crate::state::MIN_PASSPHRASE_CHARS
-                    && new.text() == repeat.text()
-                    && !current.text().is_empty();
+                let new_text = new.text();
+                let length = new_text.chars().count();
+                if length > 0 && length < crate::state::MIN_PASSPHRASE_CHARS {
+                    set_message(
+                        &new_message,
+                        &gettextrs::gettext("At least eight characters"),
+                        true,
+                    );
+                } else {
+                    set_message(&new_message, "", false);
+                }
+                if !repeat.text().is_empty() && repeat.text() != new_text {
+                    set_message(
+                        &repeat_message,
+                        &gettextrs::gettext("The passphrases do not match"),
+                        true,
+                    );
+                } else {
+                    set_message(&repeat_message, "", false);
+                }
+                let valid = current_ok.get()
+                    && length >= crate::state::MIN_PASSPHRASE_CHARS
+                    && new_text == repeat.text();
                 dialog.set_response_enabled("change", valid);
             })
         };
-        {
-            let update = update.clone();
-            current.connect_changed(move |_| update());
+
+        if let Some(path) = self.imp().path.borrow().clone() {
+            let window = self.clone();
+            let dialog = dialog.clone();
+            let current_widget = current.clone();
+            let current_message = current_message.clone();
+            let current_ok = current_ok.clone();
+            let refresh = refresh.clone();
+            let source: Rc<RefCell<Option<glib::SourceId>>> = Rc::new(RefCell::new(None));
+            current.connect_changed(move |row| {
+                if let Some(source) = source.borrow_mut().take() {
+                    source.remove();
+                }
+                let value = row.text().to_string();
+                current_ok.set(false);
+                dialog.set_response_enabled("change", false);
+                if value.is_empty() {
+                    set_message(&current_message, "", false);
+                    return;
+                }
+                set_message(&current_message, &gettextrs::gettext("Checking…"), false);
+                let window = window.clone();
+                let path = path.clone();
+                let current_widget = current_widget.clone();
+                let current_message = current_message.clone();
+                let current_ok = current_ok.clone();
+                let refresh = refresh.clone();
+                let source2 = source.clone();
+                let id = glib::timeout_add_local(Duration::from_millis(500), move || {
+                    source2.borrow_mut().take();
+                    let current_widget = current_widget.clone();
+                    let value = value.clone();
+                    window.verify_passphrase(path.clone(), value.clone(), {
+                        let current_message = current_message.clone();
+                        let current_ok = current_ok.clone();
+                        let refresh = refresh.clone();
+                        Rc::new(move |ok| {
+                            if current_widget.text() != value {
+                                return;
+                            }
+                            current_ok.set(ok);
+                            if ok {
+                                set_message(&current_message, "", false);
+                            } else {
+                                set_message(
+                                    &current_message,
+                                    &gettextrs::gettext("Wrong passphrase."),
+                                    true,
+                                );
+                            }
+                            refresh();
+                        })
+                    });
+                    glib::ControlFlow::Break
+                });
+                *source.borrow_mut() = Some(id);
+            });
         }
+
         {
-            let update = update.clone();
-            new.connect_changed(move |_| update());
+            let refresh = refresh.clone();
+            new.connect_changed(move |_| refresh());
         }
-        repeat.connect_changed(move |_| update());
+        repeat.connect_changed(move |_| refresh());
         {
             let window = self.clone();
             let current = current.clone();
@@ -3180,7 +3317,7 @@ impl QuadernoWindow {
         });
     }
 
-    fn present_move_vault(&self) {
+    fn present_move_vault(&self, file_row: adw::ActionRow) {
         if self.imp().path.borrow().is_none() {
             return;
         }
@@ -3195,12 +3332,17 @@ impl QuadernoWindow {
             {
                 let dest = dest.clone();
                 let caller = window.clone();
+                let file_row = file_row.clone();
                 caller.prompt_passphrase(
                     gettextrs::gettext("Move journal file"),
                     gettextrs::gettext(
                         "Enter the passphrase to verify the copy before the journal is moved.",
                     ),
-                    Rc::new(move |passphrase| window.clone().move_vault(dest.clone(), passphrase)),
+                    Rc::new(move |passphrase| {
+                        window
+                            .clone()
+                            .move_vault(dest.clone(), passphrase, file_row.clone())
+                    }),
                 );
             }
         });
@@ -3208,7 +3350,7 @@ impl QuadernoWindow {
 
     /// Copies the vault to `dest`, verifies the copy, removes the original and
     /// reopens at the new path (product spec §8).
-    fn move_vault(&self, dest: PathBuf, passphrase: String) {
+    fn move_vault(&self, dest: PathBuf, passphrase: String, file_row: adw::ActionRow) {
         let Some(old) = self.imp().path.borrow().clone() else {
             return;
         };
@@ -3263,6 +3405,7 @@ impl QuadernoWindow {
                     window.imp().path.replace(Some(dest.clone()));
                     window.imp().vault.replace(Some(vault));
                     window.show_main(access);
+                    file_row.set_subtitle(&pretty_path(&dest));
                     window.toast(&gettextrs::gettext("Journal moved"));
                     if let Some(keyring) = window.keyring() {
                         let old_key = old.to_string_lossy().into_owned();
@@ -3283,7 +3426,24 @@ impl QuadernoWindow {
     }
 
     fn toast(&self, message: &str) {
-        self.imp().toast_overlay.add_toast(adw::Toast::new(message));
+        let toast = adw::Toast::new(message);
+        if let Some(dialog) = self.imp().preferences.borrow().as_ref()
+            && dialog.is_visible()
+        {
+            dialog.add_toast(toast);
+            return;
+        }
+        self.imp().toast_overlay.add_toast(toast);
+    }
+
+    /// Checks a passphrase against the vault file off the main thread.
+    fn verify_passphrase(&self, path: PathBuf, passphrase: String, on_result: Rc<dyn Fn(bool)>) {
+        glib::spawn_future_local(async move {
+            let ok = gio::spawn_blocking(move || Vault::open(&path, &passphrase).is_ok())
+                .await
+                .unwrap_or(false);
+            on_result(ok);
+        });
     }
 
     fn present_preferences(&self) {
@@ -3292,6 +3452,13 @@ impl QuadernoWindow {
         dialog.add(&self.build_general_page());
         dialog.add(&self.build_entries_page());
         dialog.add(&self.build_privacy_page());
+        // Toasts raised while the dialog is open (e.g. a finished Move) are shown
+        // on the dialog, above its content, not behind it.
+        self.imp().preferences.replace(Some(dialog.clone()));
+        let window = self.clone();
+        dialog.connect_closed(move |_| {
+            window.imp().preferences.replace(None);
+        });
         dialog.present(Some(self));
     }
 
@@ -4835,6 +5002,37 @@ fn collection_title(kind: SubjectKind) -> String {
 fn choice_subtitle(usage: i64) -> String {
     gettextrs::ngettext("Used in {n} entry", "Used in {n} entries", usage as u32)
         .replace("{n}", &usage.to_string())
+}
+
+/// A small, hidden-by-default validation message label.
+fn message_label() -> gtk::Label {
+    let label = gtk::Label::new(None);
+    label.set_xalign(0.0);
+    label.set_wrap(true);
+    label.add_css_class("caption");
+    label.add_css_class("dim-label");
+    label.set_margin_start(12);
+    label.set_margin_end(12);
+    label.set_margin_bottom(6);
+    label.set_visible(false);
+    label
+}
+
+/// Sets a validation message; `error` styles it as an error, otherwise dim.
+fn set_message(label: &gtk::Label, text: &str, error: bool) {
+    if text.is_empty() {
+        label.set_visible(false);
+        return;
+    }
+    label.set_label(text);
+    label.set_visible(true);
+    if error {
+        label.add_css_class("error");
+        label.remove_css_class("dim-label");
+    } else {
+        label.remove_css_class("error");
+        label.add_css_class("dim-label");
+    }
 }
 
 /// The label of an auto-lock duration.
