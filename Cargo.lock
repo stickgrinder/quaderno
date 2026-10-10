@@ -1315,6 +1315,7 @@ dependencies = [
  "oo7",
  "quaderno-vault",
  "sourceview5",
+ "tempfile",
  "tokio",
  "unicode-normalization",
  "uuid",

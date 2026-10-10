@@ -20,6 +20,7 @@ use sourceview5::prelude::*;
 use uuid::Uuid;
 use zeroize::Zeroizing;
 
+use crate::backups;
 use crate::details;
 use crate::icon_search;
 use crate::icons;
@@ -135,6 +136,8 @@ mod imp {
         pub error_page: TemplateChild<adw::StatusPage>,
         #[template_child]
         pub locate_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub backup_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub main_banner: TemplateChild<adw::Banner>,
         #[template_child]
@@ -285,6 +288,7 @@ mod imp {
                 unlock_button: Default::default(),
                 error_page: Default::default(),
                 locate_button: Default::default(),
+                backup_button: Default::default(),
                 main_banner: Default::default(),
                 menu_button: Default::default(),
                 main_split: Default::default(),
@@ -474,6 +478,9 @@ impl QuadernoWindow {
         let window = self.clone();
         imp.locate_button
             .connect_clicked(move |_| window.choose_file());
+        let window = self.clone();
+        imp.backup_button
+            .connect_clicked(move |_| window.choose_backup());
 
         self.refresh_create_form();
     }
@@ -3024,6 +3031,77 @@ impl QuadernoWindow {
         data.add(&file_row);
         page.add(&data);
 
+        // Backups and export (product spec §8 and §10).
+        let backups_group = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Backups"))
+            .build();
+
+        let backups_switch = adw::SwitchRow::builder()
+            .title(gettextrs::gettext("Automatic backups"))
+            .subtitle(gettextrs::gettext("Weekly, keeping the last 8"))
+            .build();
+        backups_switch.set_active(self.imp().settings.boolean("backups-enabled"));
+        {
+            let settings = self.imp().settings.clone();
+            backups_switch.connect_active_notify(move |row| {
+                let _ = settings.set_boolean("backups-enabled", row.is_active());
+            });
+        }
+        backups_group.add(&backups_switch);
+
+        let folder_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Backup folder"))
+            .build();
+        folder_row.set_subtitle(&pretty_path(&self.backup_dir()));
+        let default_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Default"))
+            .valign(gtk::Align::Center)
+            .visible(!self.imp().settings.string("backup-folder").is_empty())
+            .build();
+        let choose_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Change…"))
+            .valign(gtk::Align::Center)
+            .build();
+        {
+            let window = self.clone();
+            let folder_row = folder_row.clone();
+            let default_button = default_button.clone();
+            choose_button.connect_clicked(move |_| {
+                window.choose_backup_folder(folder_row.clone(), default_button.clone())
+            });
+        }
+        {
+            let window = self.clone();
+            let folder_row = folder_row.clone();
+            let hide_button = default_button.clone();
+            default_button.connect_clicked(move |_| {
+                let _ = window.imp().settings.set_string("backup-folder", "");
+                folder_row.set_subtitle(&pretty_path(&window.backup_dir()));
+                hide_button.set_visible(false);
+            });
+        }
+        folder_row.add_suffix(&default_button);
+        folder_row.add_suffix(&choose_button);
+        backups_group.add(&folder_row);
+
+        let backup_now_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Back up now"))
+            .subtitle(gettextrs::gettext(
+                "Write a snapshot of the journal to the backup folder",
+            ))
+            .build();
+        let backup_now_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Back up"))
+            .valign(gtk::Align::Center)
+            .build();
+        {
+            let window = self.clone();
+            backup_now_button.connect_clicked(move |_| window.present_backup_now());
+        }
+        backup_now_row.add_suffix(&backup_now_button);
+        backups_group.add(&backup_now_row);
+        page.add(&backups_group);
+
         page
     }
 
@@ -3421,6 +3499,132 @@ impl QuadernoWindow {
                     }
                 }
                 _ => window.show_error(&gettextrs::gettext("The journal could not be reopened.")),
+            }
+        });
+    }
+
+    /// The folder backups are written to: the chosen one, or the default under
+    /// the app data directory.
+    fn backup_dir(&self) -> PathBuf {
+        let custom = self.imp().settings.string("backup-folder");
+        if custom.is_empty() {
+            glib::user_data_dir().join("quaderno").join("backups")
+        } else {
+            PathBuf::from(custom.as_str())
+        }
+    }
+
+    /// Asks for a folder for automatic backups and remembers it.
+    fn choose_backup_folder(&self, folder_row: adw::ActionRow, default_button: gtk::Button) {
+        let dialog = gtk::FileDialog::builder()
+            .title(gettextrs::gettext("Choose a backup folder"))
+            .build();
+        let current = self.backup_dir();
+        if current.is_dir() {
+            dialog.set_initial_folder(Some(&gio::File::for_path(&current)));
+        }
+        let window = self.clone();
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, move |result| {
+            if let Ok(folder) = result
+                && let Some(path) = folder.path()
+            {
+                let _ = window
+                    .imp()
+                    .settings
+                    .set_string("backup-folder", &path.to_string_lossy());
+                folder_row.set_subtitle(&pretty_path(&path));
+                default_button.set_visible(true);
+            }
+        });
+    }
+
+    /// Opens a file chooser starting in the backup folder, to recover a
+    /// damaged journal (product spec §3.2, §11).
+    fn choose_backup(&self) {
+        let dialog = gtk::FileDialog::builder()
+            .title(gettextrs::gettext("Open a backup"))
+            .build();
+        let dir = self.backup_dir();
+        if dir.is_dir() {
+            dialog.set_initial_folder(Some(&gio::File::for_path(&dir)));
+        }
+        let window = self.clone();
+        dialog.open(Some(self), gio::Cancellable::NONE, move |result| {
+            if let Ok(file) = result
+                && let Some(path) = file.path()
+            {
+                window.begin_open(path);
+            }
+        });
+    }
+
+    /// Prompts for the passphrase, then writes a manual backup.
+    fn present_backup_now(&self) {
+        let Some(path) = self.imp().path.borrow().clone() else {
+            return;
+        };
+        let window = self.clone();
+        self.prompt_passphrase(
+            gettextrs::gettext("Back up now"),
+            gettextrs::gettext("Enter the passphrase to encrypt the backup."),
+            Rc::new(move |passphrase| window.backup_now(path.clone(), Zeroizing::new(passphrase))),
+        );
+    }
+
+    fn backup_now(&self, path: PathBuf, passphrase: Zeroizing<String>) {
+        let Some(vault_id) = self.imp().vault.borrow().as_ref().map(Vault::id) else {
+            return;
+        };
+        let dir = self.backup_dir();
+        let now = jiff::Zoned::now();
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let outcome = gio::spawn_blocking(move || -> Result<(), VaultError> {
+                std::fs::create_dir_all(&dir)
+                    .map_err(|error| VaultError::io(dir.clone(), error))?;
+                let dest = dir.join(backups::filename(vault_id, &now));
+                let vault = Vault::open(&path, passphrase.as_str())?;
+                vault.backup(&dest, passphrase.as_str())?;
+                prune_backups(&dir, vault_id);
+                Ok(())
+            })
+            .await;
+            match outcome {
+                Ok(Ok(())) => window.toast(&gettextrs::gettext("Backed up")),
+                _ => window.toast(&gettextrs::gettext("The backup could not be written.")),
+            }
+        });
+    }
+
+    /// Takes an automatic backup on open when one is due (product spec §8).
+    /// Runs off the main thread and never blocks the UI.
+    fn run_automatic_backup(&self, path: PathBuf, passphrase: Zeroizing<String>) {
+        if !self.imp().settings.boolean("backups-enabled") {
+            return;
+        }
+        let Some(vault_id) = self.imp().vault.borrow().as_ref().map(Vault::id) else {
+            return;
+        };
+        let dir = self.backup_dir();
+        let now = jiff::Zoned::now();
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let outcome = gio::spawn_blocking(move || -> Result<(), VaultError> {
+                std::fs::create_dir_all(&dir)
+                    .map_err(|error| VaultError::io(dir.clone(), error))?;
+                let existing = backups::existing(&dir, vault_id);
+                if !backups::is_due(existing.first().map(PathBuf::as_path), &now) {
+                    return Ok(());
+                }
+                let dest = dir.join(backups::filename(vault_id, &now));
+                let vault = Vault::open(&path, passphrase.as_str())?;
+                vault.backup(&dest, passphrase.as_str())?;
+                prune_backups(&dir, vault_id);
+                Ok(())
+            })
+            .await;
+            if !matches!(outcome, Ok(Ok(()))) {
+                window.toast(&gettextrs::gettext("Automatic backup failed"));
             }
         });
     }
@@ -4712,7 +4916,7 @@ impl QuadernoWindow {
 
             match outcome {
                 Ok(Ok(vault)) => {
-                    window.adopt_vault(path, vault, remember.then_some(passphrase));
+                    window.adopt_vault(path, vault, Zeroizing::new(passphrase), remember, true);
                 }
                 Ok(Err(error)) => window.show_error(&format!("{error}")),
                 Err(_) => {
@@ -4816,7 +5020,7 @@ impl QuadernoWindow {
                     if from_keyring {
                         window.imp().throttle.borrow_mut().reset();
                     }
-                    window.adopt_vault(path, vault, None);
+                    window.adopt_vault(path, vault, Zeroizing::new(passphrase), false, false);
                 }
                 Ok(Err(VaultError::Refused { .. })) => {
                     window.show_error(&gettextrs::gettext(
@@ -4851,7 +5055,14 @@ impl QuadernoWindow {
         self.imp().unlock_error.set_visible(true);
     }
 
-    fn adopt_vault(&self, path: PathBuf, vault: Vault, remember: Option<String>) {
+    fn adopt_vault(
+        &self,
+        path: PathBuf,
+        vault: Vault,
+        passphrase: Zeroizing<String>,
+        remember: bool,
+        just_created: bool,
+    ) {
         let access = vault.access();
         let _ = self
             .imp()
@@ -4860,16 +5071,24 @@ impl QuadernoWindow {
         self.imp().path.replace(Some(path.clone()));
         self.imp().vault.replace(Some(vault));
 
-        if let (Some(passphrase), Some(keyring)) = (remember, self.keyring()) {
-            let receiver = keyring.store(
-                path.to_string_lossy().into_owned(),
-                Zeroizing::new(passphrase.into_bytes()),
-            );
-            glib::spawn_future_local(async move {
-                let _ = receiver.await;
-            });
+        if remember {
+            if let Some(keyring) = self.keyring() {
+                let receiver = keyring.store(
+                    path.to_string_lossy().into_owned(),
+                    Zeroizing::new(passphrase.as_bytes().to_vec()),
+                );
+                glib::spawn_future_local(async move {
+                    let _ = receiver.await;
+                });
+            }
         }
         self.show_main(access);
+
+        // A vault that already had data gets its automatic weekly backup on
+        // open; a brand-new empty one does not (product spec §8).
+        if !just_created {
+            self.run_automatic_backup(path, passphrase);
+        }
     }
 
     /// Locks the vault: saves pending edits, closes it and shows the unlock screen.
@@ -5043,6 +5262,14 @@ fn lock_label(minutes: i32) -> String {
         60 => gettextrs::gettext("1 hour"),
         minutes => gettextrs::ngettext("{n} minute", "{n} minutes", minutes as u32)
             .replace("{n}", &minutes.to_string()),
+    }
+}
+
+/// Deletes the oldest backups so at most [`backups::KEEP`] of this vault remain.
+fn prune_backups(dir: &std::path::Path, vault_id: Uuid) {
+    let files = backups::existing(dir, vault_id);
+    for stale in backups::to_prune(&files, backups::KEEP) {
+        let _ = std::fs::remove_file(stale);
     }
 }
 

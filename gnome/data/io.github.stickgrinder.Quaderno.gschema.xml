@@ -67,5 +67,15 @@
       <summary>Markdown symbols</summary>
       <description>How Markdown syntax characters are shown; version 1.0 offers only dimmed.</description>
     </key>
+    <key name="backups-enabled" type="b">
+      <default>true</default>
+      <summary>Automatic backups</summary>
+      <description>Whether Quaderno snapshots the journal automatically, weekly.</description>
+    </key>
+    <key name="backup-folder" type="s">
+      <default>''</default>
+      <summary>Backup folder</summary>
+      <description>Folder for automatic backups; empty uses the default under the app data directory.</description>
+    </key>
   </schema>
 </schemalist>

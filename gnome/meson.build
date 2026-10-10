@@ -35,6 +35,7 @@ custom_target('quaderno',
     # is re-run.
     'src/main.rs',
     'src/application.rs',
+    'src/backups.rs',
     'src/details.rs',
     'src/icon_search.rs',
     'src/icons.rs',

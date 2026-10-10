@@ -31,3 +31,6 @@ uuid = { workspace = true }
 [[bin]]
 name = "quaderno"
 path = "src/main.rs"
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 mod application;
+mod backups;
 mod details;
 mod icon_search;
 mod icons;
