@@ -72,13 +72,15 @@ _Deferred/decided:_ the New button is an `AdwSplitButton` (primary journal page;
 _Deferred/decided:_ the General page's Serif option names Source Serif 4 and falls back to the system serif until the font is bundled with the packaging in M7; Line width is a fraction of the editor width (narrow 0.6, comfortable 0.78, wide 0.95) so it always takes effect; spell checking is a multi-select popover stored as a comma-separated list; "Remember passphrase" prompts for the passphrase when enabled (the vault never keeps it) and the reopen happens before the keyring is touched so a slow keyring never stalls the UI; Move… copies, verifies and replaces the file and updates the keyring and settings; the Entries page reorders with Move up/down (drag deferred) and its icon picker matches by name, the curated synonym table, then Phosphor tags and categories from vendored tables; the collections page is a mode of the list pane with per-row "Merge into…" rather than a pushed page and multi-select; backups and export are M7; a pre-existing bug was fixed (the `Adw.Toggle` chips had no name, so the All/Journal/Dreams/Notes filters never filtered).
 
 ### M7 · Backups, export, release
-- [ ] Automatic and manual backups; open-a-backup from the error screen.
-- [ ] Markdown and JSON export with the unencrypted warning.
-- [ ] Italian translation complete; English strings reviewed.
-- [ ] Flatpak manifest ready for Flathub; AUR `PKGBUILD` for `quaderno` and `quaderno-git` in `gnome/build-aux/aur/` (system-SQLCipher feature, meson build).
-- [ ] Metainfo with screenshots; root `README.md`; first tags `vault-v1.0.0` and `gnome-v1.0.0`.
+- [x] Automatic and manual backups; open-a-backup from the error screen.
+- [x] Markdown and JSON export with the unencrypted warning.
+- [x] Italian translation complete; English strings reviewed.
+- [x] Flatpak manifest ready for Flathub; AUR `PKGBUILD` for `quaderno` and `quaderno-git` in `gnome/build-aux/aur/` (system-SQLCipher feature, meson build).
+- [x] Metainfo with screenshots; root `README.md`; first tags `vault-v1.0.0` and `gnome-v1.0.0`.
 
 **Accept:** a clean install from Flatpak and from the AUR build both create, fill, back up and export a journal.
+
+_Deferred/decided:_ automatic backups run when a vault is opened and the newest snapshot is a week old (none for a just-created vault); the passphrase is never held in memory — the on-open backup uses the one in hand during unlock and "Back up now…" prompts for it; backups go to `$XDG_DATA_HOME/quaderno/backups/` or a chosen folder, named `journal-<last 8 of the vault id>_<timestamp>.quaderno`; the id tail is used because UUIDv7 prefixes are timestamps and would collide (product spec §10 updated the same way for export filenames); the last 8 per vault are kept and unrelated files in a shared folder ignored; a helper `gnome/src/backups.rs` holds the naming/pruning/due logic with tests. Export offers a single "Export…" dialog: Markdown (one file per live entry, YAML front matter in the current UI language, ids and timestamps included) or JSON (all rows, including soft-deleted, via `Vault::export_json`). The Italian catalog is complete (235 strings, Blueprint and desktop included); the default choice/rating/colour/flag labels are listed once in `details::translatable_defaults` so xgettext can see the strings the vault stores as data. AppStream metainfo translation is deferred: it needs `itstool`, absent here; the metainfo ships in English. The Flathub manifest builds and passes `appstreamcli validate` but was not submitted; the AUR `sha256sums` are `SKIP` until the tag exists, and the AUR build was checked as an equivalent `meson -Dsqlcipher=system` build (the `system-sqlcipher` feature also enables `rusqlite/modern_sqlite` so the SQLCipher key bindings exist). The metainfo's screenshots are wired to `raw.githubusercontent.com` URLs; the PNGs must still be added under `gnome/data/screenshots/`. The workspace and meson versions were bumped to 1.0.0; the tags are created locally.
 
 ## Version 1.1
 - Insights (`docs/statistics.md`).

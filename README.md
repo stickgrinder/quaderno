@@ -10,7 +10,7 @@ a native GTK4/libadwaita application; it will never be a web or Electron app.
 Quaderno is built around a simple promise: what you write is nobody else's business.
 
 - **One encrypted file.** The whole journal is a single SQLCipher database, normally `journal.quaderno`. There is no server and no plaintext mode.
-- **No network.** The app makes no network requests of any kind: no telemetry,
+- **No network.** The app makes no network requests of any kind: no telemetry, no update checks, no remote content.
 - **Nothing derived from your writing touches disk unencrypted.** Search indexes are built in memory after unlock and dropped on lock.
 - **Losing the passphrase loses the journal.** There is no recovery key, and the app says so when a vault is created.
 
@@ -18,7 +18,7 @@ The file format is public and documented in [`vault-spec/format.md`](vault-spec/
 
 ## Status
 
-Version 1.0 is in development. The current milestone and acceptance criteria are in [`docs/plan.md`](docs/plan.md).
+Version 1.0 is the current release. The milestones and acceptance criteria are in [`docs/plan.md`](docs/plan.md).
 
 ## Repository layout
 
@@ -82,6 +82,12 @@ flatpak run io.github.stickgrinder.Quaderno
 Cargo dependencies are vendored for the sandboxed build; see
 `gnome/build-aux/cargo-sources.json`.
 
+#### Arch Linux (AUR)
+
+Templates for the `quaderno` and `quaderno-git` packages live in
+`gnome/build-aux/aur/`. They build with meson against the distribution's
+SQLCipher (`-Dsqlcipher=system`).
+
 ## Testing and checks
 
 ### Gnome application
@@ -100,9 +106,15 @@ checked separately. Workflows live in `.github/workflows/`.
 
 ## Documentation
 
-> TBD
+- [`vault-spec/format.md`](vault-spec/format.md) — the encrypted file format, for other clients.
+- [`docs/product-spec.md`](docs/product-spec.md) — what Quaderno does, as rules.
+- [`gnome/docs/ui-spec.md`](gnome/docs/ui-spec.md) — GNOME screens, widgets and shortcuts.
+- [`docs/statistics.md`](docs/statistics.md) — the Insights definitions (version 1.1).
+- [`docs/plan.md`](docs/plan.md) — milestones and acceptance criteria.
 
 ## License
 
 GPL-3.0-or-later. See [`LICENSE`](LICENSE).  
-Quaderno's file format document is licensed under CC-BY-SA-4.0.
+Quaderno's file format document is licensed under CC-BY-SA-4.0. The bundled
+Source Serif 4 font is licensed under the SIL Open Font License 1.1, and the
+Phosphor icons under the MIT license; their licenses ship with the app.
