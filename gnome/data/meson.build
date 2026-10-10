@@ -33,3 +33,18 @@ install_data(
   'icons/phosphor/LICENSE',
   install_dir: datadir / 'licenses/quaderno',
 )
+
+# Source Serif 4, the bundled Serif writing font (product spec §8). It is
+# licensed under the SIL Open Font License 1.1.
+install_data(
+  'fonts/SourceSerif4-Regular.ttf',
+  'fonts/SourceSerif4-It.ttf',
+  'fonts/SourceSerif4-Bold.ttf',
+  'fonts/SourceSerif4-BoldIt.ttf',
+  install_dir: datadir / 'fonts',
+)
+
+install_data(
+  'fonts/LICENSE.md',
+  install_dir: datadir / 'licenses/quaderno/SourceSerif4',
+)
