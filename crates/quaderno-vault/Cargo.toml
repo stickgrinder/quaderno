@@ -20,7 +20,10 @@ default = ["bundled-sqlcipher"]
 # development builds).
 bundled-sqlcipher = ["rusqlite/bundled-sqlcipher"]
 # Link the distribution's SQLCipher instead (used by distribution packages).
-system-sqlcipher = ["rusqlite/sqlcipher"]
+# `modern_sqlite` pulls in libsqlite3-sys's prebuilt SQLCipher bindings, which
+# declare `sqlite3_key`/`sqlite3_rekey`; without them the system build cannot
+# key the database.
+system-sqlcipher = ["rusqlite/sqlcipher", "rusqlite/modern_sqlite"]
 
 [dependencies]
 rusqlite = { workspace = true, features = ["backup"] }

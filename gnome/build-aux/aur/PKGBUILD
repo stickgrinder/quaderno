@@ -1,0 +1,34 @@
+# Maintainer: Paolo Pustorino <stickgrinder@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Builds against the distribution's SQLCipher (`-Dsqlcipher=system`) and the
+# Meson build in gnome/ (AGENTS.md). Copy this file to the AUR package
+# `quaderno` and update pkgver/sha256sums on each release.
+
+pkgname=quaderno
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Private, encrypted journal for GNOME"
+arch=('x86_64' 'aarch64')
+url="https://github.com/stickgrinder/quaderno"
+license=('GPL-3.0-or-later')
+depends=('gtk4' 'libadwaita' 'libspelling' 'sqlcipher' 'glib2' 'hicolor-icon-theme')
+makedepends=('meson' 'cargo' 'rust' 'blueprint-compiler' 'gettext')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/gnome-v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "quaderno-gnome-v$pkgver"
+  meson setup build --prefix=/usr --libdir=lib -Dsqlcipher=system
+  meson compile -C build
+}
+
+check() {
+  cd "quaderno-gnome-v$pkgver"
+  meson test -C build --print-errorlogs
+}
+
+package() {
+  cd "quaderno-gnome-v$pkgver"
+  meson install -C build --destdir "$pkgdir"
+}

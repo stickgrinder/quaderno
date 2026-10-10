@@ -13,6 +13,13 @@ repository.workspace = true
 [build-dependencies]
 glib-build-tools = "0.22"
 
+[features]
+default = ["bundled-sqlcipher"]
+# Build SQLCipher from source (Flatpak, local development).
+bundled-sqlcipher = ["quaderno-vault/bundled-sqlcipher"]
+# Link the distribution's SQLCipher (AUR and other distribution packages).
+system-sqlcipher = ["quaderno-vault/system-sqlcipher"]
+
 [dependencies]
 gtk = { workspace = true }
 adw = { workspace = true }

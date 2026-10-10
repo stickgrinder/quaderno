@@ -13,5 +13,9 @@ manifest="$2"
 target_dir="$3"
 output="$4"
 
-"$cargo" build --release --manifest-path "$manifest" --target-dir "$target_dir"
+# `QUADERNO_CARGO_FLAGS` carries the SQLCipher feature selection from meson
+# (empty for the default bundled build). It is intentionally word-split.
+# shellcheck disable=SC2086
+"$cargo" build --release --manifest-path "$manifest" -p quaderno \
+    --target-dir "$target_dir" ${QUADERNO_CARGO_FLAGS:-}
 cp "$target_dir/release/quaderno" "$output"

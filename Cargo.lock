@@ -1303,7 +1303,7 @@ dependencies = [
 
 [[package]]
 name = "quaderno"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "futures-channel",
  "gettext-rs",
@@ -1324,7 +1324,7 @@ dependencies = [
 
 [[package]]
 name = "quaderno-vault"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "jiff",
  "rusqlite",

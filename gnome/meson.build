@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 project('quaderno',
-  version: '0.1.0',
+  version: '1.0.0',
   meson_version: '>= 1.4',
   license: 'GPL-3.0-or-later',
   default_options: ['warning_level=2'],
@@ -16,6 +16,12 @@ localedir = get_option('localedir')
 
 cargo = find_program('cargo', required: true)
 cargo_build = find_program(meson.project_source_root() / 'build-aux' / 'cargo-build.sh')
+
+# Flatpak and local development bundle SQLCipher; distribution packages (AUR)
+# link the system one with `-Dsqlcipher=system` (AGENTS.md).
+cargo_flags = get_option('sqlcipher') == 'system' \
+  ? '--no-default-features --features system-sqlcipher' \
+  : ''
 
 # Cargo drives the Rust build; this target produces the `quaderno` binary and
 # installs it. `depend_files` makes ninja rebuild when a Rust or UI source
@@ -57,7 +63,7 @@ custom_target('quaderno',
     cargo_target_dir,
     '@OUTPUT@',
   ],
-  env: ['QUADERNO_LOCALEDIR=' + localedir],
+  env: ['QUADERNO_LOCALEDIR=' + localedir, 'QUADERNO_CARGO_FLAGS=' + cargo_flags],
   build_by_default: true,
   install: true,
   install_dir: bindir,

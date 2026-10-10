@@ -1,0 +1,42 @@
+# Maintainer: Paolo Pustorino <stickgrinder@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Tracks the gnome-v* tags of https://github.com/stickgrinder/quaderno.
+# Builds against the distribution's SQLCipher (`-Dsqlcipher=system`) and the
+# Meson build in gnome/ (AGENTS.md). Copy this file to the AUR package
+# `quaderno-git`.
+
+pkgname=quaderno-git
+pkgver=r0.0000000
+pkgrel=1
+pkgdesc="Private, encrypted journal for GNOME (development version)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/stickgrinder/quaderno"
+license=('GPL-3.0-or-later')
+depends=('gtk4' 'libadwaita' 'libspelling' 'sqlcipher' 'glib2' 'hicolor-icon-theme')
+makedepends=('meson' 'cargo' 'rust' 'blueprint-compiler' 'gettext' 'git')
+provides=('quaderno')
+conflicts=('quaderno')
+source=('git+https://github.com/stickgrinder/quaderno.git')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd quaderno
+  printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd quaderno
+  meson setup build --prefix=/usr --libdir=lib -Dsqlcipher=system
+  meson compile -C build
+}
+
+check() {
+  cd quaderno
+  meson test -C build --print-errorlogs
+}
+
+package() {
+  cd quaderno
+  meson install -C build --destdir "$pkgdir"
+}

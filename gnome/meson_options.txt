@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+option('sqlcipher',
+  type: 'combo',
+  choices: ['bundled', 'system'],
+  value: 'bundled',
+  description: 'How the app links SQLCipher: build and bundle it, or link the system library.',
+)
