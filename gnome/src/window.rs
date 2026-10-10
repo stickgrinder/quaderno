@@ -22,6 +22,7 @@ use zeroize::Zeroizing;
 
 use crate::backups;
 use crate::details;
+use crate::export;
 use crate::icon_search;
 use crate::icons;
 use crate::keyring::Keyring;
@@ -3102,6 +3103,27 @@ impl QuadernoWindow {
         backups_group.add(&backup_now_row);
         page.add(&backups_group);
 
+        let export_group = adw::PreferencesGroup::builder()
+            .title(gettextrs::gettext("Export"))
+            .build();
+        let export_row = adw::ActionRow::builder()
+            .title(gettextrs::gettext("Export journal"))
+            .subtitle(gettextrs::gettext(
+                "Write a Markdown folder or a single JSON file; exports are not encrypted",
+            ))
+            .build();
+        let export_button = gtk::Button::builder()
+            .label(gettextrs::gettext("Export…"))
+            .valign(gtk::Align::Center)
+            .build();
+        {
+            let window = self.clone();
+            export_button.connect_clicked(move |_| window.present_export());
+        }
+        export_row.add_suffix(&export_button);
+        export_group.add(&export_row);
+        page.add(&export_group);
+
         page
     }
 
@@ -3625,6 +3647,188 @@ impl QuadernoWindow {
             .await;
             if !matches!(outcome, Ok(Ok(()))) {
                 window.toast(&gettextrs::gettext("Automatic backup failed"));
+            }
+        });
+    }
+
+    /// Warns that the export is not encrypted, then asks for the format.
+    fn present_export(&self) {
+        let dialog = adw::AlertDialog::new(
+            Some(&gettextrs::gettext("Export the journal?")),
+            Some(&gettextrs::gettext(
+                "The export is not encrypted: anyone who can read those files can read your journal. Keep them somewhere safe.",
+            )),
+        );
+        dialog.add_response("cancel", &gettextrs::gettext("Cancel"));
+        dialog.add_response("markdown", &gettextrs::gettext("Markdown folder…"));
+        dialog.add_response("json", &gettextrs::gettext("JSON file…"));
+        dialog.set_response_appearance("markdown", adw::ResponseAppearance::Suggested);
+        dialog.set_default_response(Some("markdown"));
+        dialog.set_close_response("cancel");
+
+        let window = self.clone();
+        dialog.connect_response(None, move |_, response| match response {
+            "markdown" => window.choose_export_markdown(),
+            "json" => window.choose_export_json(),
+            _ => {}
+        });
+        dialog.present(Some(self));
+    }
+
+    fn choose_export_markdown(&self) {
+        let dialog = gtk::FileDialog::builder()
+            .title(gettextrs::gettext("Choose an export folder"))
+            .build();
+        let window = self.clone();
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, move |result| {
+            if let Ok(folder) = result
+                && let Some(path) = folder.path()
+            {
+                window.export_markdown(path);
+            }
+        });
+    }
+
+    fn choose_export_json(&self) {
+        let dialog = gtk::FileDialog::builder()
+            .title(gettextrs::gettext("Export as JSON"))
+            .initial_name("quaderno-journal.json")
+            .build();
+        let window = self.clone();
+        dialog.save(Some(self), gio::Cancellable::NONE, move |result| {
+            if let Ok(file) = result
+                && let Some(path) = file.path()
+            {
+                window.export_json(path);
+            }
+        });
+    }
+
+    /// Gathers every live entry with its labels resolved to display strings.
+    fn collect_export_entries(&self) -> Vec<export::ExportEntry> {
+        let vault = self.imp().vault.borrow();
+        let Some(vault) = vault.as_ref() else {
+            return Vec::new();
+        };
+        let Ok(entries) = vault.entries(false) else {
+            return Vec::new();
+        };
+        entries
+            .into_iter()
+            .map(|entry| {
+                let choices = vault.entry_choices(entry.id).unwrap_or_default();
+                let subjects = vault.entry_subjects(entry.id, None).unwrap_or_default();
+                let colors = vault.entry_colors(entry.id).unwrap_or_default();
+
+                let mut emotions = Vec::new();
+                let mut activities = Vec::new();
+                for choice in &choices {
+                    let label = details::choice_display_label(choice);
+                    match choice.kind {
+                        ChoiceKind::Emotion => emotions.push(label),
+                        ChoiceKind::Activity => activities.push(label),
+                    }
+                }
+
+                let mut people = Vec::new();
+                let mut places = Vec::new();
+                let mut things = Vec::new();
+                let mut tags = Vec::new();
+                for subject in &subjects {
+                    match subject.kind {
+                        SubjectKind::Person => people.push(subject.name.clone()),
+                        SubjectKind::Place => places.push(subject.name.clone()),
+                        SubjectKind::Thing => things.push(subject.name.clone()),
+                        SubjectKind::Tag => tags.push(subject.name.clone()),
+                    }
+                }
+
+                let mut flags = Vec::new();
+                for (set, flag) in [
+                    (entry.lucid, DreamFlag::Lucid),
+                    (entry.nightmare, DreamFlag::Nightmare),
+                    (entry.recurring, DreamFlag::Recurring),
+                ] {
+                    if set == Some(true) {
+                        flags.push(details::dream_flag_label(flag));
+                    }
+                }
+
+                export::ExportEntry {
+                    id: entry.id,
+                    entry_type: entry.entry_type,
+                    dated_at: entry.dated_at,
+                    created_at: entry.created_at,
+                    updated_at: entry.updated_at,
+                    source_id: entry.source_id,
+                    conflict_of: entry.conflict_of,
+                    mood: entry.mood,
+                    energy: entry.energy,
+                    cognitive_load: entry.cognitive_load,
+                    sleep: entry.sleep,
+                    flags,
+                    emotions,
+                    activities,
+                    colors: colors
+                        .iter()
+                        .map(|color| details::color_label(*color))
+                        .collect(),
+                    people,
+                    places,
+                    things,
+                    tags,
+                    content: entry.content,
+                }
+            })
+            .collect()
+    }
+
+    fn export_markdown(&self, dir: PathBuf) {
+        let entries = self.collect_export_entries();
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let result = gio::spawn_blocking(move || -> std::io::Result<usize> {
+                std::fs::create_dir_all(&dir)?;
+                for entry in &entries {
+                    std::fs::write(dir.join(export::file_name(entry)), export::render(entry))?;
+                }
+                Ok(entries.len())
+            })
+            .await;
+            match result {
+                Ok(Ok(count)) => {
+                    let message = gettextrs::ngettext(
+                        "Exported {n} entry",
+                        "Exported {n} entries",
+                        count as u32,
+                    )
+                    .replace("{n}", &count.to_string());
+                    window.toast(&message);
+                }
+                _ => window.toast(&gettextrs::gettext("The export could not be written.")),
+            }
+        });
+    }
+
+    fn export_json(&self, path: PathBuf) {
+        let json = {
+            let vault = self.imp().vault.borrow();
+            match vault.as_ref() {
+                Some(vault) => vault.export_json().ok(),
+                None => None,
+            }
+        };
+        let Some(json) = json else {
+            self.toast(&gettextrs::gettext("The export could not be written."));
+            return;
+        };
+        let window = self.clone();
+        glib::spawn_future_local(async move {
+            let result =
+                gio::spawn_blocking(move || std::fs::write(&path, format!("{json}\n"))).await;
+            match result {
+                Ok(Ok(())) => window.toast(&gettextrs::gettext("Exported the journal as JSON")),
+                _ => window.toast(&gettextrs::gettext("The export could not be written.")),
             }
         });
     }

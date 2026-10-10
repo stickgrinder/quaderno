@@ -46,7 +46,7 @@ Opening an existing journal: file chooser → unlock screen. A file whose `vault
 - If the passphrase is in the keyring, the vault opens without a prompt.
 - Otherwise the unlock screen asks for it. A wrong passphrase shows an inline error; after 5 wrong attempts, a 30-second delay before the next.
 - Vault states on open, per `vault-spec/format.md` §7.2: normal, **read-only** (banner explains that a newer version of Quaderno changed the journal; editing is disabled), or **refused** (message: update Quaderno).
-- A file that fails validation shows an error screen offering to open the latest automatic backup.
+- A file that fails validation shows an error screen offering "Open a backup…", a file chooser starting in the backup folder.
 
 ### 3.3 Locking
 
@@ -161,7 +161,7 @@ In the icon picker, the user types a word and sees matching Phosphor icons, then
 
 ## 10. Export
 
-- **Markdown folder:** one file per entry, `YYYY-MM-DD_<type>_<first 8 chars of id>.md`, with YAML front matter holding all metadata by readable name (e.g. `emotions: [Calm, Joy]`, `people: [Marta]`, `mood: 4`), then the content.
+- **Markdown folder:** one file per entry, `YYYY-MM-DD_<type>_<last 8 chars of id>.md`, with YAML front matter holding all metadata by readable name (e.g. `emotions: [Calm, Joy]`, `people: [Marta]`, `mood: 4`), then the content. The id suffix uses the last 8 characters because IDs are UUIDv7, whose leading characters are a timestamp and would collide for entries written close together.
 - **JSON:** one file with all tables as arrays, column names as keys.
 - Before exporting, a confirmation dialog says the export is **not encrypted**. Export always goes to a location the user picks.
 

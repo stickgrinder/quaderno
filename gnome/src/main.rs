@@ -3,6 +3,7 @@
 mod application;
 mod backups;
 mod details;
+mod export;
 mod icon_search;
 mod icons;
 mod keyring;
