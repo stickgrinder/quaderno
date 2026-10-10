@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Translatable files, relative to the meson project root (gnome/).
-# The desktop file and Blueprint UI are handled by `i18n.merge_file` and
-# are added here once they carry translatable keys.
+# `.rs` files use gettextrs::gettext/pgettext/ngettext (keywords added in
+# po/meson.build); the Blueprint UI uses `_()`.
 
-src/application.rs
 src/details.rs
-src/main.rs
+src/timeline.rs
 src/window.rs
+
+ui/quaderno-window.blp
+
+data/io.github.stickgrinder.Quaderno.desktop.in

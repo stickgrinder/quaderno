@@ -3889,7 +3889,7 @@ impl QuadernoWindow {
         let row = adw::ActionRow::builder()
             .title(gettextrs::gettext("About these lists"))
             .subtitle(gettextrs::gettext(
-                "Mood, energy, cognitive load, sleep and colours are fixed scales so statistics stay comparable. People, places, things and tags are managed from their Collections pages.",
+                "Mood, energy, cognitive load, sleep and colors are fixed scales so statistics stay comparable. People, places, things and tags are managed from their Collections pages.",
             ))
             .build();
         row.add_prefix(&gtk::Image::from_icon_name("dialog-information-symbolic"));

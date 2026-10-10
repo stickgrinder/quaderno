@@ -194,6 +194,82 @@ pub fn choice_display_label(choice: &Choice) -> String {
     }
 }
 
+/// Every default label the vault stores as data (vault-spec §4.3 and
+/// Appendices A–C), listed with literal `pgettext` calls so xgettext extracts
+/// them (vault-spec §6.2). The vault's own labels are never literals at a call
+/// site: `choice` labels come from the database and the fixed scales are mapped
+/// at runtime, so this function exists only to keep them in the message
+/// catalog. It is never called.
+#[allow(dead_code)]
+fn translatable_defaults() {
+    // Emotions (context = kind).
+    let _ = gettextrs::pgettext("emotion", "Joy");
+    let _ = gettextrs::pgettext("emotion", "Gratitude");
+    let _ = gettextrs::pgettext("emotion", "Calm");
+    let _ = gettextrs::pgettext("emotion", "Love");
+    let _ = gettextrs::pgettext("emotion", "Pride");
+    let _ = gettextrs::pgettext("emotion", "Hope");
+    let _ = gettextrs::pgettext("emotion", "Sadness");
+    let _ = gettextrs::pgettext("emotion", "Anger");
+    let _ = gettextrs::pgettext("emotion", "Anxiety");
+    let _ = gettextrs::pgettext("emotion", "Loneliness");
+    let _ = gettextrs::pgettext("emotion", "Boredom");
+    let _ = gettextrs::pgettext("emotion", "Nostalgia");
+    // Day activities (context = kind).
+    let _ = gettextrs::pgettext("activity", "Work");
+    let _ = gettextrs::pgettext("activity", "Exercise");
+    let _ = gettextrs::pgettext("activity", "Walk");
+    let _ = gettextrs::pgettext("activity", "Reading");
+    let _ = gettextrs::pgettext("activity", "Cooking");
+    let _ = gettextrs::pgettext("activity", "Friends & family");
+    let _ = gettextrs::pgettext("activity", "Music");
+    let _ = gettextrs::pgettext("activity", "Side project");
+    let _ = gettextrs::pgettext("activity", "Nature");
+    let _ = gettextrs::pgettext("activity", "Meditation");
+    let _ = gettextrs::pgettext("activity", "Gaming");
+    let _ = gettextrs::pgettext("activity", "Travel");
+    let _ = gettextrs::pgettext("activity", "Screen time");
+    let _ = gettextrs::pgettext("activity", "Chores");
+    // Rating scales (Appendix B).
+    let _ = gettextrs::pgettext("rating.mood", "Awful");
+    let _ = gettextrs::pgettext("rating.mood", "Bad");
+    let _ = gettextrs::pgettext("rating.mood", "Okay");
+    let _ = gettextrs::pgettext("rating.mood", "Good");
+    let _ = gettextrs::pgettext("rating.mood", "Great");
+    let _ = gettextrs::pgettext("rating.energy", "Drained");
+    let _ = gettextrs::pgettext("rating.energy", "Low");
+    let _ = gettextrs::pgettext("rating.energy", "Steady");
+    let _ = gettextrs::pgettext("rating.energy", "High");
+    let _ = gettextrs::pgettext("rating.energy", "Charged");
+    let _ = gettextrs::pgettext("rating.cognitive_load", "Idle");
+    let _ = gettextrs::pgettext("rating.cognitive_load", "Light");
+    let _ = gettextrs::pgettext("rating.cognitive_load", "Moderate");
+    let _ = gettextrs::pgettext("rating.cognitive_load", "Heavy");
+    let _ = gettextrs::pgettext("rating.cognitive_load", "Overloaded");
+    let _ = gettextrs::pgettext("rating.sleep", "Sleepless");
+    let _ = gettextrs::pgettext("rating.sleep", "Poor");
+    let _ = gettextrs::pgettext("rating.sleep", "Fair");
+    let _ = gettextrs::pgettext("rating.sleep", "Good");
+    let _ = gettextrs::pgettext("rating.sleep", "Deep");
+    // Dream flags (Appendix B).
+    let _ = gettextrs::pgettext("dream_flag", "Lucid");
+    let _ = gettextrs::pgettext("dream_flag", "Nightmare");
+    let _ = gettextrs::pgettext("dream_flag", "Recurring");
+    // Fixed colours (Appendix C).
+    let _ = gettextrs::pgettext("color", "Red");
+    let _ = gettextrs::pgettext("color", "Orange");
+    let _ = gettextrs::pgettext("color", "Yellow");
+    let _ = gettextrs::pgettext("color", "Green");
+    let _ = gettextrs::pgettext("color", "Teal");
+    let _ = gettextrs::pgettext("color", "Blue");
+    let _ = gettextrs::pgettext("color", "Purple");
+    let _ = gettextrs::pgettext("color", "Pink");
+    let _ = gettextrs::pgettext("color", "Brown");
+    let _ = gettextrs::pgettext("color", "Gray");
+    let _ = gettextrs::pgettext("color", "Black");
+    let _ = gettextrs::pgettext("color", "White");
+}
+
 /// The singular noun for a subject kind, used in the token placeholder and the
 /// create row.
 pub fn subject_noun(kind: SubjectKind) -> String {

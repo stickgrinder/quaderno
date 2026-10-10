@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: quaderno\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 00:00+0200\n"
-"PO-Revision-Date: 2026-09-29 00:00+0200\n"
+"POT-Creation-Date: 2026-10-10 13:43+0200\n"
+"PO-Revision-Date: 2026-10-10 13:43+0200\n"
 "Last-Translator: Paolo Pustorino <stickgrinder@gmail.com>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -16,254 +16,1323 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Private, encrypted journal"
-msgstr "Diario privato e cifrato"
+#: src/details.rs:53
+msgid "Mood on waking"
+msgstr "Umore al risveglio"
 
-# Default emotion labels (vault-spec/format.md Appendix A), context = kind.
+#: src/details.rs:54
+msgid "Mood"
+msgstr "Umore"
+
+#: src/details.rs:55
+msgid "Energy"
+msgstr "Energia"
+
+#: src/details.rs:56
+msgid "Cognitive load"
+msgstr "Carico mentale"
+
+#: src/details.rs:57
+msgid "Sleep quality"
+msgstr "Qualità del sonno"
+
+#. Emotions (context = kind).
+#: src/details.rs:206
 msgctxt "emotion"
 msgid "Joy"
 msgstr "Gioia"
 
+#: src/details.rs:207
 msgctxt "emotion"
 msgid "Gratitude"
 msgstr "Gratitudine"
 
+#: src/details.rs:208
 msgctxt "emotion"
 msgid "Calm"
 msgstr "Calma"
 
+#: src/details.rs:209
 msgctxt "emotion"
 msgid "Love"
 msgstr "Amore"
 
+#: src/details.rs:210
 msgctxt "emotion"
 msgid "Pride"
 msgstr "Orgoglio"
 
+#: src/details.rs:211
 msgctxt "emotion"
 msgid "Hope"
 msgstr "Speranza"
 
+#: src/details.rs:212
 msgctxt "emotion"
 msgid "Sadness"
 msgstr "Tristezza"
 
+#: src/details.rs:213
 msgctxt "emotion"
 msgid "Anger"
 msgstr "Rabbia"
 
+#: src/details.rs:214
 msgctxt "emotion"
 msgid "Anxiety"
 msgstr "Ansia"
 
+#: src/details.rs:215
 msgctxt "emotion"
 msgid "Loneliness"
 msgstr "Solitudine"
 
+#: src/details.rs:216
 msgctxt "emotion"
 msgid "Boredom"
 msgstr "Noia"
 
+#: src/details.rs:217
 msgctxt "emotion"
 msgid "Nostalgia"
 msgstr "Nostalgia"
 
-# Default activity labels (vault-spec/format.md Appendix A), context = kind.
+#. Day activities (context = kind).
+#: src/details.rs:219
 msgctxt "activity"
 msgid "Work"
 msgstr "Lavoro"
 
+#: src/details.rs:220
 msgctxt "activity"
 msgid "Exercise"
 msgstr "Esercizio"
 
+#: src/details.rs:221
 msgctxt "activity"
 msgid "Walk"
 msgstr "Passeggiata"
 
+#: src/details.rs:222
 msgctxt "activity"
 msgid "Reading"
 msgstr "Lettura"
 
+#: src/details.rs:223
 msgctxt "activity"
 msgid "Cooking"
 msgstr "Cucinare"
 
+#: src/details.rs:224
 msgctxt "activity"
 msgid "Friends & family"
 msgstr "Amici e famiglia"
 
+#: src/details.rs:225
 msgctxt "activity"
 msgid "Music"
 msgstr "Musica"
 
+#: src/details.rs:226
 msgctxt "activity"
 msgid "Side project"
 msgstr "Progetto personale"
 
+#: src/details.rs:227
 msgctxt "activity"
 msgid "Nature"
 msgstr "Natura"
 
+#: src/details.rs:228
 msgctxt "activity"
 msgid "Meditation"
 msgstr "Meditazione"
 
+#: src/details.rs:229
 msgctxt "activity"
 msgid "Gaming"
 msgstr "Videogiochi"
 
+#: src/details.rs:230
 msgctxt "activity"
 msgid "Travel"
 msgstr "Viaggio"
 
+#: src/details.rs:231
 msgctxt "activity"
 msgid "Screen time"
 msgstr "Tempo schermo"
 
+#: src/details.rs:232
 msgctxt "activity"
 msgid "Chores"
 msgstr "Faccende"
 
-# Rating scales (vault-spec/format.md Appendix B), context = scale.
+#. Rating scales (Appendix B).
+#: src/details.rs:234
 msgctxt "rating.mood"
 msgid "Awful"
 msgstr "Terribile"
 
+#: src/details.rs:235
 msgctxt "rating.mood"
 msgid "Bad"
 msgstr "Scarso"
 
+#: src/details.rs:236
 msgctxt "rating.mood"
 msgid "Okay"
 msgstr "Nella norma"
 
+#: src/details.rs:237
 msgctxt "rating.mood"
 msgid "Good"
 msgstr "Buono"
 
+#: src/details.rs:238
 msgctxt "rating.mood"
 msgid "Great"
 msgstr "Ottimo"
 
+#: src/details.rs:239
 msgctxt "rating.energy"
 msgid "Drained"
 msgstr "Sfinito"
 
+#: src/details.rs:240
 msgctxt "rating.energy"
 msgid "Low"
 msgstr "Bassa"
 
+#: src/details.rs:241
 msgctxt "rating.energy"
 msgid "Steady"
 msgstr "Costante"
 
+#: src/details.rs:242
 msgctxt "rating.energy"
 msgid "High"
 msgstr "Alta"
 
+#: src/details.rs:243
 msgctxt "rating.energy"
 msgid "Charged"
 msgstr "Carica"
 
+#: src/details.rs:244
 msgctxt "rating.cognitive_load"
 msgid "Idle"
 msgstr "Ozioso"
 
+#: src/details.rs:245
 msgctxt "rating.cognitive_load"
 msgid "Light"
 msgstr "Leggera"
 
+#: src/details.rs:246
 msgctxt "rating.cognitive_load"
 msgid "Moderate"
 msgstr "Media"
 
+#: src/details.rs:247
 msgctxt "rating.cognitive_load"
 msgid "Heavy"
 msgstr "Pesante"
 
+#: src/details.rs:248
 msgctxt "rating.cognitive_load"
 msgid "Overloaded"
 msgstr "Sovraccarico"
 
+#: src/details.rs:249
 msgctxt "rating.sleep"
 msgid "Sleepless"
 msgstr "Insonne"
 
+#: src/details.rs:250
 msgctxt "rating.sleep"
 msgid "Poor"
 msgstr "Scarso"
 
+#: src/details.rs:251
 msgctxt "rating.sleep"
 msgid "Fair"
 msgstr "Discreto"
 
+#: src/details.rs:252
 msgctxt "rating.sleep"
 msgid "Good"
 msgstr "Buono"
 
+#: src/details.rs:253
 msgctxt "rating.sleep"
 msgid "Deep"
 msgstr "Profondo"
 
-# The twelve fixed colours (vault-spec/format.md Appendix C).
-msgctxt "color"
-msgid "Red"
-msgstr "Rosso"
-
-msgctxt "color"
-msgid "Orange"
-msgstr "Arancione"
-
-msgctxt "color"
-msgid "Yellow"
-msgstr "Giallo"
-
-msgctxt "color"
-msgid "Green"
-msgstr "Verde"
-
-msgctxt "color"
-msgid "Teal"
-msgstr "Verde acqua"
-
-msgctxt "color"
-msgid "Blue"
-msgstr "Blu"
-
-msgctxt "color"
-msgid "Purple"
-msgstr "Viola"
-
-msgctxt "color"
-msgid "Pink"
-msgstr "Rosa"
-
-msgctxt "color"
-msgid "Brown"
-msgstr "Marrone"
-
-msgctxt "color"
-msgid "Gray"
-msgstr "Grigio"
-
-msgctxt "color"
-msgid "Black"
-msgstr "Nero"
-
-msgctxt "color"
-msgid "White"
-msgstr "Bianco"
-
-# Dream flags (vault-spec/format.md Appendix B), context = dream_flag.
+#. Dream flags (Appendix B).
+#: src/details.rs:255
 msgctxt "dream_flag"
 msgid "Lucid"
 msgstr "Lucido"
 
+#: src/details.rs:256
 msgctxt "dream_flag"
 msgid "Nightmare"
 msgstr "Incubo"
 
+#: src/details.rs:257
 msgctxt "dream_flag"
 msgid "Recurring"
 msgstr "Ricorrente"
+
+#. Fixed colours (Appendix C).
+#: src/details.rs:259
+msgctxt "color"
+msgid "Red"
+msgstr "Rosso"
+
+#: src/details.rs:260
+msgctxt "color"
+msgid "Orange"
+msgstr "Arancione"
+
+#: src/details.rs:261
+msgctxt "color"
+msgid "Yellow"
+msgstr "Giallo"
+
+#: src/details.rs:262
+msgctxt "color"
+msgid "Green"
+msgstr "Verde"
+
+#: src/details.rs:263
+msgctxt "color"
+msgid "Teal"
+msgstr "Verde acqua"
+
+#: src/details.rs:264
+msgctxt "color"
+msgid "Blue"
+msgstr "Blu"
+
+#: src/details.rs:265
+msgctxt "color"
+msgid "Purple"
+msgstr "Viola"
+
+#: src/details.rs:266
+msgctxt "color"
+msgid "Pink"
+msgstr "Rosa"
+
+#: src/details.rs:267
+msgctxt "color"
+msgid "Brown"
+msgstr "Marrone"
+
+#: src/details.rs:268
+msgctxt "color"
+msgid "Gray"
+msgstr "Grigio"
+
+#: src/details.rs:269
+msgctxt "color"
+msgid "Black"
+msgstr "Nero"
+
+#: src/details.rs:270
+msgctxt "color"
+msgid "White"
+msgstr "Bianco"
+
+#: src/details.rs:277
+msgid "person"
+msgstr "persona"
+
+#: src/details.rs:278
+msgid "place"
+msgstr "luogo"
+
+#: src/details.rs:279
+msgid "thing"
+msgstr "cosa"
+
+#: src/details.rs:280
+msgid "tag"
+msgstr "tag"
+
+#. / The placeholder of a token field, e.g. "Add person…".
+#: src/details.rs:286
+#, rust-format
+msgid "Add {kind}…"
+msgstr "Aggiungi {kind}…"
+
+#: src/details.rs:293 src/window.rs:810 src/window.rs:5420
+msgid "Tags"
+msgstr "Tag"
+
+#: src/details.rs:295
+msgid "People, places & things"
+msgstr "Persone, luoghi e cose"
+
+#. / The label of the "Create …" suggestion row.
+#: src/details.rs:301
+#, rust-format
+msgid "Create {kind} “{name}”"
+msgstr "Crea {kind} «{name}»"
+
+#: src/details.rs:312
+#, rust-format
+msgid "{n} entry"
+msgid_plural "{n} entries"
+msgstr[0] "{n} voce"
+msgstr[1] "{n} voci"
+
+#: src/details.rs:317
+msgid "last"
+msgstr "ultima"
+
+#: src/timeline.rs:145 src/timeline.rs:191 ui/quaderno-window.blp:420
+msgid "Today"
+msgstr "Oggi"
+
+#: src/timeline.rs:152 src/timeline.rs:198 ui/quaderno-window.blp:424
+msgid "Yesterday"
+msgstr "Ieri"
+
+#: src/window.rs:429
+msgid "Lock"
+msgstr "Blocca"
+
+#: src/window.rs:432 src/window.rs:3859
+msgid "Preferences"
+msgstr "Preferenze"
+
+#: src/window.rs:436
+msgid "Keyboard Shortcuts"
+msgstr "Scorciatoie da tastiera"
+
+#: src/window.rs:440
+msgid "About Quaderno"
+msgstr "Informazioni su Quaderno"
+
+#: src/window.rs:444
+msgid "Quit"
+msgstr "Esci"
+
+#: src/window.rs:518 src/window.rs:5167
+msgid "The journal file could not be found."
+msgstr "Impossibile trovare il file del diario."
+
+#: src/window.rs:755 src/window.rs:2032 src/window.rs:2035
+#: ui/quaderno-window.blp:221 ui/quaderno-window.blp:227
+msgid "Timeline"
+msgstr "Cronologia"
+
+#: src/window.rs:760
+msgid "Journal pages"
+msgstr "Pagine di diario"
+
+#: src/window.rs:765 ui/quaderno-window.blp:285
+msgid "Dreams"
+msgstr "Sogni"
+
+#: src/window.rs:770 src/window.rs:2034
+msgid "Quick notes"
+msgstr "Note rapide"
+
+#: src/window.rs:785
+msgid "Collections"
+msgstr "Raccolte"
+
+#: src/window.rs:797 src/window.rs:5417
+msgid "People"
+msgstr "Persone"
+
+#: src/window.rs:802 src/window.rs:5418
+msgid "Locations"
+msgstr "Luoghi"
+
+#: src/window.rs:807 src/window.rs:5419
+msgid "Things"
+msgstr "Cose"
+
+#: src/window.rs:1072
+msgid "Entry date"
+msgstr "Data della voce"
+
+#: src/window.rs:1091
+msgid "How it felt"
+msgstr "Come è andata"
+
+#: src/window.rs:1152 src/window.rs:3879
+msgid "Emotions"
+msgstr "Emozioni"
+
+#: src/window.rs:1154 src/window.rs:3881
+msgid "Day activities"
+msgstr "Attività del giorno"
+
+#: src/window.rs:1158
+msgid "Colors of the day"
+msgstr "Colori del giorno"
+
+#: src/window.rs:1239 src/window.rs:1243 src/window.rs:3931 src/window.rs:4264
+msgid "Add"
+msgstr "Aggiungi"
+
+#: src/window.rs:1247 ui/quaderno-window.blp:248
+msgid "Search"
+msgstr "Cerca"
+
+#: src/window.rs:1607
+msgid "Remove"
+msgstr "Rimuovi"
+
+#: src/window.rs:1909
+msgid "Removed"
+msgstr "Rimosso"
+
+#: src/window.rs:1910 src/window.rs:5041
+msgid "Undo"
+msgstr "Annulla"
+
+#: src/window.rs:1929 src/window.rs:1985 src/window.rs:2327 src/window.rs:2801
+#: src/window.rs:5611 ui/quaderno-window.blp:361
+msgid "Journal page"
+msgstr "Pagina di diario"
+
+#: src/window.rs:1932 src/window.rs:1988 src/window.rs:2330 src/window.rs:5612
+msgid "Dream"
+msgstr "Sogno"
+
+#: src/window.rs:1934 src/window.rs:5613
+msgid "Quick note"
+msgstr "Nota rapida"
+
+#: src/window.rs:2009
+msgid ""
+"Quick notes are not counted in Insights. Expanding creates a new entry, "
+"copies the text and tags, and links both ways."
+msgstr ""
+"Le note rapide non sono conteggiate negli Approfondimenti. Espandere crea "
+"una nuova voce, copia il testo e i tag e collega le due in entrambe le "
+"direzioni."
+
+#: src/window.rs:2090 src/window.rs:2207
+msgid "This item is used by entries. Merge it instead of deleting it."
+msgstr "Questo elemento è usato da delle voci. Uniscilo invece di eliminarlo."
+
+#: src/window.rs:2105
+msgid "Items merged"
+msgstr "Elementi uniti"
+
+#: src/window.rs:2112 src/window.rs:2194
+msgid "Merge into…"
+msgstr "Unisci in…"
+
+#: src/window.rs:2114
+msgid ""
+"Every entry linked to this item will link to the one you keep, and all its "
+"entries are kept."
+msgstr ""
+"Ogni voce collegata a questo elemento verrà collegata a quello che "
+"mantieni, e tutte le sue voci sono conservate."
+
+#: src/window.rs:2117 src/window.rs:2229 src/window.rs:3133 src/window.rs:3215
+#: src/window.rs:3662 src/window.rs:4197 src/window.rs:4223 src/window.rs:4263
+msgid "Cancel"
+msgstr "Annulla"
+
+#: src/window.rs:2118
+msgid "Merge"
+msgstr "Unisci"
+
+#: src/window.rs:2129
+msgid "Keep"
+msgstr "Mantieni"
+
+#: src/window.rs:2184 src/window.rs:4007
+msgid "Rename…"
+msgstr "Rinomina…"
+
+#: src/window.rs:2200 src/window.rs:4057
+msgid "Delete…"
+msgstr "Elimina…"
+
+#: src/window.rs:2228 src/window.rs:2230 src/window.rs:4222 src/window.rs:4224
+msgid "Rename"
+msgstr "Rinomina"
+
+#: src/window.rs:2311
+msgid "Entry created"
+msgstr "Voce creata"
+
+#: src/window.rs:2321 src/window.rs:4198
+msgid "Delete"
+msgstr "Elimina"
+
+#: src/window.rs:2331
+msgid "Expand into"
+msgstr "Espandi in"
+
+#: src/window.rs:2363
+msgid "From quick note:"
+msgstr "Da una nota rapida:"
+
+#: src/window.rs:2367 ui/quaderno-window.blp:302
+msgid "Open"
+msgstr "Aperte"
+
+#: src/window.rs:2371
+msgid "From a deleted note"
+msgstr "Da una nota eliminata"
+
+#: src/window.rs:2398
+msgid "Expanded into"
+msgstr "Espansa in"
+
+#: src/window.rs:2454
+msgid "General"
+msgstr "Generali"
+
+#: src/window.rs:2470
+msgid "Text size"
+msgstr "Dimensione del testo"
+
+#: src/window.rs:2471
+msgid "Entry text size, in points"
+msgstr "Dimensione del testo delle voci, in punti"
+
+#: src/window.rs:2486
+msgid "Line width"
+msgstr "Larghezza di riga"
+
+#: src/window.rs:2487
+msgid "Maximum width of the text column"
+msgstr "Larghezza massima della colonna di testo"
+
+#: src/window.rs:2492
+msgid "Narrow"
+msgstr "Stretta"
+
+#: src/window.rs:2493
+msgid "Comfortable"
+msgstr "Comoda"
+
+#: src/window.rs:2494
+msgid "Wide"
+msgstr "Ampia"
+
+#: src/window.rs:2514
+msgid "Dimmed"
+msgstr "Attenuati"
+
+#: src/window.rs:2516
+msgid "Markdown symbols"
+msgstr "Simboli Markdown"
+
+#: src/window.rs:2517
+msgid "Hidden comes in a later version"
+msgstr "Nascosti in una versione successiva"
+
+#: src/window.rs:2533
+msgid "Writing font"
+msgstr "Carattere di scrittura"
+
+#: src/window.rs:2535
+msgid ""
+"Used for entry text and quick notes. Interface text always follows the "
+"system font."
+msgstr ""
+"Usato per il testo delle voci e delle note rapide. Il testo dell'interfaccia "
+"segue sempre il carattere di sistema."
+
+#: src/window.rs:2551
+msgid "Serif"
+msgstr "Serif"
+
+#: src/window.rs:2552
+msgid "Source Serif 4 · bundled"
+msgstr "Source Serif 4 · incluso"
+
+#: src/window.rs:2557
+msgid "Sans"
+msgstr "Sans"
+
+#: src/window.rs:2558
+msgid "System document font"
+msgstr "Carattere di sistema per i documenti"
+
+#: src/window.rs:2563
+msgid "Mono"
+msgstr "Mono"
+
+#: src/window.rs:2564
+msgid "System monospace font"
+msgstr "Carattere monospazio di sistema"
+
+#: src/window.rs:2569
+msgid "Custom…"
+msgstr "Personalizzato…"
+
+#: src/window.rs:2570
+msgid "Any installed font"
+msgstr "Un qualsiasi carattere installato"
+
+#: src/window.rs:2681
+msgid "Spell checking"
+msgstr "Controllo ortografico"
+
+#: src/window.rs:2682
+msgid "Languages from the system dictionaries"
+msgstr "Lingue dai dizionari di sistema"
+
+#: src/window.rs:2692 src/window.rs:5500 src/window.rs:5509
+msgid "System default"
+msgstr "Predefinito di sistema"
+
+#: src/window.rs:2797
+msgid "Behavior"
+msgstr "Comportamento"
+
+#: src/window.rs:2802
+msgid "Before 10:00 Dream, then Journal page"
+msgstr "Sogno prima delle 10:00, poi pagina di diario"
+
+#: src/window.rs:2805
+msgid "New entry type"
+msgstr "Tipo di nuova voce"
+
+#: src/window.rs:2838
+msgid "A day ends at"
+msgstr "La giornata finisce alle"
+
+#: src/window.rs:2840
+msgid "Entries written before this time count for the previous day"
+msgstr "Le voci scritte prima di quest'ora contano per il giorno precedente"
+
+#: src/window.rs:2878
+msgid "Privacy & data"
+msgstr "Privacy e dati"
+
+#: src/window.rs:2883
+msgid "Unlocking"
+msgstr "Sblocco"
+
+#: src/window.rs:2887 ui/quaderno-window.blp:77
+msgid "Remember passphrase on this device"
+msgstr "Ricorda la passphrase su questo dispositivo"
+
+#: src/window.rs:2889
+msgid "Stored in GNOME Keyring; the journal opens without asking"
+msgstr "Salvata nel portachiavi di GNOME; il diario si apre senza chiedere"
+
+#: src/window.rs:2901
+msgid "No keyring is available on this device"
+msgstr "Nessun portachiavi disponibile su questo dispositivo"
+
+#: src/window.rs:2929
+msgid "Remember passphrase"
+msgstr "Ricorda la passphrase"
+
+#: src/window.rs:2931
+msgid ""
+"Enter the passphrase to store it in GNOME Keyring. The journal will open "
+"without asking on this device."
+msgstr ""
+"Inserisci la passphrase per salvarla nel portachiavi di GNOME. Il diario si "
+"aprirà senza chiedere su questo dispositivo."
+
+#: src/window.rs:2963
+msgid "Lock after"
+msgstr "Blocca dopo"
+
+#: src/window.rs:2983
+msgid "Lock when the session locks"
+msgstr "Blocca quando la sessione si blocca"
+
+#: src/window.rs:2995 src/window.rs:3140 ui/quaderno-window.blp:43
+#: ui/quaderno-window.blp:134
+msgid "Passphrase"
+msgstr "Passphrase"
+
+#: src/window.rs:2997
+msgid ""
+"The journal is always encrypted. A forgotten passphrase cannot be recovered."
+msgstr ""
+"Il diario è sempre cifrato. Una passphrase dimenticata non può essere "
+"recuperata."
+
+#: src/window.rs:3001 src/window.rs:3063 ui/quaderno-window.blp:71
+msgid "Change…"
+msgstr "Cambia…"
+
+#: src/window.rs:3014
+msgid "Data"
+msgstr "Dati"
+
+#: src/window.rs:3017
+msgid "Journal file"
+msgstr "File del diario"
+
+#: src/window.rs:3023
+msgid "Move…"
+msgstr "Sposta…"
+
+#: src/window.rs:3037
+msgid "Backups"
+msgstr "Backup"
+
+#: src/window.rs:3041
+msgid "Automatic backups"
+msgstr "Backup automatici"
+
+#: src/window.rs:3042
+msgid "Weekly, keeping the last 8"
+msgstr "Ogni settimana, conservando gli ultimi 8"
+
+#: src/window.rs:3054
+msgid "Backup folder"
+msgstr "Cartella dei backup"
+
+#: src/window.rs:3058
+msgid "Default"
+msgstr "Predefinita"
+
+#: src/window.rs:3089 src/window.rs:3590
+msgid "Back up now"
+msgstr "Esegui un backup ora"
+
+#: src/window.rs:3091
+msgid "Write a snapshot of the journal to the backup folder"
+msgstr "Scrive un'istantanea del diario nella cartella dei backup"
+
+#: src/window.rs:3095
+msgid "Back up"
+msgstr "Esegui"
+
+#: src/window.rs:3107
+msgid "Export"
+msgstr "Esportazione"
+
+#: src/window.rs:3110
+msgid "Export journal"
+msgstr "Esporta il diario"
+
+#: src/window.rs:3112
+msgid ""
+"Write a Markdown folder or a single JSON file; exports are not encrypted"
+msgstr ""
+"Scrivi una cartella Markdown o un singolo file JSON; le esportazioni non "
+"sono cifrate"
+
+#: src/window.rs:3116
+msgid "Export…"
+msgstr "Esporta…"
+
+#: src/window.rs:3134
+msgid "Continue"
+msgstr "Continua"
+
+#: src/window.rs:3170 src/window.rs:3295
+msgid "Checking…"
+msgstr "Verifica…"
+
+#: src/window.rs:3190 src/window.rs:3321 src/window.rs:3369 src/window.rs:5256
+msgid "Wrong passphrase."
+msgstr "Passphrase errata."
+
+#: src/window.rs:3210
+msgid "Change passphrase"
+msgstr "Cambia passphrase"
+
+#: src/window.rs:3212
+msgid ""
+"The journal is rebuilt with the new passphrase. A forgotten passphrase "
+"cannot be recovered."
+msgstr ""
+"Il diario viene ricostruito con la nuova passphrase. Una passphrase "
+"dimenticata non può essere recuperata."
+
+#: src/window.rs:3216
+msgid "Change"
+msgstr "Cambia"
+
+#: src/window.rs:3222
+msgid "Current passphrase"
+msgstr "Passphrase attuale"
+
+#: src/window.rs:3224
+msgid "New passphrase"
+msgstr "Nuova passphrase"
+
+#: src/window.rs:3226
+msgid "Repeat new passphrase"
+msgstr "Ripeti la nuova passphrase"
+
+#: src/window.rs:3254 src/window.rs:5075
+msgid "At least eight characters"
+msgstr "Almeno otto caratteri"
+
+#: src/window.rs:3263 src/window.rs:5076
+msgid "The passphrases do not match"
+msgstr "Le passphrase non corrispondono"
+
+#: src/window.rs:3386
+msgid "The passphrase could not be changed."
+msgstr "Impossibile cambiare la passphrase."
+
+#: src/window.rs:3403
+msgid "Passphrase changed"
+msgstr "Passphrase cambiata"
+
+#: src/window.rs:3415 src/window.rs:3523
+msgid "The journal could not be reopened."
+msgstr "Impossibile riaprire il diario."
+
+#: src/window.rs:3425 src/window.rs:3437
+msgid "Move journal file"
+msgstr "Sposta il file del diario"
+
+#: src/window.rs:3439
+msgid "Enter the passphrase to verify the copy before the journal is moved."
+msgstr ""
+"Inserisci la passphrase per verificare la copia prima di spostare il diario."
+
+#: src/window.rs:3484
+msgid "The journal could not be moved."
+msgstr "Impossibile spostare il diario."
+
+#: src/window.rs:3509
+msgid "Journal moved"
+msgstr "Diario spostato"
+
+#: src/window.rs:3542
+msgid "Choose a backup folder"
+msgstr "Scegli una cartella per i backup"
+
+#: src/window.rs:3567
+msgid "Open a backup"
+msgstr "Apri un backup"
+
+#: src/window.rs:3591
+msgid "Enter the passphrase to encrypt the backup."
+msgstr "Inserisci la passphrase per cifrare il backup."
+
+#: src/window.rs:3615
+msgid "Backed up"
+msgstr "Backup eseguito"
+
+#: src/window.rs:3616
+msgid "The backup could not be written."
+msgstr "Impossibile scrivere il backup."
+
+#: src/window.rs:3649
+msgid "Automatic backup failed"
+msgstr "Backup automatico non riuscito"
+
+#: src/window.rs:3657
+msgid "Export the journal?"
+msgstr "Esportare il diario?"
+
+#: src/window.rs:3659
+msgid ""
+"The export is not encrypted: anyone who can read those files can read your "
+"journal. Keep them somewhere safe."
+msgstr ""
+"L'esportazione non è cifrata: chiunque possa leggere quei file può leggere "
+"il tuo diario. Conservali in un luogo sicuro."
+
+#: src/window.rs:3663
+msgid "Markdown folder…"
+msgstr "Cartella Markdown…"
+
+#: src/window.rs:3664
+msgid "JSON file…"
+msgstr "File JSON…"
+
+#: src/window.rs:3680
+msgid "Choose an export folder"
+msgstr "Scegli una cartella per l'esportazione"
+
+#: src/window.rs:3694
+msgid "Export as JSON"
+msgstr "Esporta come JSON"
+
+#: src/window.rs:3801
+#, rust-format
+msgid "Exported {n} entry"
+msgid_plural "Exported {n} entries"
+msgstr[0] "Esportata {n} voce"
+msgstr[1] "Esportate {n} voci"
+
+#: src/window.rs:3808 src/window.rs:3822 src/window.rs:3831
+msgid "The export could not be written."
+msgstr "Impossibile scrivere l'esportazione."
+
+#: src/window.rs:3830
+msgid "Exported the journal as JSON"
+msgstr "Diario esportato come JSON"
+
+#: src/window.rs:3877
+msgid "Entries"
+msgstr "Voci"
+
+#: src/window.rs:3890
+msgid "About these lists"
+msgstr "Informazioni su questi elenchi"
+
+#: src/window.rs:3892
+msgid ""
+"Mood, energy, cognitive load, sleep and colors are fixed scales so "
+"statistics stay comparable. People, places, things and tags are managed from "
+"their Collections pages."
+msgstr ""
+"Umore, energia, carico mentale, sonno e colori sono scale fisse, così le "
+"statistiche restano confrontabili. Persone, luoghi, cose e tag si gestiscono "
+"dalle rispettive pagine delle Raccolte."
+
+#: src/window.rs:3968
+msgid "Change icon"
+msgstr "Cambia icona"
+
+#: src/window.rs:4014
+msgid "Reset name"
+msgstr "Reimposta nome"
+
+#: src/window.rs:4024
+msgid "Move up"
+msgstr "Sposta su"
+
+#: src/window.rs:4033
+msgid "Move down"
+msgstr "Sposta giù"
+
+#: src/window.rs:4043
+msgid "Show"
+msgstr "Mostra"
+
+#: src/window.rs:4045
+msgid "Hide"
+msgstr "Nascondi"
+
+#: src/window.rs:4067
+msgid "This item is used by entries. Hide it, or merge it from its collection."
+msgstr ""
+"Questo elemento è usato da delle voci. Nascondilo o uniscilo dalla sua "
+"raccolta."
+
+#: src/window.rs:4078
+msgid "Hidden"
+msgstr "Nascosto"
+
+#: src/window.rs:4192
+msgid "Delete this item?"
+msgstr "Eliminare questo elemento?"
+
+#: src/window.rs:4194
+msgid "It is not used by any entry, so deleting it cannot change past entries."
+msgstr ""
+"Non è usato da nessuna voce, quindi eliminarlo non può cambiare le voci "
+"passate."
+
+#: src/window.rs:4262
+msgid "Add an item"
+msgstr "Aggiungi un elemento"
+
+#: src/window.rs:4269
+msgid "Name"
+msgstr "Nome"
+
+#: src/window.rs:4360
+msgid "Search icons"
+msgstr "Cerca icone"
+
+#: src/window.rs:4361
+msgid "All icons"
+msgstr "Tutte le icone"
+
+#: src/window.rs:4432
+msgid "Matching icons"
+msgstr "Icone corrispondenti"
+
+#: src/window.rs:4763 src/window.rs:4984
+msgid "Saved"
+msgstr "Salvato"
+
+#: src/window.rs:4800
+msgid "Use creation date"
+msgstr "Usa la data di creazione"
+
+#: src/window.rs:4891
+msgid "later"
+msgstr "dopo"
+
+#: src/window.rs:4893
+msgid "earlier"
+msgstr "prima"
+
+#: src/window.rs:4897
+msgid "Entry date set to"
+msgstr "Data della voce impostata al"
+
+#: src/window.rs:4899
+msgid "written"
+msgstr "scritta"
+
+#: src/window.rs:4920
+#, rust-format
+msgid "{n} word"
+msgid_plural "{n} words"
+msgstr[0] "{n} parola"
+msgstr[1] "{n} parole"
+
+#: src/window.rs:4942
+msgid "Saving…"
+msgstr "Salvataggio…"
+
+#: src/window.rs:5040
+msgid "Entry deleted"
+msgstr "Voce eliminata"
+
+#: src/window.rs:5077
+msgid "Weak passphrase"
+msgstr "Passphrase debole"
+
+#: src/window.rs:5078
+msgid "Fair passphrase"
+msgstr "Passphrase discreta"
+
+#: src/window.rs:5079
+msgid "Strong passphrase"
+msgstr "Passphrase forte"
+
+#: src/window.rs:5127
+msgid "The journal could not be created."
+msgstr "Impossibile creare il diario."
+
+#: src/window.rs:5135 ui/quaderno-window.blp:104
+msgid "Open Existing Journal…"
+msgstr "Apri un diario esistente…"
+
+#: src/window.rs:5149
+msgid "Choose a location"
+msgstr "Scegli una posizione"
+
+#: src/window.rs:5231
+msgid "This journal was changed by a newer version of Quaderno."
+msgstr "Questo diario è stato modificato da una versione più recente di Quaderno."
+
+#: src/window.rs:5244
+msgid "The journal could not be opened."
+msgstr "Impossibile aprire il diario."
+
+#: src/window.rs:5254
+msgid "Too many attempts. Wait 30 seconds and try again."
+msgstr "Troppi tentativi. Attendi 30 secondi e riprova."
+
+#. / The subtitle of a choice row: how many entries use it.
+#: src/window.rs:5426
+#, rust-format
+msgid "Used in {n} entry"
+msgid_plural "Used in {n} entries"
+msgstr[0] "Usato in {n} voce"
+msgstr[1] "Usato in {n} voci"
+
+#: src/window.rs:5464
+msgid "Never"
+msgstr "Mai"
+
+#: src/window.rs:5465
+msgid "1 minute"
+msgstr "1 minuto"
+
+#: src/window.rs:5466
+msgid "1 hour"
+msgstr "1 ora"
+
+#: src/window.rs:5467
+#, rust-format
+msgid "{n} minute"
+msgid_plural "{n} minutes"
+msgstr[0] "{n} minuto"
+msgstr[1] "{n} minuti"
+
+#: src/window.rs:5592 src/window.rs:5597
+msgid "Created"
+msgstr "Creata"
+
+#: src/window.rs:5594
+msgid "Updated"
+msgstr "Aggiornata"
+
+#: ui/quaderno-window.blp:9 ui/quaderno-window.blp:196
+#: data/io.github.stickgrinder.Quaderno.desktop.in:4
+msgid "Quaderno"
+msgstr "Quaderno"
+
+#: ui/quaderno-window.blp:37
+msgid "Create your journal"
+msgstr "Crea il tuo diario"
+
+#: ui/quaderno-window.blp:38
+msgid ""
+"Everything you write is encrypted with this passphrase and stays on this "
+"device."
+msgstr ""
+"Tutto ciò che scrivi è cifrato con questa passphrase e resta su questo "
+"dispositivo."
+
+#: ui/quaderno-window.blp:47
+msgid "Repeat passphrase"
+msgstr "Ripeti la passphrase"
+
+#: ui/quaderno-window.blp:67
+msgid "Location"
+msgstr "Posizione"
+
+#: ui/quaderno-window.blp:78
+msgid "Stored in GNOME Keyring"
+msgstr "Salvata nel portachiavi di GNOME"
+
+#: ui/quaderno-window.blp:84
+msgid "A forgotten passphrase cannot be recovered"
+msgstr "Una passphrase dimenticata non può essere recuperata"
+
+#: ui/quaderno-window.blp:85
+msgid ""
+"There is no reset and no backdoor. If you lose it, the journal and its "
+"backups cannot be opened by anyone, including you."
+msgstr ""
+"Non esiste alcun ripristino né alcuna scappatoia. Se la perdi, il diario e i "
+"suoi backup non potranno essere aperti da nessuno, nemmeno da te."
+
+#: ui/quaderno-window.blp:99
+msgid "Create Journal"
+msgstr "Crea il diario"
+
+#: ui/quaderno-window.blp:123
+msgid "Quaderno is locked"
+msgstr "Quaderno è bloccato"
+
+#: ui/quaderno-window.blp:146
+msgid "Unlock"
+msgstr "Sblocca"
+
+#: ui/quaderno-window.blp:163
+msgid "Journal unavailable"
+msgstr "Diario non disponibile"
+
+#: ui/quaderno-window.blp:172
+msgid "Locate file…"
+msgstr "Individua il file…"
+
+#: ui/quaderno-window.blp:177
+msgid "Open a backup…"
+msgstr "Apri un backup…"
+
+#: ui/quaderno-window.blp:202
+msgid "Main Menu"
+msgstr "Menu principale"
+
+#: ui/quaderno-window.blp:233
+msgid "Back"
+msgstr "Indietro"
+
+#: ui/quaderno-window.blp:241
+msgid "Sections"
+msgstr "Sezioni"
+
+#: ui/quaderno-window.blp:254
+msgid "New"
+msgstr "Nuova"
+
+#: ui/quaderno-window.blp:264
+msgid "Search entries"
+msgstr "Cerca nelle voci"
+
+#: ui/quaderno-window.blp:275 ui/quaderno-window.blp:312
+msgid "All"
+msgstr "Tutte"
+
+#: ui/quaderno-window.blp:280
+msgid "Journal"
+msgstr "Diario"
+
+#: ui/quaderno-window.blp:290
+msgid "Notes"
+msgstr "Note"
+
+#: ui/quaderno-window.blp:307
+msgid "Expanded"
+msgstr "Espanse"
+
+#: ui/quaderno-window.blp:329
+msgid "Entry"
+msgstr "Voce"
+
+#: ui/quaderno-window.blp:337
+msgid "Your journal"
+msgstr "Il tuo diario"
+
+#: ui/quaderno-window.blp:338
+msgid "Select an entry or create a new one."
+msgstr "Seleziona una voce o creane una nuova."
+
+#: ui/quaderno-window.blp:385
+msgid "Date"
+msgstr "Data"
+
+#: ui/quaderno-window.blp:404
+msgid "Time"
+msgstr "Ora"
+
+#: ui/quaderno-window.blp:434 ui/quaderno-window.blp:553
+msgid "Details"
+msgstr "Dettagli"
+
+#: ui/quaderno-window.blp:440 ui/quaderno-window.blp:441
+msgid "Expand into entry"
+msgstr "Espandi in una voce"
+
+#: ui/quaderno-window.blp:447
+msgid "Entry Menu"
+msgstr "Menu della voce"
+
+#: ui/quaderno-window.blp:506
+msgid "Heading"
+msgstr "Titolo"
+
+#: ui/quaderno-window.blp:512
+msgid "Bold"
+msgstr "Grassetto"
+
+#: ui/quaderno-window.blp:518
+msgid "Italic"
+msgstr "Corsivo"
+
+#: ui/quaderno-window.blp:524
+msgid "List"
+msgstr "Elenco"
+
+#: ui/quaderno-window.blp:530
+msgid "Quote"
+msgstr "Citazione"
+
+#: ui/quaderno-window.blp:536
+msgid "Link"
+msgstr "Collegamento"
+
+#: ui/quaderno-window.blp:559
+msgid "Close"
+msgstr "Chiudi"
+
+#: data/io.github.stickgrinder.Quaderno.desktop.in:5
+msgid "Private, encrypted journal"
+msgstr "Diario privato e cifrato"
+
+#: data/io.github.stickgrinder.Quaderno.desktop.in:11
+msgid "journal;diary;notes;dreams;private;"
+msgstr "diario;agenda;note;sogni;privato;"
