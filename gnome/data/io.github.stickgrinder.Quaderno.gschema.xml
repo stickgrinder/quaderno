@@ -52,6 +52,11 @@
       <summary>Line width</summary>
       <description>Editor text column width: narrow, comfortable or wide.</description>
     </key>
+    <key name="details-visible" type="b">
+      <default>true</default>
+      <summary>Details panel visible</summary>
+      <description>Whether the right details panel is shown; open on first run and remembered afterwards.</description>
+    </key>
     <key name="spell-languages" type="s">
       <default>''</default>
       <summary>Spell checking languages</summary>

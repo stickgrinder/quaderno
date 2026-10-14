@@ -102,7 +102,7 @@ Opening an existing journal: file chooser → unlock screen. A file whose `vault
 
 ## 5. Metadata (details panel)
 
-Toggled with the details button (Ctrl+I). Every field is optional. Which fields each type shows follows vault spec §5.1; the panel only shows what the current type allows.
+Toggled with the details button (Ctrl+I). It is open by default, and its visibility is remembered per device. Every field is optional. Which fields each type shows follows vault spec §5.1; the panel only shows what the current type allows.
 
 - **Ratings:** four rows of five icon buttons. Clicking the selected value again clears it. On dreams, the mood row is labelled "Mood on waking".
 - **Dream flags:** toggle chips in the editor header: Lucid, Nightmare, Recurring.

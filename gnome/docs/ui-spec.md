@@ -89,7 +89,8 @@ Artboard: Unlock. `AdwStatusPage` with a lock icon, "Quaderno is locked", the va
 
 The end sidebar of an `AdwOverlaySplitView` around the editor (see §2.1), toggled
 from the editor header with the details button and Ctrl+Shift+I, closing with the
-X in its header. `GtkScrolledWindow` with `AdwPreferencesGroup`s (artboard Main, right):
+X in its header. It is shown by default and its visibility is remembered per
+device (`details-visible`). `GtkScrolledWindow` with `AdwPreferencesGroup`s (artboard Main, right):
 
 - **Entry date:** row with date button (it opens the editor's calendar popover); caption with created/updated times.
 - **How it felt:** four rows, each a label plus a linked box of 5 icon `GtkToggleButton`s, allowing no selection (clicking the active toggle clears it). `AdwToggleGroup` is deliberately not used here: it can only ever keep one toggle active, so it cannot express the empty value a rating needs. The value's label is the row subtitle and the button tooltips.

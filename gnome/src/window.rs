@@ -1036,10 +1036,9 @@ impl QuadernoWindow {
         });
         let window = self.clone();
         imp.details_split.connect_show_sidebar_notify(move |split| {
-            window
-                .imp()
-                .details_button
-                .set_active(split.shows_sidebar());
+            let shows = split.shows_sidebar();
+            window.imp().details_button.set_active(shows);
+            let _ = window.imp().settings.set_boolean("details-visible", shows);
         });
         let window = self.clone();
         imp.details_close.connect_clicked(move |_| {
@@ -1047,6 +1046,12 @@ impl QuadernoWindow {
         });
 
         self.build_details();
+
+        // The panel is open on first run and remembers the user's last choice
+        // (per device, not in the vault).
+        let visible = self.imp().settings.boolean("details-visible");
+        self.imp().details_split.set_show_sidebar(visible);
+        self.imp().details_button.set_active(visible);
     }
 
     fn toggle_details(&self) {
