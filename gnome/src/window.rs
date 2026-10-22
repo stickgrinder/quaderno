@@ -675,11 +675,14 @@ impl QuadernoWindow {
 
     /// Applies the light or dark Quaderno scheme to match the system style.
     fn apply_style_scheme(&self) {
-        let id = if adw::StyleManager::default().is_dark() {
-            "quaderno-dark"
+        let dark = adw::StyleManager::default().is_dark();
+        // The list's type badges use brighter colours in the dark style.
+        if dark {
+            self.add_css_class("quaderno-dark");
         } else {
-            "quaderno"
-        };
+            self.remove_css_class("quaderno-dark");
+        }
+        let id = if dark { "quaderno-dark" } else { "quaderno" };
         let manager = sourceview5::StyleSchemeManager::default();
         if let (Some(scheme), Some(buffer)) = (
             manager.scheme(id),
@@ -4696,9 +4699,9 @@ impl QuadernoWindow {
             header.set_activatable(false);
             let label = gtk::Label::new(Some(&group.label));
             label.set_xalign(0.0);
-            label.add_css_class("heading");
-            label.set_margin_top(8);
-            label.set_margin_bottom(4);
+            label.add_css_class("day-header");
+            label.set_margin_top(14);
+            label.set_margin_bottom(6);
             label.set_margin_start(12);
             header.set_child(Some(&label));
             list.append(&header);
@@ -4710,9 +4713,7 @@ impl QuadernoWindow {
                     .subtitle(&summary.excerpt)
                     .activatable(true)
                     .build();
-                let image = gtk::Image::from_icon_name(type_icon(summary.entry_type));
-                image.set_valign(gtk::Align::Start);
-                action.add_prefix(&image);
+                action.add_prefix(&type_badge(summary.entry_type));
                 let time = summary.dated_at.strftime("%H:%M").to_string();
                 let suffix = gtk::Label::new(Some(&time));
                 suffix.add_css_class("dim-label");
@@ -5523,6 +5524,20 @@ fn update_spell_label(
     } else {
         button.set_label(&names.join(", "));
     }
+}
+
+/// The rounded, type-tinted badge that leads an entry row (ui-spec §3.4).
+fn type_badge(entry_type: EntryType) -> gtk::Image {
+    let image = gtk::Image::from_icon_name(type_icon(entry_type));
+    image.set_pixel_size(16);
+    image.set_valign(gtk::Align::Start);
+    image.add_css_class("type-badge");
+    image.add_css_class(match entry_type {
+        EntryType::Journal => "type-journal",
+        EntryType::Dream => "type-dream",
+        EntryType::Note => "type-note",
+    });
+    image
 }
 
 fn type_icon(entry_type: EntryType) -> &'static str {

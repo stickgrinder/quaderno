@@ -74,7 +74,7 @@ Artboard: Unlock. `AdwStatusPage` with a lock icon, "Quaderno is locked", the va
 - Header bar: New split button (`AdwSplitButton`), title, search toggle.
 - `GtkSearchBar` with `GtkSearchEntry` under the header.
 - Filter chips: `AdwToggleGroup` (All / Journal / Dreams / Notes).
-- `GtkListView` with section headers (journal day), rows as in the Main artboard. Type badge colors: journal orange `#c64600` (dark style `#ed5b00`), dream blue `#1c71d8` (dark `#3584e4`), note neutral.
+- `GtkListView` with section headers (journal day), rows as in the Main artboard. Day headers are smaller and dimmer than the entry titles. The type icon sits in a 32 px rounded badge tinted by type: journal orange `#c64600` (dark style `#ed5b00`), dream blue `#1c71d8` (dark `#3584e4`), note neutral. The selected row uses a neutral grey rather than the system accent.
 - Empty states: `AdwStatusPage` ("No entries yet", "No results").
 
 ### 3.5 Editor

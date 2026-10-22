@@ -56,3 +56,65 @@ textview.entry-text > text {
 .font-sample-serif { font-family: "Source Serif 4", serif; }
 .font-sample-sans { font-family: sans-serif; }
 .font-sample-mono { font-family: monospace; }
+
+/* Entry list (ui-spec §3.4). */
+/* A neutral selection instead of the system accent. */
+.entry-list > row:selected,
+.entry-list > row:selected:focus {
+  background-color: alpha(@window_fg_color, 0.09);
+  color: @window_fg_color;
+  border-radius: 8px;
+}
+
+.entry-list > row:selected:hover {
+  background-color: alpha(@window_fg_color, 0.13);
+}
+
+.entry-list label.title {
+  font-weight: 600;
+}
+
+/* Day headers are smaller and quieter than the entry titles. */
+.day-header {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: alpha(@window_fg_color, 0.62);
+}
+
+/* Entry-type badges: a rounded tinted square with a coloured symbol. The small
+   top margin sits the box on the title/first-excerpt line, as in the artboard. */
+.type-badge {
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.type-journal {
+  color: #c64600;
+  background-color: rgba(198, 70, 0, 0.14);
+}
+
+.type-dream {
+  color: #1c71d8;
+  background-color: rgba(28, 113, 216, 0.14);
+}
+
+.type-note {
+  color: alpha(@window_fg_color, 0.7);
+  background-color: alpha(@window_fg_color, 0.07);
+}
+
+.quaderno-dark .type-journal {
+  color: #ed5b00;
+  background-color: rgba(237, 91, 0, 0.18);
+}
+
+.quaderno-dark .type-dream {
+  color: #3584e4;
+  background-color: rgba(53, 132, 228, 0.18);
+}
+
+.quaderno-dark .type-note {
+  color: alpha(@window_fg_color, 0.78);
+  background-color: alpha(@window_fg_color, 0.09);
+}
