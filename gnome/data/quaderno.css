@@ -1,11 +1,12 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 /* App-specific styles for the details panel (ui-spec §3.6). */
 
-/* A pill holding an icon, a name and a remove button. */
+/* A pill holding an icon, a name and a remove button. The tint is a dimmed
+   version of the system accent, so it follows the user's chosen colour. */
 .chip {
   border-radius: 999px;
   padding: 1px 6px 1px 10px;
-  background-color: alpha(@window_fg_color, 0.08);
+  background-color: alpha(@accent_bg_color, 0.16);
 }
 
 /* The editor shares the window background: only the text column is clamped,
@@ -117,4 +118,18 @@ textview.entry-text > text {
 .quaderno-dark .type-note {
   color: alpha(@window_fg_color, 0.78);
   background-color: alpha(@window_fg_color, 0.09);
+}
+
+/* Rating toggles use the system accent when active (the theme's neutral
+   checked state reads as disabled here). */
+.linked > button.rating-toggle:checked,
+.linked > button.rating-toggle:checked:hover,
+.linked > button.rating-toggle:checked:active {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
+/* The selected level's name ("Good", "High", …) follows the accent too. */
+.rating-group label.subtitle {
+  color: @accent_color;
 }

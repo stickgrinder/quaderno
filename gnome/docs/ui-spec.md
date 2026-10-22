@@ -30,17 +30,22 @@ AdwOverlaySplitView (sidebar: sections)        ← outer
 
 | Pane | Artboard | Width |
 |---|---|---|
-| Sections sidebar | Main (left) | 232 px |
+| Sections sidebar | Main (left) | 230 px |
 | Entry list | Main (middle) | 352 px |
 | Editor | Main (centre) | flexible, text column max 660 px |
-| Details panel | Main (right) | 372 px |
+| Details panel | Main (right) | 440 px |
+
+The default window is 1520 × 860 and starts with the sections sidebar closed;
+the header toggle opens it. Window size and maximized state are remembered per
+device. When the details panel is shown as an overlay (below 1290 sp) it is
+capped at 340 px, so it fits inside narrow windows instead of clipping.
 
 ### 2.2 Breakpoints (`AdwBreakpoint`)
 
 | Window width | Change |
 |---|---|
-| < 1400 sp | Sections sidebar collapses (shown with the sidebar button). Artboard "Dream". |
-| < 1100 sp | Details panel becomes an overlay over the editor instead of a side pane. |
+| < 1460 sp | Sections sidebar collapses (shown with the sidebar button). Artboard "Dream". |
+| < 1290 sp | Details panel becomes an overlay over the editor instead of a side pane. |
 | < 760 sp | Entry list and editor become a navigation stack (list → editor with back button). Details panel opens as an `AdwBottomSheet`. |
 
 Minimum window size: 360 × 480, so the layout also works on phone-sized screens.
@@ -69,6 +74,8 @@ Artboard: Unlock. `AdwStatusPage` with a lock icon, "Quaderno is locked", the va
 - Header bar: app name, main menu (`GtkMenuButton`: Lock, Preferences, Keyboard Shortcuts, About Quaderno).
 - "On this day" and "Insights" are 1.1: don't show them in 1.0.
 
+The sidebar starts closed; the header toggle (F9) opens it.
+
 ### 3.4 Entry list
 
 - Header bar: New split button (`AdwSplitButton`), title, search toggle.
@@ -93,10 +100,10 @@ X in its header. It is shown by default and its visibility is remembered per
 device (`details-visible`). `GtkScrolledWindow` with `AdwPreferencesGroup`s (artboard Main, right):
 
 - **Entry date:** row with date button (it opens the editor's calendar popover); caption with created/updated times.
-- **How it felt:** four rows, each a label plus a linked box of 5 icon `GtkToggleButton`s, allowing no selection (clicking the active toggle clears it). `AdwToggleGroup` is deliberately not used here: it can only ever keep one toggle active, so it cannot express the empty value a rating needs. The value's label is the row subtitle and the button tooltips.
-- **Emotions / Day activities:** `GtkFlowBox` of chips (`pill` buttons with icon + label; clicking a chip's remove icon unlinks it, with undo toast), plus an "Add" chip opening a `GtkPopover` with a `GtkSearchEntry` and a `GtkListView` of choices. The popover stays open so several can be picked; already-linked items are not listed.
+- **How it felt:** four rows, each a label plus a linked box of 5 icon `GtkToggleButton`s, allowing no selection (clicking the active toggle clears it). `AdwToggleGroup` is deliberately not used here: it can only ever keep one toggle active, so it cannot express the empty value a rating needs. The value's label is the row subtitle and the button tooltips. The active button uses the system accent color.
+- **Emotions / Day activities:** an `AdwWrapBox` of compact chips (`pill` buttons with icon + label; clicking a chip's remove icon unlinks it, with undo toast), plus an inline "+ Add" chip opening a `GtkPopover` with a `GtkSearchEntry` and a `GtkListView` of choices. The popover stays open so several can be picked; already-linked items are not listed.
 - **Colors of the day:** 12 circular `GtkToggleButton`s with the color as background, accessible names = color names.
-- **People, places & things, Tags:** one token field per kind: an `AdwWrapBox` of chips followed by a `GtkText`, so the text sits inline with the chips and still wraps; with a `GtkPopover` suggestion list (`GtkListView`). Artboard Dream shows the suggestion popover. Suggestions are sorted by use count, show "N entries · last <date>", and end with a "Create …" row; Enter picks, Shift+Enter always creates, Backspace on an empty field removes the last token. A comma commits the typed name (links an exact match, otherwise creates) and keeps focus in the field, so several names can be typed in a row; Tab keeps its normal meaning. The popover is non-modal and the list is not focusable, so typing continues in the field; Up/Down move the highlighted suggestion.
+- **People, places & things, Tags:** one token field per kind, each an `AdwPreferencesRow` in the boxed group so the rows carry the same dividers as "How it felt": the kind icon, then an `AdwWrapBox` of chips followed by an inline `GtkText`, so the text sits beside the chips and wraps only when it runs out of room; with a `GtkPopover` suggestion list (`GtkListView`). Artboard Dream shows the suggestion popover. Suggestions are sorted by use count, show "N entries · last <date>", and end with a "Create …" row; Enter picks, Shift+Enter always creates, Backspace on an empty field removes the last token. A comma commits the typed name (links an exact match, otherwise creates) and keeps focus in the field, so several names can be typed in a row; Tab keeps its normal meaning. The popover is non-modal and the list is not focusable, so typing continues in the field; Up/Down move the highlighted suggestion.
 
 The panel only offers what the entry type allows (vault spec §5.1): journal pages
 and dreams get every section, quick notes get tags only, and a read-only vault
@@ -169,7 +176,7 @@ the collection. This is a mode of the list pane, not a pushed
 
 ## 6. Colors and charts
 
-- Use the system accent color for selection and primary actions. Don't hard-code accent colors.
+- Use the system accent color for selection, primary actions and the chip tint. Don't hard-code accent colors.
 - Entry type colors (§3.4) and the 12 day colors (vault spec Appendix C) are the only fixed colors.
 - Charts are 1.1 (Insights); see `docs/statistics.md`.
 

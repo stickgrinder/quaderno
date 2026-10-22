@@ -4,7 +4,7 @@ using Gtk 4.0;
 using Adw 1;
 
 template $QuadernoWindow: Adw.ApplicationWindow {
-  default-width: 1180;
+  default-width: 1520;
   default-height: 860;
   title: _("Quaderno");
 
@@ -186,8 +186,9 @@ template $QuadernoWindow: Adw.ApplicationWindow {
         name: "main";
 
         child: Adw.OverlaySplitView main_split {
-          min-sidebar-width: 180;
-          max-sidebar-width: 300;
+          min-sidebar-width: 230;
+          max-sidebar-width: 230;
+          show-sidebar: false;
 
           sidebar: Adw.ToolbarView {
             [top]
@@ -239,7 +240,7 @@ template $QuadernoWindow: Adw.ApplicationWindow {
                 Gtk.ToggleButton sidebar_toggle {
                   icon-name: "sidebar-show-symbolic";
                   tooltip-text: _("Sections");
-                  active: true;
+                  active: false;
                 }
 
                 [end]
@@ -345,8 +346,8 @@ template $QuadernoWindow: Adw.ApplicationWindow {
 
                 child: Adw.OverlaySplitView details_split {
                   sidebar-position: end;
-                  min-sidebar-width: 300;
-                  max-sidebar-width: 420;
+                  min-sidebar-width: 440;
+                  max-sidebar-width: 440;
                   collapsed: false;
                   show-sidebar: false;
 

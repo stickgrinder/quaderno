@@ -61,7 +61,7 @@ pub struct RatingControl {
 pub struct ChoiceControl {
     kind: ChoiceKind,
     section: gtk::Box,
-    flow: gtk::FlowBox,
+    wrap: adw::WrapBox,
     add_button: gtk::Button,
     popover: gtk::Popover,
 }
@@ -69,7 +69,7 @@ pub struct ChoiceControl {
 /// One token field (people, places, things, tags) and its suggestion popover.
 pub struct TokenControl {
     kind: SubjectKind,
-    row: gtk::Box,
+    row: adw::PreferencesRow,
     wrap: adw::WrapBox,
     entry: gtk::Text,
     popover: gtk::Popover,
@@ -395,6 +395,7 @@ mod imp {
             obj.setup_details();
             obj.setup_notes();
             obj.setup_breakpoints();
+            obj.restore_window_state();
         }
     }
 
@@ -503,6 +504,31 @@ impl QuadernoWindow {
 
     fn note_activity(&self) {
         self.imp().last_activity.set(Instant::now());
+    }
+
+    /// Restores the last window size and maximized state, and saves them when
+    /// the window closes. These are per-device UI preferences, not vault data.
+    fn restore_window_state(&self) {
+        let settings = &self.imp().settings;
+        let width = settings.int("window-width").max(360);
+        let height = settings.int("window-height").max(480);
+        self.set_default_size(width, height);
+        if settings.boolean("window-maximized") {
+            self.maximize();
+        }
+
+        let window = self.clone();
+        self.connect_close_request(move |_| {
+            let settings = &window.imp().settings;
+            let maximized = window.is_maximized();
+            let _ = settings.set_boolean("window-maximized", maximized);
+            // Keep the unmaximized size, so restoring it later is meaningful.
+            if !maximized {
+                let _ = settings.set_int("window-width", window.width());
+                let _ = settings.set_int("window-height", window.height());
+            }
+            glib::Propagation::Proceed
+        });
     }
 
     /// Decides the first page to show.
@@ -1037,32 +1063,67 @@ impl QuadernoWindow {
 
     fn setup_details(&self) {
         let imp = self.imp();
+        // Set while we change the split or the button ourselves, so a layout
+        // change is never mistaken for the user's open/closed choice.
+        let syncing = Rc::new(Cell::new(false));
 
-        let window = self.clone();
-        imp.details_button.connect_toggled(move |button| {
-            window
-                .imp()
-                .details_split
-                .set_show_sidebar(button.is_active());
-        });
-        let window = self.clone();
-        imp.details_split.connect_show_sidebar_notify(move |split| {
-            let shows = split.shows_sidebar();
-            window.imp().details_button.set_active(shows);
-            let _ = window.imp().settings.set_boolean("details-visible", shows);
-        });
-        let window = self.clone();
-        imp.details_close.connect_clicked(move |_| {
-            window.imp().details_split.set_show_sidebar(false);
-        });
+        {
+            let window = self.clone();
+            let syncing = syncing.clone();
+            imp.details_button.connect_toggled(move |button| {
+                if syncing.get() {
+                    return;
+                }
+                let active = button.is_active();
+                window.imp().details_split.set_show_sidebar(active);
+                let _ = window.imp().settings.set_boolean("details-visible", active);
+            });
+        }
+        {
+            let window = self.clone();
+            let syncing = syncing.clone();
+            imp.details_split.connect_show_sidebar_notify(move |split| {
+                syncing.set(true);
+                window
+                    .imp()
+                    .details_button
+                    .set_active(split.shows_sidebar());
+                syncing.set(false);
+            });
+        }
+        {
+            let window = self.clone();
+            let syncing = syncing.clone();
+            imp.details_close.connect_clicked(move |_| {
+                syncing.set(true);
+                window.imp().details_split.set_show_sidebar(false);
+                syncing.set(false);
+                let _ = window.imp().settings.set_boolean("details-visible", false);
+            });
+        }
+        {
+            let window = self.clone();
+            let syncing = syncing.clone();
+            imp.details_split.connect_collapsed_notify(move |split| {
+                // Collapsing to an overlay can reset `show-sidebar`; re-apply
+                // the saved choice so the responsive layout never changes it.
+                let visible = window.imp().settings.boolean("details-visible");
+                syncing.set(true);
+                split.set_show_sidebar(visible);
+                window.imp().details_button.set_active(visible);
+                syncing.set(false);
+            });
+        }
 
         self.build_details();
 
         // The panel is open on first run and remembers the user's last choice
         // (per device, not in the vault).
         let visible = self.imp().settings.boolean("details-visible");
+        syncing.set(true);
         self.imp().details_split.set_show_sidebar(visible);
         self.imp().details_button.set_active(visible);
+        syncing.set(false);
     }
 
     fn toggle_details(&self) {
@@ -1106,6 +1167,7 @@ impl QuadernoWindow {
         let felt_group = adw::PreferencesGroup::builder()
             .title(gettextrs::gettext("How it felt"))
             .build();
+        felt_group.add_css_class("rating-group");
         let mut ratings = Vec::new();
         for rating in [
             Rating::Mood,
@@ -1121,6 +1183,7 @@ impl QuadernoWindow {
             let mut buttons = Vec::new();
             for value in 1..=5u8 {
                 let button = gtk::ToggleButton::new();
+                button.add_css_class("rating-toggle");
                 if let Some(icon) = details::rating_icon(rating, value) {
                     button.set_icon_name(&icons::resolve(icon));
                 }
@@ -1245,18 +1308,20 @@ impl QuadernoWindow {
         heading.set_xalign(0.0);
         heading.add_css_class("heading");
 
-        let flow = gtk::FlowBox::new();
-        flow.set_selection_mode(gtk::SelectionMode::None);
-        flow.set_column_spacing(6);
-        flow.set_row_spacing(6);
-        flow.set_valign(gtk::Align::Start);
+        let wrap = adw::WrapBox::new();
+        wrap.set_child_spacing(6);
+        wrap.set_line_spacing(6);
+        wrap.set_hexpand(true);
+        wrap.set_valign(gtk::Align::Start);
 
-        let add_button = gtk::Button::builder()
-            .label(gettextrs::gettext("Add"))
-            .icon_name("list-add-symbolic")
-            .build();
+        let add_content = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        add_content.append(&gtk::Image::from_icon_name("list-add-symbolic"));
+        add_content.append(&gtk::Label::new(Some(&gettextrs::gettext("Add"))));
+        let add_button = gtk::Button::builder().child(&add_content).build();
         add_button.add_css_class("pill");
-        add_button.set_tooltip_text(Some(&gettextrs::gettext("Add")));
+        let add_label = gettextrs::gettext("Add");
+        add_button.set_tooltip_text(Some(&add_label));
+        add_button.update_property(&[gtk::accessible::Property::Label(&add_label)]);
 
         let (list, selection, model) = picker::list_view();
         let search = gtk::SearchEntry::new();
@@ -1317,27 +1382,30 @@ impl QuadernoWindow {
         }
 
         section.append(&heading);
-        section.append(&flow);
+        section.append(&wrap);
         self.imp().details_box.append(&section);
 
         ChoiceControl {
             kind,
             section,
-            flow,
+            wrap,
             add_button,
             popover,
         }
     }
 
     fn build_token_field(&self, kind: SubjectKind) -> TokenControl {
-        let row = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-        row.set_margin_top(6);
-        row.set_margin_bottom(6);
-        row.set_margin_start(6);
-        row.set_margin_end(6);
+        // A real preferences row, so the group draws the same dividers as
+        // "How it felt"; the icon and token field are its content.
+        let row = adw::PreferencesRow::new();
+        let content = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        content.set_margin_top(6);
+        content.set_margin_bottom(6);
+        content.set_margin_start(6);
+        content.set_margin_end(6);
         let icon = gtk::Image::from_icon_name(subject_icon(kind));
         icon.set_valign(gtk::Align::Center);
-        row.append(&icon);
+        content.append(&icon);
 
         let wrap = adw::WrapBox::new();
         wrap.set_child_spacing(6);
@@ -1349,7 +1417,8 @@ impl QuadernoWindow {
         entry.set_hexpand(true);
         entry.set_width_request(80);
         wrap.append(&entry);
-        row.append(&wrap);
+        content.append(&wrap);
+        row.set_child(Some(&content));
 
         let (list, selection, model) = picker::list_view();
         let scrolled = gtk::ScrolledWindow::builder()
@@ -1546,10 +1615,12 @@ impl QuadernoWindow {
     }
 
     fn refresh_choice_control(&self, control: &ChoiceControl) {
-        let flow = &control.flow;
-        flow.remove_all();
+        let wrap = &control.wrap;
+        while let Some(child) = wrap.first_child() {
+            wrap.remove(&child);
+        }
         let Some(id) = *self.imp().selected.borrow() else {
-            flow.append(&control.add_button);
+            wrap.append(&control.add_button);
             return;
         };
         let choices = {
@@ -1562,10 +1633,10 @@ impl QuadernoWindow {
         for choice in choices {
             if choice.kind == control.kind {
                 let chip = self.build_choice_chip(&choice);
-                flow.append(&chip);
+                wrap.append(&chip);
             }
         }
-        flow.append(&control.add_button);
+        wrap.append(&control.add_button);
     }
 
     fn build_choice_chip(&self, choice: &Choice) -> gtk::Widget {
@@ -4481,17 +4552,34 @@ impl QuadernoWindow {
     }
 
     fn setup_breakpoints(&self) {
-        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1400sp") {
+        // With the 440 px details pane, the sections sidebar only fits once the
+        // window is wide enough for all four panes plus a usable editor.
+        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1460sp") {
             let breakpoint = adw::Breakpoint::new(condition);
             breakpoint.add_setter(&*self.imp().main_split, "collapsed", Some(&true.to_value()));
             adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
         }
-        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1100sp") {
+        // The side pane needs the list, the editor's minimum and itself; below
+        // that it becomes an overlay so it can never push the content out of
+        // the window.
+        if let Ok(condition) = adw::BreakpointCondition::parse("max-width: 1290sp") {
             let breakpoint = adw::Breakpoint::new(condition);
             breakpoint.add_setter(
                 &*self.imp().details_split,
                 "collapsed",
                 Some(&true.to_value()),
+            );
+            // As an overlay it must fit the window: cap it well below the
+            // 440 px side-pane width so it never clips on small windows.
+            breakpoint.add_setter(
+                &*self.imp().details_split,
+                "min-sidebar-width",
+                Some(&300i32.to_value()),
+            );
+            breakpoint.add_setter(
+                &*self.imp().details_split,
+                "max-sidebar-width",
+                Some(&340i32.to_value()),
             );
             adw::prelude::AdwApplicationWindowExt::add_breakpoint(self, breakpoint);
         }

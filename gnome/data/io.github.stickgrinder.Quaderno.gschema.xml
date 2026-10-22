@@ -3,12 +3,12 @@
 <schemalist>
   <schema id="io.github.stickgrinder.Quaderno" path="/io/github/stickgrinder/Quaderno/">
     <key name="window-width" type="i">
-      <default>980</default>
+      <default>1520</default>
       <summary>Window width</summary>
       <description>Last width of the main window, in logical pixels.</description>
     </key>
     <key name="window-height" type="i">
-      <default>640</default>
+      <default>860</default>
       <summary>Window height</summary>
       <description>Last height of the main window, in logical pixels.</description>
     </key>
