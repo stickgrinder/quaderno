@@ -3,6 +3,7 @@
 mod application;
 mod backups;
 mod details;
+mod editor_view;
 mod export;
 mod icon_search;
 mod icons;

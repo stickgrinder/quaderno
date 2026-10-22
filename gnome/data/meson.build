@@ -48,3 +48,16 @@ install_data(
   'fonts/LICENSE.md',
   install_dir: datadir / 'licenses/quaderno/SourceSerif4',
 )
+
+# A richer Markdown language for the editor (per-level headings, blockquote
+# style). It is a modification of GtkSourceView's LGPL-2.1-or-later
+# markdown.lang; see the file header and the shipped license.
+install_data(
+  'language-specs/quaderno-markdown.lang',
+  install_dir: datadir / 'gtksourceview-5/language-specs',
+)
+
+install_data(
+  'language-specs/COPYING.LGPL',
+  install_dir: datadir / 'licenses/quaderno/quaderno-markdown',
+)

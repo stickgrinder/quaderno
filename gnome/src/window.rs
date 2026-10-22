@@ -606,20 +606,28 @@ impl QuadernoWindow {
 
     fn setup_editor(&self) {
         let buffer = sourceview5::Buffer::new(None);
-        if let Some(language) = sourceview5::LanguageManager::default().language("markdown") {
+        // The bundled language splits headings by level and styles blockquotes;
+        // fall back to the stock Markdown definition when it is not installed
+        // (e.g. running the binary without `meson install`).
+        let languages = sourceview5::LanguageManager::default();
+        let language = languages
+            .language("quaderno-markdown")
+            .or_else(|| languages.language("markdown"));
+        if let Some(language) = language {
             buffer.set_language(Some(&language));
         }
 
         let manager = sourceview5::StyleSchemeManager::default();
         manager.append_search_path("resource:///io/github/stickgrinder/Quaderno/styles");
 
-        let view = sourceview5::View::with_buffer(&buffer);
+        let view = crate::editor_view::EditorView::with_buffer(&buffer);
         view.set_wrap_mode(gtk::WrapMode::WordChar);
         view.set_top_margin(12);
         view.set_bottom_margin(12);
         view.set_left_margin(12);
         view.set_right_margin(12);
         view.add_css_class("entry-text");
+        view.install_blockquote_indent();
         let adapter = crate::spell_checking::attach(&buffer);
 
         let window = self.clone();
@@ -653,7 +661,7 @@ impl QuadernoWindow {
         }
         self.imp().editor_css.replace(Some(css));
 
-        self.imp().editor_view.replace(Some(view));
+        self.imp().editor_view.replace(Some(view.upcast()));
         self.imp().editor_buffer.replace(Some(buffer));
         self.imp().spell_adapter.replace(Some(adapter));
 

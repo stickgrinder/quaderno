@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- Dims the Markdown punctuation that the stock Markdown language isolates
-     (list markers, blockquote markers, rules, URLs, escapes). Marks that share
-     a class with their text (the # of a heading, the * of emphasis) are not
-     isolated by the language, so they keep the parent style. -->
+<!-- Quaderno's Markdown appearance: syntax characters dimmed, headings sized by
+     level in the body text colour, blockquotes italic, inline code and code
+     blocks on a subtle background. The heading levels come from the bundled
+     quaderno-markdown language; the other tokens are standard Markdown. -->
 <style-scheme id="quaderno" name="Quaderno" version="1.0" parent-scheme="Adwaita">
   <metadata>
-    <description>Quaderno: dimmed Markdown syntax</description>
+    <description>Quaderno: marked-up Markdown</description>
   </metadata>
 
-  <style name="def:list-marker" foreground="#9a9996"/>
+  <!-- Markdown punctuation stays quiet. -->
+  <style name="def:list-marker" foreground="#9a9996" bold="false"/>
   <style name="def:thematic-break" foreground="#9a9996"/>
-  <style name="def:shebang" foreground="#9a9996"/>
+  <style name="def:shebang" foreground="#9a9996" bold="false"/>
   <style name="def:link-destination" foreground="#9a9996"/>
   <style name="def:link-symbol" foreground="#9a9996"/>
   <style name="def:special-char" foreground="#9a9996"/>
+
+  <!-- Headings: same colour as the text, growing with the level. -->
+  <style name="def:heading" foreground="#504E55" bold="true"/>
+  <style name="def:heading1" foreground="#504E55" bold="true" scale="1.8"/>
+  <style name="def:heading2" foreground="#504E55" bold="true" scale="1.4"/>
+  <style name="def:heading3" foreground="#504E55" bold="true" scale="1.2"/>
+  <style name="def:heading4" foreground="#504E55" bold="true" scale="1.1"/>
+  <style name="def:heading5" foreground="#504E55" bold="true"/>
+  <style name="def:heading6" foreground="#504E55" bold="true"/>
+
+  <!-- Inline and block formatting. -->
+  <style name="def:strong-emphasis" bold="true"/>
+  <style name="def:emphasis" italic="true"/>
+  <style name="def:inline-code" foreground="#4E57BA" background="#F0EFED"/>
+  <style name="def:preformatted-section" foreground="#4E57BA" background="#F4F3F1"/>
+  <!-- Quotes are italic and slightly larger; the view draws their left bar. -->
+  <style name="def:note" italic="true" scale="1.2"/>
 </style-scheme>

@@ -69,7 +69,7 @@ Opening an existing journal: file chooser → unlock screen. A file whose `vault
 
 ### 4.2 Editing and saving
 
-- Text is Markdown, edited in a plain-text editor with syntax highlighting; Markdown symbols are shown dimmed.
+- Text is Markdown, edited in a plain-text editor with syntax highlighting; Markdown symbols are shown dimmed. Headings are shown at different sizes by level, and bold, italic, code and blockquotes are visually distinguished.
 - **Autosave:** 1 second after the last keystroke, when the editor loses focus, when switching entries, and before locking or quitting. The header shows "Saved" / "Saving…". No save button.
 - **Title:** derived from the first `#` heading, otherwise the first line, otherwise "Untitled" (display only; nothing stored).
 - An entry with empty text and no metadata is discarded when the user leaves it, instead of being saved.
