@@ -173,6 +173,7 @@ the collection. This is a mode of the list pane, not a pushed
 - A build script converts each used SVG into a GTK symbolic icon named `ph-<name>-symbolic` (fill set to a plain color GTK can recolor; drop `currentColor`), and adds it to the GResource. The whole regular set is vendored and converted, so the picker (M6) needs no new assets; they live under `scalable/actions` in the GResource, because that is the directory the `hicolor` fallback theme that carries resource icons actually scans.
 - Stored icon names in the vault are bare Phosphor names (`flower-lotus`); the app maps them to `ph-flower-lotus-symbolic`. Unknown names show `ph-question-symbolic`.
 - The icon picker's synonym table lives in `gnome/data/icon-synonyms.tsv`, translated terms included.
+- The application icon is `gnome/data/icons/hicolor/scalable/apps/io.github.stickgrinder.Quaderno.svg`, with a symbolic variant in `symbolic/apps`. Both are installed with the app and used for the app id.
 
 ## 6. Colors and charts
 

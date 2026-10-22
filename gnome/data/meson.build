@@ -28,6 +28,11 @@ install_data(
   install_dir: datadir / 'icons/hicolor/scalable/apps',
 )
 
+install_data(
+  'icons/hicolor/symbolic/apps/io.github.stickgrinder.Quaderno-symbolic.svg',
+  install_dir: datadir / 'icons/hicolor/symbolic/apps',
+)
+
 # Phosphor Icons are MIT licensed (ui-spec §5); ship the license with the app.
 install_data(
   'icons/phosphor/LICENSE',
