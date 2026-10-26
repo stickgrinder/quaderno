@@ -6,7 +6,7 @@
 # `quaderno` and update pkgver/sha256sums on each release.
 
 pkgname=quaderno
-pkgver=1.0.0
+pkgver=0.1.0
 pkgrel=1
 pkgdesc="Private, encrypted journal for GNOME"
 arch=('x86_64' 'aarch64')

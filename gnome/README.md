@@ -1,6 +1,6 @@
 # Quaderno for GNOME
 
-The GTK4/libadwaita app (binary `quaderno`, app ID `io.github.stickgrinder.Quaderno`). Version 1.0 is the current target.
+The GTK4/libadwaita app (binary `quaderno`, app ID `io.github.stickgrinder.Quaderno`). Version 0.1 is the current release; the 1.0 scope is defined in `docs/plan.md`.
 
 | Folder | Contents |
 |---|---|

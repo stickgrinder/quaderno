@@ -10,3 +10,4 @@ src/window.rs
 ui/quaderno-window.blp
 
 data/io.github.stickgrinder.Quaderno.desktop.in
+data/io.github.stickgrinder.Quaderno.metainfo.xml

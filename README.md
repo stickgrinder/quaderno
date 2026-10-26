@@ -18,7 +18,7 @@ The file format is public and documented in [`vault-spec/format.md`](vault-spec/
 
 ## Status
 
-Version 1.0 is the current release. The milestones and acceptance criteria are in [`docs/plan.md`](docs/plan.md).
+Version 0.1 is the current release. The milestones and acceptance criteria are in [`docs/plan.md`](docs/plan.md).
 
 ## Repository layout
 

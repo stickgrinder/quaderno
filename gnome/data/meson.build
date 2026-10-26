@@ -9,8 +9,14 @@ install_data(
   install_dir: datadir / 'glib-2.0/schemas',
 )
 
-install_data(
-  'io.github.stickgrinder.Quaderno.metainfo.xml',
+i18n.itstool_join(
+  input: 'io.github.stickgrinder.Quaderno.metainfo.xml',
+  output: 'io.github.stickgrinder.Quaderno.metainfo.xml',
+  mo_targets: quaderno_i18n[0],
+  # Work around a Meson 1.12 default-value bug; an empty list means the XML
+  # rules are autodetected.
+  its_files: [],
+  install: true,
   install_dir: datadir / 'metainfo',
 )
 

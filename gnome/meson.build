@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 project('quaderno',
-  version: '1.0.0',
+  version: '0.1.0',
   meson_version: '>= 1.4',
   license: 'GPL-3.0-or-later',
   default_options: ['warning_level=2'],
@@ -72,8 +72,8 @@ custom_target('quaderno',
   install_dir: bindir,
 )
 
-subdir('data')
 subdir('po')
+subdir('data')
 
 gnome.post_install(
   glib_compile_schemas: true,
