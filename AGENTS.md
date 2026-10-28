@@ -11,10 +11,10 @@ Read this file completely before starting any task. Then read the documents list
 | `vault-spec/format.md` | The encrypted file format. Public: other people build clients from it. |
 | `vault-spec/migrations/*.sql` | The schema. If it disagrees with `format.md`, the SQL wins and the document has a bug: report it. |
 | `docs/product-spec.md` | What Quaderno does, as rules, for every platform. Version 1 scope. |
-| `gnome/docs/ui-spec.md` | GNOME app: screens, widgets, layouts, shortcuts, states. (Android gets its own `android/docs/ui-spec.md`.) |
+| `docs/ui-spec.md` | GNOME app: screens, widgets, layouts, shortcuts, states. (Android will have its own UI spec in its own repository.) |
 | `docs/statistics.md` | Insights definitions (version 1.1). |
 | `docs/plan.md` | Milestones and acceptance criteria. Work on one milestone at a time. |
-| `gnome/docs/design/*.png` | GNOME design artboards. Visual reference only; the HTML they came from is not code to port. |
+| `docs/design/*.png` | GNOME design artboards. Visual reference only; the HTML they came from is not code to port. |
 
 If a task needs a decision these documents don't make, **stop and ask**. Don't invent product behavior.
 
@@ -28,39 +28,38 @@ If a task needs a decision these documents don't make, **stop and ask**. Don't i
 - **Secrets:** `oo7` (Secret Service, with the Flatpak portal).
 - **Other crates:** `uuid` (v7), `unicode-normalization`, `jiff` for time (use it everywhere), `thiserror` in libraries, `anyhow` only in the binary, `gettext-rs`.
 - **Build:** meson (drives cargo), plus a Flatpak manifest against the current stable `org.gnome.Platform`.
-- **Icons:** Phosphor Icons 2.1, regular weight (MIT), converted to GTK symbolic icons at build time (see `gnome/docs/ui-spec.md` §Icons).
+- **Icons:** Phosphor Icons 2.1, regular weight (MIT), converted to GTK symbolic icons at build time (see `docs/ui-spec.md` §Icons).
 - **License:** GPL-3.0-or-later for all code. Every source file starts with an SPDX header: `// SPDX-License-Identifier: GPL-3.0-or-later`.
 - **App ID:** `io.github.stickgrinder.Quaderno`.
 
 ## Repository layout
 
-A monorepo: the shared vault library and spec, plus one folder per app. Each app keeps its own build files inside its folder; the root holds only the Cargo workspace and shared material.
+The repository holds the GNOME app, the shared vault library and the public format spec. Android will live in its own repository later.
 
 ```
 AGENTS.md            this file (CLAUDE.md imports it)
-Cargo.toml           Cargo workspace: crates/* and gnome
-vault-spec/          public format spec + migrations (CC-BY-SA-4.0); the vault crate embeds the SQL with include_str!
+Cargo.toml           Cargo workspace and the `quaderno` app package
+Cargo.lock
+build.rs             compiles the Blueprint UI and icon GResource
+meson.build          meson project for the app; drives cargo
+src/                 Rust sources
+ui/                  Blueprint files
+data/                desktop file, metainfo, GSettings schema, icons, styles, fonts, screenshots
+po/                  gettext catalogs (LINGUAS starts with "it"). Default-list labels live here
+                     too, for consistency across clients (vault spec §6.2).
+build-aux/           Flatpak manifest, cargo sources, aur/ PKGBUILD templates
 crates/
   quaderno-vault/      shared library: everything that touches the vault file. No GTK, no Android.
   quaderno-vault-ffi/  Kotlin/Swift bindings via uniffi. Added when Android work starts; not in 1.0.
-gnome/               the GNOME app (binary `quaderno`)
-  meson.build        meson project for the app; drives cargo
-  src/
-  ui/                Blueprint files
-  data/              desktop file, metainfo, GSettings schema, icons, icon synonyms
-  po/                gettext catalogs (LINGUAS starts with "it"). Default-list labels live here
-                     too, for consistency across clients (vault spec §6.2).
-  build-aux/         Flatpak manifest, aur/ PKGBUILD templates
-  docs/              GNOME-specific docs: ui-spec.md, design/ PNGs
-android/             the Android app (later). Gradle project, with its own docs/ (ui-spec.md, design/). Empty in 1.0 except README.md.
-docs/                shared docs: product spec, statistics, plan
+vault-spec/          public format spec + migrations (CC-BY-SA-4.0); the vault crate embeds the SQL with include_str!
+docs/                shared docs: product spec, UI spec, statistics, plan, design artboards, releasing
 fixtures/            sample.quaderno + sample.json, the reference test material (vault spec §10)
 tools/               independent readers/tools for the format (e.g. the Python sample reader)
 ```
 
-**Releases** are tagged per component: `vault-vX.Y.Z` (library and spec), `gnome-vX.Y.Z`, `android-vX.Y.Z`.
+**Releases** are tagged `vX.Y.Z` for the app, library and spec together. If the vault is extracted for Android later, it gets its own tags then.
 
-**CI** has one workflow per component, triggered by paths: `gnome/**` runs the GNOME build, `android/**` the Android build; changes under `crates/**` or `vault-spec/**` run every workflow that depends on them.
+**CI** has one workflow per component, triggered by paths: `src/**`, `ui/**`, `data/**`, `po/**` and `build-aux/**` run the GNOME build; `crates/**` and `vault-spec/**` run the vault checks and the GNOME build. Android will have its own workflow in its own repository.
 
 ## Commands
 
@@ -68,8 +67,8 @@ tools/               independent readers/tools for the format (e.g. the Python s
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-meson setup build gnome && meson compile -C build && meson test -C build
-flatpak-builder --user --install --force-clean build-flatpak gnome/build-aux/io.github.stickgrinder.Quaderno.json
+meson setup build . && meson compile -C build && meson test -C build
+flatpak-builder --user --install --force-clean build-flatpak build-aux/io.github.stickgrinder.Quaderno.json
 ```
 
 The vault crate also provides the reference fixture. After changing the vault,
@@ -80,7 +79,7 @@ cargo run -p quaderno-vault --example generate_fixtures
 python3 tools/read_sample.py fixtures/sample.quaderno --check fixtures/sample.json
 ```
 
-All of these must pass before a milestone counts as done. Android commands will be added with the Android app.
+All of these must pass before a milestone counts as done. Android commands will be added in the Android repository.
 
 ## Hard rules
 

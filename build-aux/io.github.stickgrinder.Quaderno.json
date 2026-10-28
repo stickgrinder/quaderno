@@ -42,7 +42,7 @@
       "name": "quaderno",
       "buildsystem": "simple",
       "build-commands": [
-        "meson setup --prefix=/app --libdir=lib _build gnome",
+        "meson setup --prefix=/app --libdir=lib _build .",
         "meson compile -C _build",
         "meson install -C _build --no-rebuild"
       ],
@@ -53,7 +53,7 @@
         "cargo-sources.json",
         {
           "type": "dir",
-          "path": "../../",
+          "path": "../",
           "skip": [
             ".git",
             ".flatpak-builder",
@@ -62,9 +62,7 @@
             "build-flatpak",
             "build-flatpak/*",
             "target",
-            "target/*",
-            "gnome/target",
-            "gnome/target/*"
+            "target/*"
           ]
         }
       ]

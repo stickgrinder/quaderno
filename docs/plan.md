@@ -5,13 +5,13 @@ One milestone per agent session (or a few). Tick the box when all acceptance cri
 ## Version 1.0 — capture entries
 
 ### M0 · Repository scaffolding
-- [x] Monorepo layout from `AGENTS.md`: Cargo workspace with `crates/quaderno-vault` and `gnome`; meson project in `gnome/` driving cargo; Flatpak manifest in `gnome/build-aux/`; GPL-3.0-or-later `COPYING`; SPDX headers; shared `po/` with `it`; `android/README.md` placeholder.
+- [x] Repository layout from `AGENTS.md`: Cargo workspace with `crates/quaderno-vault` and the app package; meson project at the repository root driving cargo; Flatpak manifest in `build-aux/`; GPL-3.0-or-later `COPYING`; SPDX headers; shared `po/` with `it`; an Android placeholder (removed before 0.1.0).
 - [x] Empty `AdwApplicationWindow` with the app ID, desktop file, metainfo, GSettings schema, placeholder icon.
 - [x] CI: vault workflow (fmt, clippy `-D warnings`, tests) and GNOME workflow (meson build, Flatpak build), each triggered by its paths (`AGENTS.md` §Repository layout).
 
 **Accept:** `flatpak run io.github.stickgrinder.Quaderno` opens an empty window; CI green.
 
-_Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) because meson's gettext module cannot read outside its project; kept the existing `LICENSE` instead of adding `COPYING`; Flatpak cargo deps are vendored in `gnome/build-aux/cargo-sources.json`, and the module uses the `simple` buildsystem to run meson from the monorepo root; window-open check is manual (no display in CI); placeholder app icon until M7.
+_Deferred/decided:_ the shared catalogs live in `po/` because meson's gettext module cannot read outside its project; kept the existing `LICENSE` instead of adding `COPYING`; Flatpak cargo deps are vendored in `build-aux/cargo-sources.json`, and the module uses the `simple` buildsystem to run meson from the repository root; window-open check is manual (no display in CI); placeholder app icon until M7.
 
 ### M1 · Vault library (`quaderno-vault`, no GTK)
 - [x] Create, open, close; SQLCipher settings set explicitly (vault spec §2.1); NFC passphrase handling; `zeroize`.
@@ -27,7 +27,7 @@ _Deferred/decided:_ the shared catalogs live in `gnome/po/` (not root `po/`) bec
 _Deferred/decided:_ the library never retains the passphrase (`backup`/`change_passphrase` take it as an argument); snapshots use the SQLite online backup API; a `Vault::export_json` (product spec §10 shape) was added for the fixture and M7; fixtures use random UUIDv7 ids and the current time, so CI checks the reader against the committed pair and also round-trips a freshly generated sample instead of diffing regenerated files; the migrate-on-open path is not covered by a test because only migration 0001 exists; SQLCipher logs wrong-passphrase HMAC errors to stderr (page numbers only, never content) and silencing them is left for later.
 
 ### M2 · Shell: welcome, unlock, lock
-- [x] Welcome / unlock / error / main pages (`gnome/docs/ui-spec.md` §2, §3.1–3.2).
+- [x] Welcome / unlock / error / main pages (`docs/ui-spec.md` §2, §3.1–3.2).
 - [x] Keyring via `oo7`; graceful fallback without Secret Service.
 - [x] Lock action, auto-lock on idle and on session lock; memory cleared on lock.
 - [x] Read-only banner for newer vaults.
@@ -40,7 +40,7 @@ _Deferred/decided:_ the error page's "Open a backup…" is deferred to M7 (only 
 - [x] Sections sidebar, entry list with journal-day headers and filters, editor with GtkSourceView and dimmed Markdown.
 - [x] Autosave, discard-empty, delete with undo, entry date popover and backdated info bar.
 - [x] In-memory search.
-- [x] Breakpoints (`gnome/docs/ui-spec.md` §2.2).
+- [x] Breakpoints (`docs/ui-spec.md` §2.2).
 
 **Accept:** write, edit, re-date, delete/undo and search journal pages; nothing unencrypted appears on disk (check `$XDG_*` dirs and `/tmp`).
 
@@ -52,7 +52,7 @@ _Deferred/decided:_ M3 covers journal pages only (New creates a journal page; th
 
 **Accept:** all metadata can be set and cleared; database triggers are never hit in normal use.
 
-_Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwToggleGroup` cannot deselect (ui-spec §3.6 updated); the token fields use `AdwWrapBox` for inline chips + text; the icons ship the whole Phosphor regular set converted to `ph-*-symbolic` under `scalable/actions` (the only subdirectory the `hicolor` fallback scans for resource icons), because `symbolic/actions` is not in its `index.theme`; the <760sp `AdwBottomSheet` from ui-spec §2.2 is deferred to M6 (the <1100sp overlay is in); the "Add" picker lists visible unlinked choices, stays open for multiple picks and offers no create row (list management is M6); the "Create …" row is hidden when the query exactly matches an existing name, but Shift+Enter still creates; a `subjects_with_usage` query was added to the vault for the "N entries · last <date>" subtitle; the colour and rating labels were added to `gnome/po/it.po` (the dream-flag labels come with M5), the rest of the Italian UI strings are M7.
+_Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwToggleGroup` cannot deselect (ui-spec §3.6 updated); the token fields use `AdwWrapBox` for inline chips + text; the icons ship the whole Phosphor regular set converted to `ph-*-symbolic` under `scalable/actions` (the only subdirectory the `hicolor` fallback scans for resource icons), because `symbolic/actions` is not in its `index.theme`; the <760sp `AdwBottomSheet` from ui-spec §2.2 is deferred to M6 (the <1100sp overlay is in); the "Add" picker lists visible unlinked choices, stays open for multiple picks and offers no create row (list management is M6); the "Create …" row is hidden when the query exactly matches an existing name, but Shift+Enter still creates; a `subjects_with_usage` query was added to the vault for the "N entries · last <date>" subtitle; the colour and rating labels were added to `po/it.po` (the dream-flag labels come with M5), the rest of the Italian UI strings are M7.
 
 ### M5 · Dreams and quick notes
 - [x] Dream type: flags in header, "Mood on waking".
@@ -60,7 +60,7 @@ _Deferred/decided:_ rating rows use five linked `GtkToggleButton`s because `AdwT
 
 **Accept:** product spec §6 works end to end, including deleting an expanded note.
 
-_Deferred/decided:_ the New button is an `AdwSplitButton` (primary journal page; menu Dream / Quick note) with Ctrl+N, Ctrl+Alt+N, Ctrl+Shift+N; dream flags are on = 1 and off = NULL (no explicit false); the Quick notes view reuses the list pane in a notes mode (title, Open/Expanded/All chips, card rows with a date/tags footer and no day headers) instead of a separate page; tags stay in the details panel (the artboard's inline tag row was not added); expanding is the header split button plus an "Expand into" submenu in the entry menu, with "Append to an existing entry…" left to Later (product spec §2); an "Expanded into" card lists each live expansion and a "From quick note" banner links back, showing "From a deleted note" when the source is gone; a `expanded_note_ids` query backs the Open/Expanded filter; the dream-flag labels were added to `gnome/po/it.po`. Fixing the notes view also uncovered and fixed a pre-existing bug: the `Adw.Toggle` chips had no `name`, so the All/Journal/Dreams/Notes filters never actually changed the list.
+_Deferred/decided:_ the New button is an `AdwSplitButton` (primary journal page; menu Dream / Quick note) with Ctrl+N, Ctrl+Alt+N, Ctrl+Shift+N; dream flags are on = 1 and off = NULL (no explicit false); the Quick notes view reuses the list pane in a notes mode (title, Open/Expanded/All chips, card rows with a date/tags footer and no day headers) instead of a separate page; tags stay in the details panel (the artboard's inline tag row was not added); expanding is the header split button plus an "Expand into" submenu in the entry menu, with "Append to an existing entry…" left to Later (product spec §2); an "Expanded into" card lists each live expansion and a "From quick note" banner links back, showing "From a deleted note" when the source is gone; a `expanded_note_ids` query backs the Open/Expanded filter; the dream-flag labels were added to `po/it.po`. Fixing the notes view also uncovered and fixed a pre-existing bug: the `Adw.Toggle` chips had no `name`, so the All/Journal/Dreams/Notes filters never actually changed the list.
 
 ### M6 · Preferences and collections
 - [x] Preferences dialog, all three pages (product spec §8), including day-end setting and change passphrase.
@@ -75,12 +75,12 @@ _Deferred/decided:_ the General page's Serif option names Source Serif 4 and fal
 - [x] Automatic and manual backups; open-a-backup from the error screen.
 - [x] Markdown and JSON export with the unencrypted warning.
 - [x] Italian translation complete; English strings reviewed.
-- [x] Flatpak manifest ready for Flathub; AUR `PKGBUILD` for `quaderno` and `quaderno-git` in `gnome/build-aux/aur/` (system-SQLCipher feature, meson build).
-- [x] Metainfo with screenshots; root `README.md`; first tags `vault-v0.1.0` and `gnome-v0.1.0`.
+- [x] Flatpak manifest ready for Flathub; AUR `PKGBUILD` for `quaderno` and `quaderno-git` in `build-aux/aur/` (system-SQLCipher feature, meson build).
+- [x] Metainfo with screenshots; root `README.md`; first tag `v0.1.0`.
 
 **Accept:** a clean install from Flatpak and from the AUR build both create, fill, back up and export a journal.
 
-_Deferred/decided:_ automatic backups run when a vault is opened and the newest snapshot is a week old (none for a just-created vault); the passphrase is never held in memory — the on-open backup uses the one in hand during unlock and "Back up now…" prompts for it; backups go to `$XDG_DATA_HOME/quaderno/backups/` or a chosen folder, named `journal-<last 8 of the vault id>_<timestamp>.quaderno`; the id tail is used because UUIDv7 prefixes are timestamps and would collide (product spec §10 updated the same way for export filenames); the last 8 per vault are kept and unrelated files in a shared folder ignored; a helper `gnome/src/backups.rs` holds the naming/pruning/due logic with tests. Export offers a single "Export…" dialog: Markdown (one file per live entry, YAML front matter in the current UI language, ids and timestamps included) or JSON (all rows, including soft-deleted, via `Vault::export_json`). The Italian catalog is complete (UI, Blueprint, desktop and AppStream metainfo); the default choice/rating/colour/flag labels are listed once in `details::translatable_defaults` so xgettext can see the strings the vault stores as data. AppStream metainfo translation is wired through `itstool` in `data/meson.build`; the summary, description and screenshot captions are translated. The Flathub manifest builds and passes `appstreamcli validate` but was not submitted; the AUR `sha256sums` are `SKIP` until the tag exists, and the AUR build was checked as an equivalent `meson -Dsqlcipher=system` build (the `system-sqlcipher` feature also enables `rusqlite/modern_sqlite` so the SQLCipher key bindings exist). The metainfo's screenshots are wired to `raw.githubusercontent.com` URLs; the PNGs must still be added under `gnome/data/screenshots/`. The workspace and meson versions were bumped to 0.1.0; the tags are created locally.
+_Deferred/decided:_ automatic backups run when a vault is opened and the newest snapshot is a week old (none for a just-created vault); the passphrase is never held in memory — the on-open backup uses the one in hand during unlock and "Back up now…" prompts for it; backups go to `$XDG_DATA_HOME/quaderno/backups/` or a chosen folder, named `journal-<last 8 of the vault id>_<timestamp>.quaderno`; the id tail is used because UUIDv7 prefixes are timestamps and would collide (product spec §10 updated the same way for export filenames); the last 8 per vault are kept and unrelated files in a shared folder ignored; a helper `src/backups.rs` holds the naming/pruning/due logic with tests. Export offers a single "Export…" dialog: Markdown (one file per live entry, YAML front matter in the current UI language, ids and timestamps included) or JSON (all rows, including soft-deleted, via `Vault::export_json`). The Italian catalog is complete (UI, Blueprint, desktop and AppStream metainfo); the default choice/rating/colour/flag labels are listed once in `details::translatable_defaults` so xgettext can see the strings the vault stores as data. AppStream metainfo translation is wired through `itstool` in `data/meson.build`; the summary, description and screenshot captions are translated. The Flathub manifest builds and passes `appstreamcli validate` but was not submitted; the AUR `sha256sums` are `SKIP` until the tag exists, and the AUR build was checked as an equivalent `meson -Dsqlcipher=system` build (the `system-sqlcipher` feature also enables `rusqlite/modern_sqlite` so the SQLCipher key bindings exist). The metainfo's screenshots are wired to `raw.githubusercontent.com` URLs; the PNGs must still be added under `data/screenshots/`. The workspace and meson versions are 0.1.0; the release is tagged `v0.1.0`.
 
 ## Version 1.1
 - Insights (`docs/statistics.md`).
@@ -89,4 +89,4 @@ _Deferred/decided:_ automatic backups run when a vault is opened and the newest 
 - Import from Quaderno's own Markdown/JSON export.
 
 ## Later
-Quick capture (keyring-unlocked vault only), daily reminder, "append note to existing entry", hidden-syntax editor mode, recently deleted view, Android companion in `android/`, reusing `quaderno-vault` through `crates/quaderno-vault-ffi` (uniffi Kotlin bindings) and its own translations.
+Quick capture (keyring-unlocked vault only), daily reminder, "append note to existing entry", hidden-syntax editor mode, recently deleted view, Android companion in its own repository, reusing `quaderno-vault` through `crates/quaderno-vault-ffi` (uniffi Kotlin bindings) and its own translations.

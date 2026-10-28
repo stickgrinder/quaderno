@@ -30,24 +30,24 @@
   <content_rating type="oars-1.1"/>
   <!--
     Screenshots must be remote URLs for Flathub. Add the PNG files under
-    gnome/data/screenshots/ with these names so the raw.githubusercontent.com
+    data/screenshots/ with these names so the raw.githubusercontent.com
     links below resolve.
   -->
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/gnome/data/screenshots/timeline.png</image>
+      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/data/screenshots/timeline.png</image>
       <caption>Write a journal page with optional metadata</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/gnome/data/screenshots/dreams.png</image>
+      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/data/screenshots/dreams.png</image>
       <caption>Record dreams with flags and mood on waking</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/gnome/data/screenshots/notes.png</image>
+      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/data/screenshots/notes.png</image>
       <caption>Capture quick notes and expand them later</caption>
     </screenshot>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/gnome/data/screenshots/preferences.png</image>
+      <image type="source">https://raw.githubusercontent.com/stickgrinder/quaderno/main/data/screenshots/preferences.png</image>
       <caption>Preferences, including encrypted backups and export</caption>
     </screenshot>
   </screenshots>

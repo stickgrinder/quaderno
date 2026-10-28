@@ -1,8 +1,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+[package]
+name = "quaderno"
+description = "Private, encrypted personal journal for GNOME"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
 [workspace]
 resolver = "3"
-members = ["crates/quaderno-vault", "gnome"]
+members = ["crates/quaderno-vault"]
 
 [workspace.package]
 version = "0.1.0"
@@ -29,7 +39,7 @@ thiserror = "2"
 zeroize = "1"
 serde_json = "1"
 
-# The GNOME app.
+# The app.
 quaderno-vault = { path = "crates/quaderno-vault", default-features = false }
 oo7 = "0.6"
 gettext-rs = "0.8"
@@ -37,3 +47,35 @@ tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
 futures-channel = "0.3"
 sourceview5 = { version = "0.11", features = ["gtk_v4_18"] }
 libspelling = "0.5"
+
+[features]
+default = ["bundled-sqlcipher"]
+# Build SQLCipher from source (Flatpak, local development).
+bundled-sqlcipher = ["quaderno-vault/bundled-sqlcipher"]
+# Link the distribution's SQLCipher (AUR and other distribution packages).
+system-sqlcipher = ["quaderno-vault/system-sqlcipher"]
+
+[build-dependencies]
+glib-build-tools = "0.22"
+
+[dependencies]
+gtk = { workspace = true }
+adw = { workspace = true }
+quaderno-vault = { workspace = true }
+oo7 = { workspace = true }
+gettext-rs = { workspace = true }
+tokio = { workspace = true }
+futures-channel = { workspace = true }
+zeroize = { workspace = true }
+sourceview5 = { workspace = true }
+libspelling = { workspace = true }
+unicode-normalization = { workspace = true }
+jiff = { workspace = true }
+uuid = { workspace = true }
+
+[[bin]]
+name = "quaderno"
+path = "src/main.rs"
+
+[dev-dependencies]
+tempfile = "3"

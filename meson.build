@@ -13,6 +13,9 @@ i18n = import('i18n')
 bindir = get_option('bindir')
 datadir = get_option('datadir')
 localedir = get_option('localedir')
+if not localedir.startswith('/')
+  localedir = join_paths(get_option('prefix'), localedir)
+endif
 
 cargo = find_program('cargo', required: true)
 cargo_build = find_program(meson.project_source_root() / 'build-aux' / 'cargo-build.sh')

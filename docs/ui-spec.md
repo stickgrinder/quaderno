@@ -140,7 +140,7 @@ the collection. This is a mode of the list pane, not a pushed
 
 - Font choice: four selectable cards in a `GtkFlowBox` + live preview label; size `AdwSpinRow`; line width `AdwToggleGroup` (a fraction of the editor width, so the choice always takes effect); spell checking a `GtkMenuButton` whose popover lists the installed dictionaries as check buttons (stored as a comma-separated list); default entry type `AdwComboRow`; day end `AdwComboRow` (00:00–06:00 in 30-minute steps).
 - Lists: `AdwPreferencesGroup` per kind with an "Add" button; rows carry a drag handle (drag itself is deferred), an icon button opening the icon picker, the title (translated or custom), a "Used in N entries" subtitle and a "Hidden" badge, and a menu with Rename…, Reset name (defaults), Move up, Move down, Hide / Show and Delete…. Rename opens an `AdwAlertDialog` with an entry (plus Reset for defaults); Delete is only offered for unused items; Add suggests an icon from the new name.
-- Icon picker: a `GtkPopover` with a `GtkSearchEntry`, a category `GtkDropDown` ("All icons" plus the Phosphor categories) and a virtualized `GtkGridView`. Matching uses the icon name, the `gnome/data/icon-synonyms.tsv` table, then Phosphor's tags and categories (`gnome/data/phosphor-tags.tsv`); icons already used by another item of the same kind are listed last and the fixed scales are excluded.
+- Icon picker: a `GtkPopover` with a `GtkSearchEntry`, a category `GtkDropDown` ("All icons" plus the Phosphor categories) and a virtualized `GtkGridView`. Matching uses the icon name, the `data/icon-synonyms.tsv` table, then Phosphor's tags and categories (`data/phosphor-tags.tsv`); icons already used by another item of the same kind are listed last and the fixed scales are excluded.
 - Privacy & data: Remember passphrase (asks for it when enabling, then stores it in the keyring), Lock after (`AdwComboRow`), Lock when the session locks, Change passphrase… (asks for the current and new passphrase, checking the current one against the file and explaining a mismatch or a too-short new one inline; the action stays disabled until valid), journal file `AdwActionRow` with "Move…". Toasts raised while Preferences is open are shown on the dialog, not behind it.
 - Backups group: an "Automatic backups" switch (weekly, keeping the last 8), a "Backup folder" row whose "Change…" opens a folder chooser and whose "Default" button (shown only when a custom folder is set) resets it, and "Back up now" with a "Back up" button that prompts for the passphrase.
 - Export group: an "Export…" row opening an `AdwAlertDialog` that states the export is not encrypted and offers "Markdown folder…" and "JSON file…"; the first opens a folder chooser, the second a save dialog (`quaderno-journal.json`).
@@ -169,11 +169,11 @@ the collection. This is a mode of the list pane, not a pushed
 
 ## 5. Icons
 
-- Source: Phosphor Icons 2.1.1, regular weight, from the `@phosphor-icons/core` package. Ship `LICENSE` (MIT) under `gnome/data/icons/phosphor/`.
+- Source: Phosphor Icons 2.1.1, regular weight, from the `@phosphor-icons/core` package. Ship `LICENSE` (MIT) under `data/icons/phosphor/`.
 - A build script converts each used SVG into a GTK symbolic icon named `ph-<name>-symbolic` (fill set to a plain color GTK can recolor; drop `currentColor`), and adds it to the GResource. The whole regular set is vendored and converted, so the picker (M6) needs no new assets; they live under `scalable/actions` in the GResource, because that is the directory the `hicolor` fallback theme that carries resource icons actually scans.
 - Stored icon names in the vault are bare Phosphor names (`flower-lotus`); the app maps them to `ph-flower-lotus-symbolic`. Unknown names show `ph-question-symbolic`.
-- The icon picker's synonym table lives in `gnome/data/icon-synonyms.tsv`, translated terms included.
-- The application icon is `gnome/data/icons/hicolor/scalable/apps/io.github.stickgrinder.Quaderno.svg`, with a symbolic variant in `symbolic/apps`. Both are installed with the app and used for the app id.
+- The icon picker's synonym table lives in `data/icon-synonyms.tsv`, translated terms included.
+- The application icon is `data/icons/hicolor/scalable/apps/io.github.stickgrinder.Quaderno.svg`, with a symbolic variant in `symbolic/apps`. Both are installed with the app and used for the app id.
 
 ## 6. Colors and charts
 

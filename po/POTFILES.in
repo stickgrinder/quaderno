@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Translatable files, relative to the meson project root (gnome/).
+# Translatable files, relative to the meson project root (the repository root).
 # `.rs` files use gettextrs::gettext/pgettext/ngettext (keywords added in
 # po/meson.build); the Blueprint UI uses `_()`.
 

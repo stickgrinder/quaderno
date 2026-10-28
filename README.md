@@ -24,13 +24,13 @@ Version 0.1 is the current release. The milestones and acceptance criteria are i
 
 | Path | Contents |
 |---|---|
+| `src/`, `ui/`, `data/`, `po/` | The GNOME app: Rust sources, Blueprint, data and catalogs. |
+| `build-aux/` | Flatpak manifest and vendored cargo sources, AUR templates. |
 | `crates/quaderno-vault/` | Shared library: everything that touches the vault file. |
-| `gnome/` | The GNOME app |
-| `vault-spec/` | Public file-format spec and SQL migrations |
-| `docs/` | Product specs, statistics, plan |
-| `fixtures/` | Sample encrypted vault and its expected JSON |
-| `tools/` | Independent readers for the format |
-| `android/` | Android companion app (TBD) |
+| `vault-spec/` | Public file-format spec and SQL migrations. |
+| `docs/` | Product spec, UI spec, statistics, plan, design artboards. |
+| `fixtures/` | Sample encrypted vault and its expected JSON. |
+| `tools/` | Independent readers for the format. |
 
 ## Building and running
 
@@ -44,7 +44,7 @@ On Arch/Manjaro:
 
 ```sh
 sudo pacman -S rust meson ninja blueprint-compiler gtk4 libadwaita \
-  gettext desktop-file-utils
+  libspelling sqlcipher openssl gettext desktop-file-utils
 ```
 
 Other distributions need the equivalent packages; the minimum library versions
@@ -52,10 +52,10 @@ are GTK 4.18 and libadwaita 1.7.
 
 #### Development build
 
-The meson project lives in `gnome/` and drives cargo:
+The meson project lives at the repository root and drives cargo:
 
 ```sh
-meson setup build gnome
+meson setup build .
 meson compile -C build
 meson devenv -C build ./quaderno
 ```
@@ -75,17 +75,17 @@ Build and install it, then run it:
 
 ```sh
 flatpak-builder --user --install --force-clean build-flatpak \
-  gnome/build-aux/io.github.stickgrinder.Quaderno.json
+  build-aux/io.github.stickgrinder.Quaderno.json
 flatpak run io.github.stickgrinder.Quaderno
 ```
 
 Cargo dependencies are vendored for the sandboxed build; see
-`gnome/build-aux/cargo-sources.json`.
+`build-aux/cargo-sources.json`.
 
 #### Arch Linux (AUR)
 
 Templates for the `quaderno` and `quaderno-git` packages live in
-`gnome/build-aux/aur/`. They build with meson against the distribution's
+`build-aux/aur/`. They build with meson against the distribution's
 SQLCipher (`-Dsqlcipher=system`).
 
 ## Testing and checks
@@ -108,7 +108,7 @@ checked separately. Workflows live in `.github/workflows/`.
 
 - [`vault-spec/format.md`](vault-spec/format.md) — the encrypted file format, for other clients.
 - [`docs/product-spec.md`](docs/product-spec.md) — what Quaderno does, as rules.
-- [`gnome/docs/ui-spec.md`](gnome/docs/ui-spec.md) — GNOME screens, widgets and shortcuts.
+- [`docs/ui-spec.md`](docs/ui-spec.md) — GNOME screens, widgets and shortcuts.
 - [`docs/statistics.md`](docs/statistics.md) — the Insights definitions (version 1.1).
 - [`docs/plan.md`](docs/plan.md) — milestones and acceptance criteria.
 

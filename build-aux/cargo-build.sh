@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Builds the Rust binary with cargo and copies it where meson expects the
-# custom_target output. Called by gnome/meson.build.
+# custom_target output. Called by meson.build.
 #
 # Usage: cargo-build.sh CARGO MANIFEST TARGET_DIR OUTPUT
 

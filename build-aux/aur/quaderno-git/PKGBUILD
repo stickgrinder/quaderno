@@ -1,9 +1,9 @@
 # Maintainer: Paolo Pustorino <stickgrinder@gmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
-# Tracks the gnome-v* tags of https://github.com/stickgrinder/quaderno.
+# Tracks the v* tags of https://github.com/stickgrinder/quaderno.
 # Builds against the distribution's SQLCipher (`-Dsqlcipher=system`) and the
-# Meson build in gnome/ (AGENTS.md). Copy this file to the AUR package
+# Meson build at the repository root (AGENTS.md). Copy this file to the AUR package
 # `quaderno-git`.
 
 pkgname=quaderno-git
