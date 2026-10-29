@@ -184,6 +184,7 @@ jobs:
       - name: Generate checksums
         run: |
           cd dist
+          rm -f quaderno.flatpak
           sha256sum ./* > SHA256SUMS
           cat SHA256SUMS
       - uses: softprops/action-gh-release@v2
