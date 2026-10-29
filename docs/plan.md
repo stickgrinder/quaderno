@@ -87,10 +87,10 @@ _Deferred/decided:_ automatic backups run when a vault is opened and the newest 
 - [x] Resolve the gettext localedir next to the executable.
 - [x] Tag-triggered release workflow: Flatpak, Debian 13, Ubuntu 26.04 LTS, current Fedora, binary tarball, `SHA256SUMS`, GitHub Release.
 - [x] First packaged release.
-- [ ] GitHub Pages.
+- [x] GitHub Pages.
 - [ ] AUR publication and Flathub submission.
 
-_0.1.0 is published at <https://github.com/stickgrinder/quaderno/releases/tag/v0.1.0>; Pages, AUR and Flathub remain._
+_0.1.0 is published at <https://github.com/stickgrinder/quaderno/releases/tag/v0.1.0>; the site is live at <https://stickgrinder.github.io/quaderno/>; AUR and Flathub remain._
 
 ## Version 1.1
 - Insights (`docs/statistics.md`).
