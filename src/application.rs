@@ -141,10 +141,8 @@ fn connect_session_lock(window: Rc<RefCell<Option<QuadernoWindow>>>) {
         gio::DBusSignalFlags::NONE,
         move |signal: gio::DBusSignalRef| {
             let active = signal.parameters.get::<bool>().unwrap_or(false);
-            if active {
-                if let Some(window) = window.borrow().as_ref() {
-                    window.on_session_locked();
-                }
+            if active && let Some(window) = window.borrow().as_ref() {
+                window.on_session_locked();
             }
         },
     );

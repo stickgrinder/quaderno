@@ -57,10 +57,10 @@ impl VaultError {
     /// Wraps a `rusqlite` error, turning the `rule_*` trigger messages into
     /// [`VaultError::RuleViolation`].
     pub fn from_sqlite(error: rusqlite::Error) -> Self {
-        if let rusqlite::Error::SqliteFailure(_, Some(message)) = &error {
-            if message.starts_with("rule_") {
-                return VaultError::RuleViolation(message.clone());
-            }
+        if let rusqlite::Error::SqliteFailure(_, Some(message)) = &error
+            && message.starts_with("rule_")
+        {
+            return VaultError::RuleViolation(message.clone());
         }
         VaultError::Database(error)
     }

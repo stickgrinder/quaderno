@@ -1817,11 +1817,11 @@ impl QuadernoWindow {
             }
             return;
         }
-        if let Some(row) = selected {
-            if let Ok(id) = Uuid::parse_str(&row.id()) {
-                self.link_subject(id);
-                clear_token_entry(entry, popover);
-            }
+        if let Some(row) = selected
+            && let Ok(id) = Uuid::parse_str(&row.id())
+        {
+            self.link_subject(id);
+            clear_token_entry(entry, popover);
         }
     }
 
@@ -5238,10 +5238,10 @@ impl QuadernoWindow {
             .build();
         let window = self.clone();
         dialog.open(Some(self), gio::Cancellable::NONE, move |result| {
-            if let Ok(file) = result {
-                if let Some(path) = file.path() {
-                    window.begin_open(path);
-                }
+            if let Ok(file) = result
+                && let Some(path) = file.path()
+            {
+                window.begin_open(path);
             }
         });
     }
@@ -5253,13 +5253,13 @@ impl QuadernoWindow {
             .build();
         let window = self.clone();
         dialog.save(Some(self), gio::Cancellable::NONE, move |result| {
-            if let Ok(file) = result {
-                if let Some(path) = file.path() {
-                    window
-                        .imp()
-                        .location_row
-                        .set_subtitle(&path.to_string_lossy());
-                }
+            if let Ok(file) = result
+                && let Some(path) = file.path()
+            {
+                window
+                    .imp()
+                    .location_row
+                    .set_subtitle(&path.to_string_lossy());
             }
         });
     }
@@ -5377,16 +5377,14 @@ impl QuadernoWindow {
         self.imp().path.replace(Some(path.clone()));
         self.imp().vault.replace(Some(vault));
 
-        if remember {
-            if let Some(keyring) = self.keyring() {
-                let receiver = keyring.store(
-                    path.to_string_lossy().into_owned(),
-                    Zeroizing::new(passphrase.as_bytes().to_vec()),
-                );
-                glib::spawn_future_local(async move {
-                    let _ = receiver.await;
-                });
-            }
+        if remember && let Some(keyring) = self.keyring() {
+            let receiver = keyring.store(
+                path.to_string_lossy().into_owned(),
+                Zeroizing::new(passphrase.as_bytes().to_vec()),
+            );
+            glib::spawn_future_local(async move {
+                let _ = receiver.await;
+            });
         }
         self.show_main(access);
 
