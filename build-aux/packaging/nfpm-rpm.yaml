@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Fedora package. The workflow stages the install tree under `staging/usr` and
+# runs:
+#   nfpm package --config build-aux/packaging/nfpm-rpm.yaml --packager rpm \
+#     --target dist/quaderno-<version>-1.x86_64.rpm
+name: quaderno
+arch: x86_64
+platform: linux
+version: 0.1.0
+release: "1"
+maintainer: Paolo Pustorino <stickgrinder@gmail.com>
+description: |
+  Private, encrypted personal journal for GNOME. Journal pages, dreams and
+  quick notes are stored in one encrypted file on your device, with optional
+  ratings, emotions, activities, colours, people, places, things and tags.
+vendor: Paolo Pustorino
+homepage: https://github.com/stickgrinder/quaderno
+license: GPL-3.0-or-later
+depends:
+  - gtk4 >= 4.18
+  - libadwaita >= 1.7
+  - libspelling
+  - sqlcipher
+  - glib2
+  - hicolor-icon-theme
+  - dconf
+contents:
+  - src: staging/usr/bin/quaderno
+    dst: /usr/bin/quaderno
+  - src: staging/usr/share
+    dst: /usr/share

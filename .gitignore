@@ -7,3 +7,6 @@
 # Generated files
 *.mo
 po/quaderno.pot
+
+# GitHuman review data
+/.githuman/

@@ -1,0 +1,194 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: release
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (for example v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  NFPM_VERSION: 2.48.0
+
+jobs:
+  verify:
+    name: Verify version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.tag || github.ref }}
+      - name: Check the tag against the tree
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          python3 tools/check-release-version "$TAG"
+          git fetch origin main
+          git merge-base --is-ancestor HEAD origin/main
+
+  flatpak:
+    name: Flatpak
+    needs: verify
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: quaderno.flatpak
+          manifest-path: build-aux/io.github.stickgrinder.Quaderno.json
+          run-tests: true
+      - name: Name the bundle
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: mv quaderno.flatpak "quaderno-${TAG#v}-x86_64.flatpak"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flatpak
+          path: quaderno-*-x86_64.flatpak
+          if-no-files-found: error
+
+  debian:
+    name: Debian/Ubuntu deb
+    needs: verify
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: debian:13
+            suffix: ""
+          - image: ubuntu:26.04
+            suffix: ubuntu2604
+    container:
+      image: ${{ matrix.image }}
+      options: --user root
+    steps:
+      - name: Install git and Node for the actions
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            git ca-certificates curl nodejs
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential pkg-config meson ninja-build gettext blueprint-compiler \
+            libgtk-4-dev libadwaita-1-dev libspelling-1-dev libsqlcipher-dev \
+            libssl-dev python3 xz-utils
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build and stage
+        run: |
+          meson setup --prefix=/usr --libdir=lib -Dsqlcipher=system _build .
+          meson compile -C _build
+          DESTDIR="$PWD/staging" meson install -C _build --no-rebuild
+          rm -f staging/usr/share/icons/hicolor/icon-theme.cache \
+                staging/usr/share/glib-2.0/schemas/gschemas.compiled
+      - name: Install nfpm
+        run: |
+          curl -sSfL \
+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz" \
+            | tar -xz -C /usr/local/bin nfpm
+      - name: Package the deb (and the tarball once)
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+          SUFFIX: ${{ matrix.suffix }}
+        run: |
+          version="${TAG#v}"
+          mkdir -p dist
+          nfpm package --config build-aux/packaging/nfpm-deb.yaml --packager deb \
+            --target "dist/quaderno_${version}-1${SUFFIX}_amd64.deb"
+          if [ -z "$SUFFIX" ]; then
+            tar -C staging -cJf "dist/quaderno-${version}-x86_64.tar.xz" usr
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-${{ matrix.suffix || 'debian' }}
+          path: dist/*
+          if-no-files-found: error
+
+  fedora:
+    name: Fedora rpm
+    needs: verify
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+      options: --user root
+    steps:
+      - name: Install git, Node and build dependencies
+        run: |
+          dnf install -y git ca-certificates curl nodejs \
+            meson ninja-build gettext blueprint-compiler \
+            gtk4-devel libadwaita-devel libspelling-devel sqlcipher-devel \
+            openssl-devel pkgconf-pkg-config python3 xz tar
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build and stage
+        run: |
+          meson setup --prefix=/usr --libdir=lib -Dsqlcipher=system _build .
+          meson compile -C _build
+          DESTDIR="$PWD/staging" meson install -C _build --no-rebuild
+          rm -f staging/usr/share/icons/hicolor/icon-theme.cache \
+                staging/usr/share/glib-2.0/schemas/gschemas.compiled
+      - name: Install nfpm
+        run: |
+          curl -sSfL \
+            "https://github.com/goreleaser/nfpm/releases/download/v${NFPM_VERSION}/nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz" \
+            | tar -xz -C /usr/local/bin nfpm
+      - name: Package the rpm
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          mkdir -p dist
+          nfpm package --config build-aux/packaging/nfpm-rpm.yaml --packager rpm \
+            --target "dist/quaderno-${version}-1.x86_64.rpm"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: GitHub release
+    needs: [flatpak, debian, fedora]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum ./* > SHA256SUMS
+          cat SHA256SUMS
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: Quaderno ${{ inputs.tag || github.ref_name }}
+          body_path: CHANGELOG.md
+          files: dist/*
+          fail_on_unmatched_files: true

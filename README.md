@@ -20,6 +20,18 @@ The file format is public and documented in [`vault-spec/format.md`](vault-spec/
 
 Version 0.1 is the current release. The milestones and acceptance criteria are in [`docs/plan.md`](docs/plan.md).
 
+## Install
+
+Prebuilt packages are attached to each [GitHub release](https://github.com/stickgrinder/quaderno/releases):
+
+- **Flatpak bundle** — `flatpak install quaderno-0.1.0-x86_64.flatpak` (needs `org.gnome.Platform//50`).
+- **Debian 13** and **Ubuntu 26.04 LTS** — the matching `.deb` (`sudo apt install ./quaderno_*.deb`).
+- **Fedora** — the `.rpm` (`sudo dnf install ./quaderno-*.rpm`).
+- **Binary tarball** — for any distribution with GTK 4.18+ and libadwaita 1.7+ (`tar -xf quaderno-*.tar.xz`).
+- `SHA256SUMS` lets you verify the downloads.
+
+Flathub and AUR publication are planned after the first releases.
+
 ## Repository layout
 
 | Path | Contents |
@@ -38,7 +50,7 @@ Version 0.1 is the current release. The milestones and acceptance criteria are i
 
 #### Prerequisites
 
-You need a Rust stable toolchain (edition 2024, Rust 1.85+), meson, ninja,
+You need a Rust stable toolchain (edition 2024, Rust 1.88+), meson, ninja,
 blueprint-compiler, and the GTK 4.18+ / libadwaita 1.7+ development libraries.
 On Arch/Manjaro:
 

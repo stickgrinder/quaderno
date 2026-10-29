@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
+"""Check that a release tag matches every version string in the tree.
+
+Usage: tools/check-release-version v0.1.0
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def read(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+
+def match(pattern: str, text: str, what: str) -> str:
+    found = re.search(pattern, text, re.MULTILINE)
+    if not found:
+        raise SystemExit(f"cannot find the version in {what}")
+    return found.group(1).strip().strip("'\"")
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: tools/check-release-version vX.Y.Z")
+    tag = sys.argv[1]
+    if not tag.startswith("v"):
+        raise SystemExit(f"the release tag must start with 'v', got {tag!r}")
+    version = tag[1:]
+
+    versions = {
+        "Cargo.toml": match(
+            r"^\[workspace\.package\][\s\S]*?^version\s*=\s*\"([^\"]+)\"",
+            read("Cargo.toml"),
+            "Cargo.toml",
+        ),
+        "meson.build": match(
+            r"^\s*version:\s*'([^']+)'", read("meson.build"), "meson.build"
+        ),
+        "metainfo": match(
+            r"<release\s+version=\"([^\"]+)\"",
+            read("data/io.github.stickgrinder.Quaderno.metainfo.xml"),
+            "the metainfo",
+        ),
+        "nfpm deb": match(
+            r"^version:\s*([0-9][^\s#]*)",
+            read("build-aux/packaging/nfpm-deb.yaml"),
+            "the deb recipe",
+        ),
+        "nfpm rpm": match(
+            r"^version:\s*([0-9][^\s#]*)",
+            read("build-aux/packaging/nfpm-rpm.yaml"),
+            "the rpm recipe",
+        ),
+    }
+
+    failures = [f"{where} = {value}" for where, value in versions.items() if value != version]
+    if failures:
+        print(f"tag {tag} is {version}, but:", file=sys.stderr)
+        for failure in failures:
+            print(f"  {failure}", file=sys.stderr)
+        return 1
+
+    print(f"all versions match {tag}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
