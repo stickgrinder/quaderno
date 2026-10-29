@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Quaderno app icon · GNOME/Adwaita style · GPL-3.0-or-later -->
+  <defs>
+    <linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#26508c"/>
+      <stop offset="1" stop-color="#1e4478"/>
+    </linearGradient>
+    <linearGradient id="pages" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6f5f4"/>
+      <stop offset="1" stop-color="#deddda"/>
+    </linearGradient>
+  </defs>
+  <!-- back cover: visible as the darker bottom side -->
+  <rect x="18" y="20" width="92" height="96" rx="10" fill="#142f57"/>
+  <!-- page block peeking out at the bottom -->
+  <rect x="28" y="98" width="76" height="12" rx="2" fill="url(#pages)"/>
+  <path d="M29 104.5h74M29 107.5h74" stroke="#c0bfbc" stroke-width="1"/>
+  <!-- ribbon bookmark hanging out of the pages -->
+  <path d="M44 102h10v20l-5-4-5 4z" fill="#e5a50a"/>
+  <path d="M44 102h10v3H44z" fill="#c88800"/>
+  <!-- front cover -->
+  <rect x="18" y="12" width="92" height="90" rx="10" fill="url(#cover)"/>
+  <!-- spine -->
+  <path d="M28 12h-0a10 10 0 0 0-10 10v70a10 10 0 0 0 10 10h0z" fill="#142f57"/>
+  <path d="M28 12v90" stroke="#0e2240" stroke-width="2"/>
+  <!-- top highlight -->
+  <path d="M31 13h68" fill="none" stroke="#5b8ad0" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  <!-- debossed crescent moon and star on the cover -->
+  <path d="M72.03 63.67A17 17 0 1 1 52.51 41.36A15 15 0 0 0 72.03 63.67Z" fill="#142f57" opacity=".75"/>
+  <path d="M74 30l1.6 4.4L80 36l-4.4 1.6L74 42l-1.6-4.4L68 36l4.4-1.6z" fill="#142f57" opacity=".75"/>
+  <!-- elastic band: front, then around the bottom edge -->
+  <rect x="88" y="12" width="7" height="90" fill="#e66100"/>
+  <rect x="88" y="102" width="7" height="14" fill="#c64600"/>
+  <rect x="88" y="12" width="2" height="90" fill="#ff7800" opacity=".8"/>
+</svg>

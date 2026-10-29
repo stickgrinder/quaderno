@@ -14,7 +14,7 @@ release-ready, and releases are annotated tags on `main`.
    - `build-aux/packaging/nfpm-deb.yaml` and `nfpm-rpm.yaml` (`version`);
    - `build-aux/aur/PKGBUILD` (`pkgver`) and `build-aux/aur/quaderno-git`
      needs no version change.
-2. Update `CHANGELOG.md`.
+2. Update `CHANGELOG.md` and the version/download links in `site/index.html`.
 3. Run the full checks:
 
    ```sh
@@ -52,6 +52,13 @@ It creates the GitHub Release with the `CHANGELOG.md` as its body. Verify the
 assets and the release page once the workflow finishes.
 
 The workflow can also be started by hand with a tag input, for a rerun.
+
+## Website (GitHub Pages)
+
+The site in `site/` is deployed by `.github/workflows/pages.yml` to
+<https://stickgrinder.github.io/quaderno/> whenever `site/**` changes on
+`main`. For a release, update the version and download links in
+`site/index.html`; the deploy runs automatically after the commit.
 
 ## Patch releases
 

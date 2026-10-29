@@ -53,13 +53,14 @@ crates/
   quaderno-vault-ffi/  Kotlin/Swift bindings via uniffi. Added when Android work starts; not in 1.0.
 vault-spec/          public format spec + migrations (CC-BY-SA-4.0); the vault crate embeds the SQL with include_str!
 docs/                shared docs: product spec, UI spec, statistics, plan, design artboards, releasing
+site/                GitHub Pages landing page (static HTML/CSS, no JavaScript)
 fixtures/            sample.quaderno + sample.json, the reference test material (vault spec §10)
 tools/               independent readers/tools for the format (e.g. the Python sample reader)
 ```
 
 **Releases** are tagged `vX.Y.Z` for the app, library and spec together. If the vault is extracted for Android later, it gets its own tags then.
 
-**CI** has one workflow per component, triggered by paths: `src/**`, `ui/**`, `data/**`, `po/**` and `build-aux/**` run the GNOME build; `crates/**` and `vault-spec/**` run the vault checks and the GNOME build. Android will have its own workflow in its own repository.
+**CI** has one workflow per component, triggered by paths: `src/**`, `ui/**`, `data/**`, `po/**` and `build-aux/**` run the GNOME build; `crates/**` and `vault-spec/**` run the vault checks and the GNOME build; `site/**` and `.github/workflows/pages.yml` deploy the GitHub Pages site. Android will have its own workflow in its own repository.
 
 ## Commands
 

@@ -21,7 +21,7 @@
     </p>
   </description>
   <launchable type="desktop-id">io.github.stickgrinder.Quaderno.desktop</launchable>
-  <url type="homepage">https://github.com/stickgrinder/quaderno</url>
+  <url type="homepage">https://stickgrinder.github.io/quaderno/</url>
   <url type="bugtracker">https://github.com/stickgrinder/quaderno/issues</url>
   <url type="vcs-browser">https://github.com/stickgrinder/quaderno</url>
   <developer id="io.github.stickgrinder">

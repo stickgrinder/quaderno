@@ -5,6 +5,8 @@ each with optional metadata (ratings, emotions, activities, people, places,
 things, tags, colours), stored in a single encrypted file on your device. It is
 a native GTK4/libadwaita application; it will never be a web or Electron app.
 
+Website: <https://stickgrinder.github.io/quaderno/>
+
 ## Why it exists
 
 Quaderno is built around a simple promise: what you write is nobody else's business.
@@ -41,6 +43,7 @@ Flathub and AUR publication are planned after the first releases.
 | `crates/quaderno-vault/` | Shared library: everything that touches the vault file. |
 | `vault-spec/` | Public file-format spec and SQL migrations. |
 | `docs/` | Product spec, UI spec, statistics, plan, design artboards. |
+| `site/` | GitHub Pages landing page (static HTML/CSS, no JavaScript). |
 | `fixtures/` | Sample encrypted vault and its expected JSON. |
 | `tools/` | Independent readers for the format. |
 
