@@ -85,9 +85,12 @@ _Deferred/decided:_ automatic backups run when a vault is opened and the newest 
 ## Release engineering (0.1.x)
 - [x] Flatten the repository: the GNOME app at the root, `crates/quaderno-vault` shared, `android/` removed.
 - [x] Resolve the gettext localedir next to the executable.
-- [ ] Tag-triggered release workflow: Flatpak, Debian 13, Ubuntu 26.04 LTS, current Fedora, binary tarball, `SHA256SUMS`, GitHub Release.
-- [ ] First packaged release; then GitHub Pages.
+- [x] Tag-triggered release workflow: Flatpak, Debian 13, Ubuntu 26.04 LTS, current Fedora, binary tarball, `SHA256SUMS`, GitHub Release.
+- [x] First packaged release.
+- [ ] GitHub Pages.
 - [ ] AUR publication and Flathub submission.
+
+_0.1.0 is published at <https://github.com/stickgrinder/quaderno/releases/tag/v0.1.0>; Pages, AUR and Flathub remain._
 
 ## Version 1.1
 - Insights (`docs/statistics.md`).
