@@ -90,9 +90,10 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            build-essential pkg-config meson ninja-build gettext blueprint-compiler \
-            libgtk-4-dev libadwaita-1-dev libspelling-1-dev libsqlcipher-dev \
-            libssl-dev python3 xz-utils
+            build-essential pkg-config meson ninja-build gettext itstool \
+            blueprint-compiler libgtk-4-dev libadwaita-1-dev libspelling-1-dev \
+            libsqlcipher-dev libssl-dev python3 xz-utils desktop-file-utils \
+            libglib2.0-bin libgtk-4-bin
       - uses: dtolnay/rust-toolchain@stable
       - name: Build and stage
         run: |
@@ -135,9 +136,9 @@ jobs:
       - name: Install git, Node and build dependencies
         run: |
           dnf install -y git ca-certificates curl nodejs \
-            meson ninja-build gettext blueprint-compiler \
+            meson ninja-build gettext itstool blueprint-compiler \
             gtk4-devel libadwaita-devel libspelling-devel sqlcipher-devel \
-            openssl-devel pkgconf-pkg-config python3 xz tar
+            openssl-devel pkgconf-pkg-config python3 xz tar desktop-file-utils
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.tag || github.ref }}
