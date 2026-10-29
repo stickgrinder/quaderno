@@ -3,7 +3,7 @@
 # Debian/Ubuntu package. The workflow stages the install tree under
 # `staging/usr` and runs:
 #   nfpm package --config build-aux/packaging/nfpm-deb.yaml --packager deb \
-#     --target dist/quaderno_<version>-1_amd64.deb
+#     --target dist/quaderno_<version>-1_amd64_debian_trixie.deb
 name: quaderno
 arch: amd64
 platform: linux

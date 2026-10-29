@@ -42,8 +42,8 @@ The tag triggers `.github/workflows/release.yml`, which verifies the tag
 against every version string and then builds:
 
 - `quaderno-X.Y.Z-x86_64.flatpak`
-- `quaderno_X.Y.Z-1_amd64.deb` (Debian 13)
-- `quaderno_X.Y.Z-1ubuntu2604_amd64.deb` (Ubuntu 26.04 LTS)
+- `quaderno_X.Y.Z-1_amd64_debian_trixie.deb` (Debian 13)
+- `quaderno_X.Y.Z-1_amd64_ubuntu_resolute.deb` (Ubuntu 26.04 LTS)
 - `quaderno-X.Y.Z-1.x86_64.rpm` (current Fedora)
 - `quaderno-X.Y.Z-x86_64.tar.xz`
 - `SHA256SUMS`

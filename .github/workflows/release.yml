@@ -71,9 +71,13 @@ jobs:
       matrix:
         include:
           - image: debian:13
-            suffix: ""
+            suffix: _debian_trixie
+            name: debian-trixie
+            tarball: true
           - image: ubuntu:26.04
-            suffix: ubuntu2604
+            suffix: _ubuntu_resolute
+            name: ubuntu-resolute
+            tarball: false
     container:
       image: ${{ matrix.image }}
       options: --user root
@@ -111,17 +115,18 @@ jobs:
         env:
           TAG: ${{ inputs.tag || github.ref_name }}
           SUFFIX: ${{ matrix.suffix }}
+          TARBALL: ${{ matrix.tarball }}
         run: |
           version="${TAG#v}"
           mkdir -p dist
           nfpm package --config build-aux/packaging/nfpm-deb.yaml --packager deb \
-            --target "dist/quaderno_${version}-1${SUFFIX}_amd64.deb"
-          if [ -z "$SUFFIX" ]; then
+            --target "dist/quaderno_${version}-1_amd64${SUFFIX}.deb"
+          if [ "$TARBALL" = "true" ]; then
             tar -C staging -cJf "dist/quaderno-${version}-x86_64.tar.xz" usr
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: deb-${{ matrix.suffix || 'debian' }}
+          name: deb-${{ matrix.name }}
           path: dist/*
           if-no-files-found: error
 
