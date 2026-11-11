@@ -1,13 +1,15 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --blue: #3584e4;
   --blue-dark: #1c71d8;
   --blue-deep: #1a5fb4;
+  --blue-fill-hover: #1c71d8;
   --blue-band: #cfe4fb;
   --blue-dot: #a9ccf4;
   --blue-ink: #163a5f;
+  --hero-title: #102a43;
   --ink: #1a2b3c;
   --text: #2e3436;
   --muted: #5e5c64;
@@ -15,6 +17,24 @@
   --bg: #ffffff;
   --surface: #f6f5f4;
   --sans: "Cantarell", "Inter", "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --blue-dark: #78aeed;
+    --blue-deep: #99c1f1;
+    --blue-band: #1b2a3a;
+    --blue-dot: #4a5b6d;
+    --blue-ink: #d7e8fb;
+    --hero-title: #f6f5f4;
+    --ink: #f6f5f4;
+    --text: #f6f5f4;
+    --muted: #c0bfbc;
+    --line: #3d3d3d;
+    --bg: #1e1e1e;
+    --surface: #303030;
+  }
 }
 
 *,
@@ -78,8 +98,8 @@ p {
   z-index: 10;
   padding: 0.55rem 0.9rem;
   border-radius: 6px;
-  background: var(--blue-ink);
-  color: #ffffff;
+  background: var(--ink);
+  color: var(--bg);
   font-weight: 700;
   transform: translateY(-200%);
   transition: transform 160ms ease;
@@ -87,7 +107,7 @@ p {
 
 .skip-link:focus {
   transform: translateY(0);
-  color: #ffffff;
+  color: var(--bg);
 }
 
 .hero {
@@ -152,7 +172,7 @@ p {
 }
 
 .hero h1 {
-  color: #102a43;
+  color: var(--hero-title);
   font-size: clamp(2.2rem, 5vw, 3.1rem);
 }
 
@@ -248,7 +268,7 @@ p {
 }
 
 .carousel-button:hover {
-  background: var(--blue-dark);
+  background: var(--blue-fill-hover);
 }
 
 .carousel-prev {
@@ -333,7 +353,7 @@ p {
 }
 
 .button:hover {
-  background: var(--blue-dark);
+  background: var(--blue-fill-hover);
   color: #ffffff;
 }
 

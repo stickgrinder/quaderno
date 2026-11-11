@@ -4,17 +4,18 @@
   <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quaderno — a private personal journal for GNOME</title>
-  <meta name="description" content="Quaderno is a private, encrypted personal journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
+  <title>Quaderno — a secure, private personal journal for GNOME</title>
+  <meta name="description" content="Quaderno is a secure, private personal journal for GNOME. It keeps your most personal thoughts, diary pages and dreams in one encrypted file on your computer.">
   <link rel="canonical" href="https://stickgrinder.github.io/quaderno/">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#cfe4fb">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#cfe4fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b2a3a" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Quaderno">
-  <meta property="og:title" content="Quaderno — a private personal journal for GNOME">
-  <meta property="og:description" content="A private, encrypted personal journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
+  <meta property="og:title" content="Quaderno — a secure, private personal journal for GNOME">
+  <meta property="og:description" content="A secure, private personal journal for GNOME. Your most personal thoughts, diary pages and dreams in one encrypted file.">
   <meta property="og:url" content="https://stickgrinder.github.io/quaderno/">
   <meta property="og:image" content="https://stickgrinder.github.io/quaderno/assets/timeline.png">
   <meta property="og:image:width" content="1633">
@@ -43,10 +44,10 @@
 
   <main id="content" class="content">
     <div class="intro">
-      <h2 class="tagline">A private, encrypted personal journal for GNOME.</h2>
-      <p class="what">Quaderno is a personal journal for GNOME. Journal pages, dreams and quick notes live in one encrypted file on your computer.</p>
-      <p class="promise">The goal is a personal journal that stays private by default. Your writing stays yours: no account, no server, no network.</p>
-      <p class="audience">For people who want their life to be nobody else's business.</p>
+      <h2 class="tagline">A secure, private personal journal for GNOME.</h2>
+      <p class="what">Quaderno keeps your most personal thoughts, diary pages and dreams in one encrypted file on your computer.</p>
+      <p class="promise">It is private by design: no account, no server, no network. Your writing stays yours, protected by a single master password. The file format is fully documented and built on open foundations—SQLite and SQLCipher—so there is no lock-in, and anyone can build a compatible client. That password is the only key.</p>
+      <p class="audience">Quaderno is for people who want their life to be nobody else's business.</p>
     </div>
 
     <section class="carousel" data-carousel aria-roledescription="carousel" aria-label="Screenshots">
@@ -58,19 +59,19 @@
         <div class="carousel-slides">
           <figure class="carousel-slide" data-slide>
             <img src="assets/timeline.png" width="1633" height="990" alt="Quaderno's timeline with a journal page open and details for mood, activities, colours and places." fetchpriority="high" decoding="async">
-            <figcaption>Journal pages, dreams and notes in one timeline.</figcaption>
+            <figcaption>A personal journal for your thoughts, dreams and diary.</figcaption>
           </figure>
           <figure class="carousel-slide" data-slide hidden>
             <img src="assets/dreams.png" width="1633" height="990" alt="A dream entry in Quaderno with dream flags and mood on waking." loading="lazy" decoding="async">
-            <figcaption>Record dreams with mood on waking.</figcaption>
+            <figcaption>Tag dream entries as lucid, recurring or nightmare.</figcaption>
           </figure>
           <figure class="carousel-slide" data-slide hidden>
             <img src="assets/notes.png" width="1633" height="990" alt="Two expanded quick notes in Quaderno's timeline." loading="lazy" decoding="async">
-            <figcaption>Quick notes, expanded.</figcaption>
+            <figcaption>Take notes of your intuitions or shower thoughts quickly, then expand them later.</figcaption>
           </figure>
           <figure class="carousel-slide" data-slide hidden>
             <img src="assets/preferences.png" width="1633" height="990" alt="Quaderno preferences with options for encrypted backups and export." loading="lazy" decoding="async">
-            <figcaption>Encrypted backups and export.</figcaption>
+            <figcaption>Export your journal and back it up encrypted.</figcaption>
           </figure>
         </div>
         <button class="carousel-button carousel-next" type="button" data-next aria-label="Next screenshot">
