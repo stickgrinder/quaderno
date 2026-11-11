@@ -53,7 +53,7 @@ crates/
   quaderno-vault-ffi/  Kotlin/Swift bindings via uniffi. Added when Android work starts; not in 1.0.
 vault-spec/          public format spec + migrations (CC-BY-SA-4.0); the vault crate embeds the SQL with include_str!
 docs/                shared docs: product spec, UI spec, statistics, plan, design artboards, releasing
-site/                GitHub Pages landing page (static HTML/CSS, no JavaScript)
+site/                GitHub Pages landing page (static HTML/CSS with a local carousel script)
 fixtures/            sample.quaderno + sample.json, the reference test material (vault spec §10)
 tools/               independent readers/tools for the format (e.g. the Python sample reader)
 ```

@@ -4,8 +4,8 @@
   <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quaderno — a private journal for GNOME</title>
-  <meta name="description" content="Quaderno is a private, encrypted journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
+  <title>Quaderno — a private personal journal for GNOME</title>
+  <meta name="description" content="Quaderno is a private, encrypted personal journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
   <link rel="canonical" href="https://stickgrinder.github.io/quaderno/">
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#cfe4fb">
@@ -13,14 +13,16 @@
   <link rel="stylesheet" href="style.css">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Quaderno">
-  <meta property="og:title" content="Quaderno — a private journal for GNOME">
-  <meta property="og:description" content="A private, encrypted journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
+  <meta property="og:title" content="Quaderno — a private personal journal for GNOME">
+  <meta property="og:description" content="A private, encrypted personal journal for GNOME. Journal pages, dreams and quick notes in one file on your computer.">
   <meta property="og:url" content="https://stickgrinder.github.io/quaderno/">
   <meta property="og:image" content="https://stickgrinder.github.io/quaderno/assets/timeline.png">
   <meta property="og:image:width" content="1633">
   <meta property="og:image:height" content="990">
   <meta property="og:image:alt" content="Quaderno's timeline with a journal page open and details for mood, activities, colours and places.">
   <meta name="twitter:card" content="summary_large_image">
+  <script src="carousel.js" defer></script>
+  <noscript><style>.carousel-button, .carousel-dots { display: none; }</style></noscript>
 </head>
 <body>
   <a class="skip-link" href="#content">Skip to content</a>
@@ -34,22 +36,55 @@
       </nav>
     </div>
     <div class="hero-inner">
-      <img class="app-icon" src="assets/icon.svg" alt="" width="112" height="112">
+      <img class="app-icon" src="assets/icon.svg" alt="" width="96" height="96">
       <h1>Quaderno</h1>
-      <p class="tagline">A private, encrypted journal for GNOME.</p>
     </div>
   </header>
 
   <main id="content" class="content">
     <div class="intro">
-      <p class="what">Quaderno is a journal for GNOME. Journal pages, dreams and quick notes live in one encrypted file on your computer.</p>
-      <p class="promise">The goal is a journal that stays private by default. Your writing stays yours: no account, no server, no network.</p>
-      <p class="audience">For people who want to keep a journal on their own computer.</p>
+      <h2 class="tagline">A private, encrypted personal journal for GNOME.</h2>
+      <p class="what">Quaderno is a personal journal for GNOME. Journal pages, dreams and quick notes live in one encrypted file on your computer.</p>
+      <p class="promise">The goal is a personal journal that stays private by default. Your writing stays yours: no account, no server, no network.</p>
+      <p class="audience">For people who want their life to be nobody else's business.</p>
     </div>
 
-    <figure class="screenshot">
-      <img src="assets/timeline.png" width="1633" height="990" alt="Quaderno's timeline with a journal page open and details for mood, activities, colours and places." fetchpriority="high" decoding="async">
-    </figure>
+    <section class="carousel" data-carousel aria-roledescription="carousel" aria-label="Screenshots">
+      <h2 class="section-title">Screenshots</h2>
+      <div class="carousel-viewport">
+        <button class="carousel-button carousel-prev" type="button" data-prev aria-label="Previous screenshot">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="carousel-slides">
+          <figure class="carousel-slide" data-slide>
+            <img src="assets/timeline.png" width="1633" height="990" alt="Quaderno's timeline with a journal page open and details for mood, activities, colours and places." fetchpriority="high" decoding="async">
+            <figcaption>Journal pages, dreams and notes in one timeline.</figcaption>
+          </figure>
+          <figure class="carousel-slide" data-slide hidden>
+            <img src="assets/dreams.png" width="1633" height="990" alt="A dream entry in Quaderno with dream flags and mood on waking." loading="lazy" decoding="async">
+            <figcaption>Record dreams with mood on waking.</figcaption>
+          </figure>
+          <figure class="carousel-slide" data-slide hidden>
+            <img src="assets/notes.png" width="1633" height="990" alt="Two expanded quick notes in Quaderno's timeline." loading="lazy" decoding="async">
+            <figcaption>Quick notes, expanded.</figcaption>
+          </figure>
+          <figure class="carousel-slide" data-slide hidden>
+            <img src="assets/preferences.png" width="1633" height="990" alt="Quaderno preferences with options for encrypted backups and export." loading="lazy" decoding="async">
+            <figcaption>Encrypted backups and export.</figcaption>
+          </figure>
+        </div>
+        <button class="carousel-button carousel-next" type="button" data-next aria-label="Next screenshot">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="carousel-dots" role="group" aria-label="Choose a screenshot">
+        <button class="carousel-dot" type="button" data-dot aria-label="Show screenshot 1: timeline" aria-current="true"></button>
+        <button class="carousel-dot" type="button" data-dot aria-label="Show screenshot 2: dreams" aria-current="false"></button>
+        <button class="carousel-dot" type="button" data-dot aria-label="Show screenshot 3: notes" aria-current="false"></button>
+        <button class="carousel-dot" type="button" data-dot aria-label="Show screenshot 4: preferences" aria-current="false"></button>
+      </div>
+      <p class="sr-only" data-status aria-live="polite"></p>
+    </section>
 
     <section id="download" class="download" aria-labelledby="download-title">
       <h2 id="download-title">Get Quaderno</h2>

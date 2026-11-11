@@ -43,7 +43,7 @@ Flathub and AUR publication are planned after the first releases.
 | `crates/quaderno-vault/` | Shared library: everything that touches the vault file. |
 | `vault-spec/` | Public file-format spec and SQL migrations. |
 | `docs/` | Product spec, UI spec, statistics, plan, design artboards. |
-| `site/` | GitHub Pages landing page (static HTML/CSS, no JavaScript). |
+| `site/` | GitHub Pages landing page (static HTML/CSS with a local carousel script). |
 | `fixtures/` | Sample encrypted vault and its expected JSON. |
 | `tools/` | Independent readers for the format. |
 
